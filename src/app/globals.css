@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-base: #F0EBE3;
+  --color-bg-surface: #FAFAF8;
+  --color-sidebar-bg: #141920;
+  --color-sidebar-accent: #C6A15B;
+  --color-sidebar-text: #BEB8AE;
+  --color-sidebar-text-active: #F5F2EC;
+  --color-text-primary: #1A1714;
+  --color-text-secondary: #7A7269;
+  --color-accent-gold: #C6A15B;
+  --color-accent-gold-hover: #D8B872;
+  --color-accent-jade: #1E5C4F;
+  --color-border-subtle: #E3DDD6;
+  --color-danger: #9B2C2C;
+}
+
+:root {
+  --bg-base: #F0EBE3;
+  --bg-surface: #FAFAF8;
+  --sidebar-bg: #141920;
+  --sidebar-accent: #C6A15B;
+  --sidebar-text: #BEB8AE;
+  --sidebar-text-active: #F5F2EC;
+  --text-primary: #1A1714;
+  --text-secondary: #7A7269;
+  --accent-gold: #C6A15B;
+  --accent-gold-hover: #D8B872;
+  --accent-jade: #1E5C4F;
+  --border-subtle: #E3DDD6;
+  --danger: #9B2C2C;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Manrope', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: 'Fraunces', serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .grain-overlay, .gold-text-gradient, .cta-glow-effect {
+    animation: none !important;
+  }
+}
+
+/* Premium Typography Helper Classes */
+.font-cormorant {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Premium Gold Text Gradient */
+.gold-text-gradient {
+  background: linear-gradient(135deg, #d4af37 0%, #f3e5ab 30%, #b8860b 70%, #d4af37 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 6s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Animated Film Grain Overlay */
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  animation: grain-animation 1s steps(10) infinite;
+}
+
+@keyframes grain-animation {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  25% { transform: translate(-15%, 5%); }
+  40% { transform: translate(7%, -25%); }
+  60% { transform: translate(-20%, 25%); }
+  70% { transform: translate(15%, -15%); }
+  90% { transform: translate(10%, 10%); }
+}
+
+/* Ripple & CTA Button animations */
+.cta-glow-effect {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cta-glow-effect::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0.6);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.cta-glow-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(212, 175, 55, 0.15), 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cta-glow-effect:hover::before {
+  transform: translate(-50%, -50%) scale(1.1);
+  opacity: 1;
+}
+
+/* Ripple click animations */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: ripple-animation 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* GPU acceleration helper */
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+

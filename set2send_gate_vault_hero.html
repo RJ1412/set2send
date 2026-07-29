@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #05060E;
+    color: #E8DCC8;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  :root {
+    --gold: #C4A35A;
+    --gold-light: #E2C27D;
+    --gold-dim: #7A6238;
+    --obsidian: #05060E;
+    --obsidian-2: #0A0C18;
+    --obsidian-3: #0F1120;
+    --cream: #E8DCC8;
+    --cream-dim: #9A8F7E;
+  }
+
+  /* ─── GATE VAULT ─── */
+  #vault {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #05060E;
+    overflow: hidden;
+  }
+
+  .gate-left, .gate-right {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: #07091A;
+    border: none;
+    transition: transform 1.4s cubic-bezier(0.77, 0, 0.175, 1) 0.3s;
+    overflow: hidden;
+  }
+  .gate-left { left: 0; transform-origin: left; }
+  .gate-right { right: 0; transform-origin: right; }
+
+  .gate-panel-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gate-left .gate-panel-inner { justify-content: flex-end; padding-right: 60px; }
+  .gate-right .gate-panel-inner { justify-content: flex-start; padding-left: 60px; }
+
+  .gate-ornament {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0.7;
+  }
+  .gate-line-v {
+    width: 1px;
+    height: 140px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+  }
+  .gate-diamond {
+    width: 10px;
+    height: 10px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+  .gate-line-h {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  .gate-border-left {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, var(--gold) 20%, var(--gold) 80%, transparent 100%);
+  }
+  .gate-border-right {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, var(--gold) 20%, var(--gold) 80%, transparent 100%);
+  }
+
+  .vault-center {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .vault-emblem {
+    width: 72px;
+    height: 72px;
+    border: 1px solid var(--gold-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: emblem-pulse 2s ease-in-out infinite;
+  }
+  .vault-emblem::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--gold);
+  }
+  .vault-emblem svg { position: relative; z-index: 1; }
+
+  @keyframes emblem-pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  .vault-wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    color: var(--cream);
+    text-transform: uppercase;
+  }
+
+  .vault-rule {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  .vault-tagline {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .unlock-btn {
+    margin-top: 16px;
+    padding: 12px 36px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s;
+  }
+  .unlock-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
+  }
+  .unlock-btn:hover::before { transform: scaleX(1); }
+  .unlock-btn:hover { color: #05060E; }
+  .unlock-btn span { position: relative; z-index: 1; }
+
+  /* open state */
+  #vault.open .gate-left { transform: translateX(-100%); }
+  #vault.open .gate-right { transform: translateX(100%); }
+  #vault.open .vault-center { opacity: 0; transition: opacity 0.2s; }
+
+  #vault.gone {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease 1.6s;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* atmospheric grid */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(196,163,90,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(196,163,90,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 60% at 70% 50%, black 20%, transparent 80%);
+    pointer-events: none;
+  }
+
+  /* radial glow behind phone */
+  .hero-glow {
+    position: absolute;
+    right: -60px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(196,163,90,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* top rule line */
+  .hero-top-rule {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%);
+    opacity: 0.4;
+  }
+
+  /* nav */
+  nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 64px;
+    border-bottom: 1px solid rgba(196,163,90,0.1);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo-mark {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0;
+    position: relative;
+  }
+  .nav-logo-mark::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid rgba(196,163,90,0.3);
+  }
+  .nav-wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--cream);
+  }
+  .nav-wordmark span { color: var(--gold); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--cream); }
+
+  .nav-cta {
+    padding: 10px 28px;
+    border: 1px solid var(--gold);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+  .nav-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.77,0,0.175,1);
+  }
+  .nav-cta:hover::before { transform: scaleX(1); }
+  .nav-cta:hover { color: #05060E; }
+  .nav-cta span { position: relative; z-index: 1; }
+
+  /* hero content */
+  .hero-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 0 64px;
+    gap: 80px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .hero-left { padding: 60px 0; }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .eyebrow-line {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .eyebrow-diamond {
+    width: 5px;
+    height: 5px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .eyebrow-text {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(48px, 5.5vw, 72px);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--cream);
+    margin-bottom: 10px;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--gold-light);
+    font-weight: 300;
+  }
+  .hero-headline .brand-name {
+    display: block;
+    font-style: normal;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-sub-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--cream-dim);
+    margin-bottom: 36px;
+    line-height: 1.4;
+  }
+
+  .hero-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #6E6555;
+    max-width: 440px;
+    margin-bottom: 48px;
+    border-left: 1px solid rgba(196,163,90,0.25);
+    padding-left: 20px;
+  }
+
+  .hero-platforms {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .platform-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid rgba(196,163,90,0.2);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--cream-dim);
+    background: rgba(196,163,90,0.03);
+    transition: all 0.25s;
+    cursor: default;
+  }
+  .platform-tag:hover {
+    border-color: rgba(196,163,90,0.5);
+    color: var(--cream);
+    background: rgba(196,163,90,0.06);
+  }
+  .platform-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .cta-primary {
+    padding: 16px 40px;
+    background: var(--gold);
+    color: #05060E;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .cta-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
+  }
+  .cta-primary:hover::after { transform: scaleX(1); }
+
+  .cta-secondary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--cream-dim);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .cta-secondary:hover { color: var(--cream); }
+  .cta-arrow {
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+    position: relative;
+    transition: width 0.3s;
+  }
+  .cta-secondary:hover .cta-arrow { width: 40px; }
+  .cta-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    border-right: 1px solid currentColor;
+    border-top: 1px solid currentColor;
+    transform: rotate(45deg);
+  }
+
+  .hero-proof {
+    margin-top: 52px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(196,163,90,0.1);
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .proof-stat { text-align: left; }
+  .proof-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .proof-number span { color: var(--gold); font-size: 18px; }
+  .proof-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+  }
+  .proof-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(196,163,90,0.2);
+  }
+
+  /* ─── PHONE MOCKUP ─── */
+  .hero-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .phone-scene {
+    position: relative;
+    width: 320px;
+  }
+
+  /* vertical gold accent line */
+  .phone-scene::before {
+    content: '';
+    position: absolute;
+    left: -40px;
+    top: 10%;
+    bottom: 10%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+  }
+
+  .phone-frame {
+    width: 100%;
+    background: #0D0F1E;
+    border: 1px solid rgba(196,163,90,0.25);
+    border-radius: 36px;
+    padding: 16px;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(196,163,90,0.08),
+      0 40px 80px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(196,163,90,0.1);
+  }
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: rgba(196,163,90,0.2);
+    border-radius: 2px;
+  }
+
+  .phone-screen {
+    background: #0A0B16;
+    border-radius: 26px;
+    padding: 32px 18px 20px;
+    overflow: hidden;
+  }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(196,163,90,0.1);
+    margin-bottom: 16px;
+  }
+  .chat-avatar {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .chat-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 8px;
+    height: 8px;
+    background: #2ECC71;
+    border-radius: 50%;
+    border: 1.5px solid #0A0B16;
+  }
+  .chat-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cream);
+    letter-spacing: 0.03em;
+  }
+  .chat-status {
+    font-size: 10px;
+    color: #2ECC71;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 260px;
+  }
+
+  .msg {
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 85%;
+    padding: 10px 14px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .msg.show { opacity: 1; transform: translateY(0); }
+
+  .msg-in {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 4px 16px 16px 16px;
+    color: #A89880;
+    align-self: flex-start;
+    font-size: 11px;
+    letter-spacing: 0.01em;
+  }
+  .msg-in .sender {
+    display: block;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    margin-bottom: 4px;
+    opacity: 0.6;
+  }
+
+  .msg-out {
+    background: rgba(196,163,90,0.1);
+    border: 1px solid rgba(196,163,90,0.2);
+    border-radius: 16px 4px 16px 16px;
+    color: var(--cream);
+    align-self: flex-end;
+    font-size: 11px;
+  }
+
+  .msg-card {
+    background: rgba(196,163,90,0.05);
+    border: 1px solid rgba(196,163,90,0.25);
+    border-left: 2px solid var(--gold);
+    border-radius: 4px 8px 8px 4px;
+    align-self: flex-end;
+    max-width: 90%;
+    padding: 10px 14px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .msg-card.show { opacity: 1; transform: translateY(0); }
+  .msg-card-logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .msg-card-s {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .msg-card-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--cream);
+    letter-spacing: 0.03em;
+  }
+  .msg-card-body {
+    font-size: 10px;
+    color: var(--cream-dim);
+    line-height: 1.5;
+  }
+
+  /* floating metrics */
+  .float-metric {
+    position: absolute;
+    background: #0D0F1E;
+    border: 1px solid rgba(196,163,90,0.3);
+    padding: 12px 18px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .float-metric.show { opacity: 1; transform: none; }
+
+  .float-left {
+    left: -110px;
+    top: 30%;
+    transform: translateX(-10px);
+  }
+  .float-right {
+    right: -90px;
+    top: 55%;
+    transform: translateX(10px);
+  }
+
+  .metric-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .metric-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    margin-top: 3px;
+  }
+
+  .hero-vert-label {
+    position: absolute;
+    right: -48px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(196,163,90,0.3);
+    white-space: nowrap;
+    transform-origin: center;
+  }
+
+  /* corner accents */
+  .corner-accent {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+  }
+  .corner-accent.tl { top: -1px; left: -1px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+  .corner-accent.tr { top: -1px; right: -1px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+  .corner-accent.bl { bottom: -1px; left: -1px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+  .corner-accent.br { bottom: -1px; right: -1px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+  
+  /* breathing glow ring */
+  @keyframes glow-ring {
+    0%, 100% { opacity: 0.15; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.04); }
+  }
+  .phone-glow-ring {
+    position: absolute;
+    inset: -20px;
+    border: 1px solid rgba(196,163,90,0.15);
+    border-radius: 56px;
+    animation: glow-ring 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .phone-glow-ring-2 {
+    position: absolute;
+    inset: -40px;
+    border: 1px solid rgba(196,163,90,0.06);
+    border-radius: 70px;
+    animation: glow-ring 4s ease-in-out 1s infinite;
+    pointer-events: none;
+  }
+
+  /* entry animations */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+</style>
+
+<!-- GATE VAULT -->
+<div id="vault">
+  <div class="gate-left">
+    <div class="gate-border-left"></div>
+    <div class="gate-panel-inner">
+      <div class="gate-ornament">
+        <div class="gate-line-v"></div>
+        <div class="gate-diamond"></div>
+        <div class="gate-line-h"></div>
+        <div class="gate-diamond"></div>
+        <div class="gate-line-v"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate-right">
+    <div class="gate-border-right"></div>
+    <div class="gate-panel-inner">
+      <div class="gate-ornament">
+        <div class="gate-line-v"></div>
+        <div class="gate-diamond"></div>
+        <div class="gate-line-h"></div>
+        <div class="gate-diamond"></div>
+        <div class="gate-line-v"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vault-center">
+    <div class="vault-emblem">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <path d="M16 4 L28 28 L4 28 Z" stroke="#C4A35A" stroke-width="0.8" fill="none"/>
+        <circle cx="16" cy="16" r="5" stroke="#C4A35A" stroke-width="0.8" fill="none"/>
+        <line x1="16" y1="4" x2="16" y2="11" stroke="#C4A35A" stroke-width="0.8"/>
+      </svg>
+    </div>
+    <div class="vault-wordmark">set<span style="color:var(--gold)">2</span>send</div>
+    <div class="vault-rule"></div>
+    <div class="vault-tagline">Set all workflows. Then send.</div>
+    <button class="unlock-btn" onclick="openVault()">
+      <span>Enter the Chamber</span>
+    </button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-top-rule"></div>
+
+  <nav>
+    <div class="nav-logo">
+      <div class="nav-logo-mark">S</div>
+      <div class="nav-wordmark">set<span>2</span>send</div>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">Product</a></li>
+      <li><a href="#">Solutions</a></li>
+      <li><a href="#">Agencies</a></li>
+      <li><a href="#">Pricing</a></li>
+    </ul>
+    <button class="nav-cta"><span>Begin Automating</span></button>
+  </nav>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-eyebrow fade-up" style="transition-delay:0.1s">
+        <div class="eyebrow-line"></div>
+        <div class="eyebrow-diamond"></div>
+        <div class="eyebrow-text">Precision Automation · Revenue Intelligence</div>
+      </div>
+
+      <div class="hero-headline fade-up" style="transition-delay:0.2s">
+        <span>Your audience<br>speaks.</span>
+        <em>Every word<br>a signal.</em>
+        <span class="brand-name">set2send</span>
+        <span style="font-weight:300; color:var(--cream)">intercepts.</span>
+      </div>
+
+      <p class="hero-desc fade-up" style="transition-delay:0.35s">
+        The moment a comment lands, a sequence ignites. Qualify the lead, deliver the asset, cultivate the relationship — with no hand on the wheel. Your infrastructure works while you do not.
+      </p>
+
+      <div class="hero-platforms fade-up" style="transition-delay:0.45s">
+        <div class="platform-tag"><span class="platform-dot" style="background:#E1306C"></span>Instagram</div>
+        <div class="platform-tag"><span class="platform-dot" style="background:#25D366"></span>WhatsApp</div>
+        <div class="platform-tag"><span class="platform-dot" style="background:#000000;border:1px solid #555"></span>TikTok</div>
+        <div class="platform-tag"><span class="platform-dot" style="background:#006AFF"></span>Messenger</div>
+      </div>
+
+      <div class="hero-actions fade-up" style="transition-delay:0.55s">
+        <button class="cta-primary">Set Workflows. Then Send.</button>
+        <button class="cta-secondary">
+          <span class="cta-arrow"></span>
+          <span>See it work</span>
+        </button>
+      </div>
+
+      <div class="hero-proof fade-up" style="transition-delay:0.7s">
+        <div class="proof-stat">
+          <div class="proof-number">14k<span>+</span></div>
+          <div class="proof-label">Creators</div>
+        </div>
+        <div class="proof-divider"></div>
+        <div class="proof-stat">
+          <div class="proof-number">3.2M<span>+</span></div>
+          <div class="proof-label">Replies Sent</div>
+        </div>
+        <div class="proof-divider"></div>
+        <div class="proof-stat">
+          <div class="proof-number">0<span>hrs</span></div>
+          <div class="proof-label">Manual work</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right fade-up" style="transition-delay:0.3s">
+      <div class="phone-scene">
+        <div class="phone-glow-ring"></div>
+        <div class="phone-glow-ring-2"></div>
+
+        <div class="phone-frame">
+          <div class="corner-accent tl"></div>
+          <div class="corner-accent tr"></div>
+          <div class="corner-accent bl"></div>
+          <div class="corner-accent br"></div>
+
+          <div class="phone-screen">
+            <div class="chat-header">
+              <div class="chat-avatar">S</div>
+              <div>
+                <div class="chat-name">set2send</div>
+                <div class="chat-status">● Active</div>
+              </div>
+            </div>
+            <div class="chat-messages" id="chatMsgs">
+              <div class="msg msg-in" id="m1">
+                <span class="sender">@nova.creates</span>
+                DROP THE LINK 🔥
+              </div>
+              <div class="msg msg-out" id="m2">
+                Hey Nova — you're one comment away. Follow first and the link lands in your DMs instantly. ✦
+              </div>
+              <div class="msg msg-in" id="m3">
+                <span class="sender">@nova.creates</span>
+                Done. Following 🙌
+              </div>
+              <div class="msg-card" id="m4">
+                <div class="msg-card-logo">
+                  <div class="msg-card-s">S</div>
+                  <div class="msg-card-title">set2send · Automation Playbook</div>
+                </div>
+                <div class="msg-card-body">The exact sequence that turns comments into clients — delivered.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="float-metric float-left" id="fm1" style="transform:translateX(-10px)">
+          <div class="metric-value">0.4s</div>
+          <div class="metric-label">Response time</div>
+        </div>
+        <div class="float-metric float-right" id="fm2" style="transform:translateX(10px)">
+          <div class="metric-value">94%</div>
+          <div class="metric-label">Conversion rate</div>
+        </div>
+
+        <div class="hero-vert-label">LIVE AUTOMATION PREVIEW</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openVault() {
+    const vault = document.getElementById('vault');
+    vault.classList.add('open');
+    setTimeout(() => {
+      vault.classList.add('gone');
+      startHeroAnimations();
+    }, 1800);
+  }
+
+  function startHeroAnimations() {
+    document.querySelectorAll('.fade-up').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 80);
+    });
+
+    const msgs = ['m1','m2','m3','m4'];
+    const delays = [600, 1400, 2400, 3200];
+    msgs.forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('show');
+      }, delays[i]);
+    });
+
+    setTimeout(() => {
+      const fm1 = document.getElementById('fm1');
+      if (fm1) fm1.classList.add('show');
+    }, 2000);
+    setTimeout(() => {
+      const fm2 = document.getElementById('fm2');
+      if (fm2) fm2.classList.add('show');
+    }, 2800);
+  }
+
+  // Auto-open after a moment for demo purposes
+  setTimeout(openVault, 1800);
+</script>

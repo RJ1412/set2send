@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: project-backend
+    env: node
+    plan: starter
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DATABASE_URL
+        sync: false # Set this in Render dashboard
+      - key: REDIS_URL
+        sync: false # Set this in Render dashboard
+      - key: FRONTEND_URL
+        sync: false # Set this to the Vercel frontend URL
+      - key: JWT_SECRET
+        generateValue: true
+      - key: META_APP_ID
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false

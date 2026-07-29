@@ -1,0 +1,569 @@
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  .wrap{
+    width:100%;
+    background:#F4F3FF;
+    min-height:600px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .stage{
+    width:680px;
+    height:590px;
+    position:relative;
+    perspective:1000px;
+    perspective-origin:50% 58%;
+  }
+
+  .floor{
+    position:absolute;
+    bottom:0;left:0;right:0;height:190px;
+    background:
+      linear-gradient(rgba(108,99,255,0.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(108,99,255,0.07) 1px,transparent 1px);
+    background-size:34px 34px;
+    transform:rotateX(80deg);
+    transform-origin:bottom center;
+  }
+
+  .ambient{
+    position:absolute;
+    width:320px;height:320px;border-radius:50%;
+    top:80px;left:50%;transform:translateX(-20%);
+    background:radial-gradient(circle,rgba(108,99,255,0.13) 0%,transparent 65%);
+    pointer-events:none;
+    transition:background 0.9s ease;
+  }
+
+  /* ── PHONE — centered ── */
+  .phone-scene{
+    position:absolute;
+    bottom:88px;left:50%;
+    transform:translateX(-50%);
+    transform-style:preserve-3d;
+    animation:idle 6s ease-in-out infinite;
+  }
+
+  @keyframes idle{
+    0%,100%{transform:translateX(-50%) rotateX(52deg) rotateZ(-16deg) translateY(0)}
+    50%{transform:translateX(-50%) rotateX(52deg) rotateZ(-16deg) translateY(-7px)}
+  }
+
+  .phone{
+    width:130px;height:230px;
+    background:linear-gradient(160deg,#fff 0%,#eeeeff 100%);
+    border-radius:24px;
+    border:1px solid rgba(108,99,255,0.15);
+    box-shadow:0 0 0 1px #fff,0 28px 70px rgba(108,99,255,0.2),0 8px 20px rgba(0,0,0,0.07),inset 0 1px 0 #fff;
+    position:relative;overflow:hidden;
+  }
+
+  .phone-notch{
+    width:36px;height:5px;
+    background:rgba(108,99,255,0.1);border-radius:3px;
+    margin:10px auto 0;
+  }
+
+  .phone-screen-inner{
+    margin:8px 6px 6px;
+    background:#f9f9ff;border-radius:16px;height:195px;
+    overflow:hidden;display:flex;flex-direction:column;
+    padding:8px;gap:5px;position:relative;
+    border:0.5px solid rgba(108,99,255,0.1);
+  }
+
+  .ps-label{font-size:7px;font-weight:700;letter-spacing:0.1em;color:rgba(108,99,255,0.45);text-align:center;margin-bottom:1px}
+  .ps-card{background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.2);border-radius:8px;padding:6px 7px;transition:all 0.6s ease}
+  .ps-card-title{font-size:7px;font-weight:700;color:#1a1a2e}
+  .ps-card-sub{font-size:6px;color:#888;margin-top:1px}
+  .screen-flash{position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity 0.3s;pointer-events:none;background:rgba(108,99,255,0.08)}
+
+  .floor-glow{
+    position:absolute;bottom:68px;left:50%;transform:translateX(-50%);
+    width:160px;height:46px;border-radius:50%;
+    background:radial-gradient(ellipse,rgba(108,99,255,0.28) 0%,transparent 70%);
+    filter:blur(10px);
+    transition:background 0.8s ease;pointer-events:none;
+  }
+
+  /* ── BEAM ── */
+  .beam-wrap{
+    position:absolute;bottom:298px;left:50%;transform:translateX(-50%);
+    pointer-events:none;
+  }
+
+  .beam-cone{
+    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+    width:220px;height:215px;
+    clip-path:polygon(40% 100%,60% 100%,100% 0%,0% 0%);
+    background:linear-gradient(0deg,rgba(108,99,255,0.18) 0%,rgba(108,99,255,0.04) 75%,transparent 100%);
+    transition:background 0.8s ease;
+    animation:flicker 3.5s ease-in-out infinite;
+  }
+
+  @keyframes flicker{0%,100%{opacity:1}45%{opacity:0.8}50%{opacity:1}78%{opacity:0.88}}
+
+  .beam-center{
+    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+    width:2px;height:200px;
+    background:linear-gradient(0deg,rgba(108,99,255,0.5) 0%,rgba(108,99,255,0.03) 100%);
+    transition:background 0.8s ease;
+  }
+
+  .beam-scan{
+    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+    width:180px;height:2px;
+    background:linear-gradient(90deg,transparent,rgba(108,99,255,0.45),transparent);
+    animation:scanup 2.8s ease-in-out infinite;
+    transition:background 0.8s ease;
+  }
+
+  @keyframes scanup{0%{bottom:0;opacity:1}80%{opacity:0.5}100%{bottom:200px;opacity:0}}
+
+  /* ── HOLO MESSAGES — centered above phone ── */
+  .holo-stack{
+    position:absolute;bottom:308px;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column-reverse;
+    gap:9px;align-items:center;pointer-events:none;
+  }
+
+  .holo-msg{
+    background:rgba(255,255,255,0.88);
+    border:1px solid rgba(108,99,255,0.2);
+    border-radius:14px;padding:9px 13px;
+    display:flex;align-items:center;gap:9px;
+    min-width:220px;max-width:255px;
+    box-shadow:0 4px 22px rgba(108,99,255,0.1),inset 0 1px 0 #fff;
+    opacity:0;transform:translateY(18px) scale(0.93);
+    transition:opacity 0.6s cubic-bezier(.16,1,.3,1),transform 0.6s cubic-bezier(.16,1,.3,1),box-shadow 0.5s ease,border-color 0.5s ease;
+  }
+
+  .holo-msg.visible{opacity:1;transform:translateY(0) scale(1);animation:bob 4s ease-in-out infinite}
+  .holo-msg.past{opacity:0.28;transform:translateY(-3px) scale(0.95);animation:none}
+  .holo-msg:nth-child(2){animation-delay:0.4s}
+  .holo-msg:nth-child(3){animation-delay:0.8s}
+
+  @keyframes bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1)}}
+
+  .msg-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(108,99,255,0.1);color:#6C63FF;transition:all 0.5s}
+  .msg-body{flex:1}
+  .msg-title{font-size:10px;font-weight:700;color:#0a0a1a;line-height:1.3}
+  .msg-sub{font-size:9px;color:#999;margin-top:1px}
+  .msg-tag{font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(108,99,255,0.1);color:#6C63FF;flex-shrink:0;border:0.5px solid rgba(108,99,255,0.18);transition:all 0.5s}
+
+  /* ── PARTICLES ── */
+  .particles{
+    position:absolute;bottom:108px;left:50%;transform:translateX(-50%);
+    width:110px;height:230px;pointer-events:none;
+  }
+
+  .particle{
+    position:absolute;width:2.5px;height:2.5px;border-radius:50%;
+    background:#6C63FF;opacity:0;
+    animation:rise linear infinite;transition:background 0.8s;
+  }
+
+  @keyframes rise{
+    0%{opacity:0;transform:translateY(0) translateX(0) scale(1)}
+    15%{opacity:0.5}85%{opacity:0.3}
+    100%{opacity:0;transform:translateY(-225px) translateX(var(--drift)) scale(0.2)}
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel{
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:4px;width:188px;
+  }
+
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;
+    background:#fff;border:0.5px solid rgba(108,99,255,0.25);
+    border-radius:20px;padding:4px 9px;
+    font-size:8px;font-weight:700;letter-spacing:0.08em;color:#6C63FF;
+    margin-bottom:8px;box-shadow:0 1px 4px rgba(108,99,255,0.1);
+  }
+
+  .pdot{width:5px;height:5px;border-radius:50%;background:#6C63FF;animation:pulse 1.4s ease-in-out infinite;transition:background 0.6s}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.5)}}
+
+  .hl{font-size:25px;font-weight:900;line-height:1.1;color:#0a0a1a;margin-bottom:7px}
+  .grad{display:block;background:linear-gradient(90deg,#6C63FF,#a89fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:background 0.8s}
+  .sub-txt{font-size:10px;color:#777;line-height:1.6;max-width:170px;margin-bottom:14px}
+
+  .step-item{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:9px;cursor:pointer;transition:all 0.4s;border:1px solid transparent}
+  .step-item.active{background:rgba(108,99,255,0.07);border-color:rgba(108,99,255,0.2)}
+  .step-bar{width:3px;height:22px;background:rgba(0,0,0,0.08);flex-shrink:0;transition:background 0.6s;border-radius:0}
+  .step-item.active .step-bar{background:#6C63FF}
+  .step-item.done .step-bar{background:#22C55E}
+  .step-num{font-size:8px;font-weight:700;color:#ccc;font-family:monospace;transition:color 0.4s}
+  .step-item.active .step-num{color:#6C63FF}
+  .step-item.done .step-num{color:#22C55E}
+  .step-name{font-size:10px;font-weight:600;color:#bbb;transition:color 0.4s;flex:1}
+  .step-item.active .step-name{color:#0a0a1a}
+  .step-item.done .step-name{color:#888}
+  .si-ic{font-size:12px;color:#ddd;transition:color 0.4s;margin-left:auto}
+  .step-item.active .si-ic{color:#6C63FF}
+  .step-item.done .si-ic{color:#22C55E}
+
+  .ctrl-row{display:flex;gap:5px;margin-top:8px}
+  .btn{flex:1;padding:6px;border-radius:7px;border:0.5px solid rgba(0,0,0,0.12);background:#fff;color:#555;font-size:9px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+  .btn:hover{background:#f5f5ff}
+  .btn.p{background:#6C63FF;border-color:#6C63FF;color:#fff;box-shadow:0 2px 8px rgba(108,99,255,0.3)}
+  .btn.p:hover{background:#5a52e8}
+
+  /* ── RIGHT PANEL ── */
+  .right-panel{
+    position:absolute;right:8px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:8px;width:178px;
+  }
+
+  .rp-title{
+    font-size:9px;font-weight:700;letter-spacing:0.07em;
+    color:rgba(108,99,255,0.6);margin-bottom:2px;
+    text-transform:uppercase;
+  }
+
+  .stat-card{
+    background:#fff;border:0.5px solid rgba(108,99,255,0.12);
+    border-radius:12px;padding:10px 12px;
+    box-shadow:0 2px 8px rgba(108,99,255,0.07);
+    transition:border-color 0.5s,box-shadow 0.5s;
+  }
+
+  .stat-card:hover{box-shadow:0 4px 16px rgba(108,99,255,0.13)}
+
+  .stat-top{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+  .stat-icon{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:rgba(108,99,255,0.1);color:#6C63FF;transition:all 0.5s}
+  .stat-label{font-size:9px;color:#999;font-weight:500}
+  .stat-val{font-size:20px;font-weight:900;color:#0a0a1a;line-height:1;transition:color 0.5s}
+  .stat-sub{font-size:9px;color:#bbb;margin-top:2px}
+
+  .live-feed{
+    background:#fff;border:0.5px solid rgba(108,99,255,0.12);
+    border-radius:12px;padding:10px 12px;
+    box-shadow:0 2px 8px rgba(108,99,255,0.07);
+  }
+
+  .feed-header{display:flex;align-items:center;gap:5px;margin-bottom:8px}
+  .feed-dot{width:5px;height:5px;border-radius:50%;background:#22C55E;animation:pulse 1.2s ease-in-out infinite;flex-shrink:0}
+  .feed-label{font-size:8px;font-weight:700;color:#22C55E;letter-spacing:0.06em}
+
+  .feed-row{
+    display:flex;align-items:center;gap:7px;
+    padding:5px 0;border-bottom:0.5px solid rgba(0,0,0,0.05);
+  }
+  .feed-row:last-child{border-bottom:none;padding-bottom:0}
+
+  .feed-avatar{
+    width:18px;height:18px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:7px;font-weight:700;flex-shrink:0;
+    background:rgba(108,99,255,0.12);color:#6C63FF;
+    transition:all 0.5s;
+  }
+
+  .feed-text{flex:1}
+  .feed-user{font-size:9px;font-weight:600;color:#0a0a1a}
+  .feed-action{font-size:8px;color:#aaa}
+  .feed-time{font-size:7px;color:#ccc;flex-shrink:0}
+
+  .feed-status{
+    width:14px;height:14px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:8px;flex-shrink:0;
+  }
+
+  .cta-card{
+    background:linear-gradient(135deg,#6C63FF 0%,#8b83ff 100%);
+    border-radius:12px;padding:12px;
+    transition:background 0.8s;
+    cursor:pointer;
+  }
+
+  .cta-card:hover{opacity:0.92}
+  .cta-title{font-size:11px;font-weight:800;color:#fff;margin-bottom:3px}
+  .cta-sub{font-size:9px;color:rgba(255,255,255,0.7);margin-bottom:8px;line-height:1.4}
+  .cta-btn{
+    background:rgba(255,255,255,0.2);
+    border:0.5px solid rgba(255,255,255,0.35);
+    border-radius:6px;padding:5px 10px;
+    font-size:9px;font-weight:700;color:#fff;
+    display:inline-block;cursor:pointer;
+  }
+
+  .trigger-count{
+    background:#fff;border:0.5px solid rgba(108,99,255,0.12);
+    border-radius:12px;padding:10px 12px;
+    box-shadow:0 2px 8px rgba(108,99,255,0.07);
+  }
+
+  .tc-label{font-size:9px;color:#999;font-weight:500;margin-bottom:5px}
+  .tc-bar-wrap{height:5px;background:rgba(108,99,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:3px}
+  .tc-bar{height:100%;border-radius:3px;background:#6C63FF;transition:width 0.8s ease,background 0.6s}
+  .tc-nums{display:flex;justify-content:space-between;font-size:8px;color:#bbb}
+</style>
+
+<h2 class="sr-only">Full-width light theme holographic gate demo with stats panel</h2>
+
+<div class="wrap" id="wrap">
+  <div class="stage">
+
+    <div class="ambient" id="ambient"></div>
+    <div class="floor"></div>
+    <div class="floor-glow" id="fglow"></div>
+
+    <!-- LEFT -->
+    <div class="left-panel">
+      <div class="badge"><span class="pdot" id="pdot"></span>LIVE ENGINE</div>
+      <div class="hl">Watch the<br><span class="grad" id="grad">gate fire.</span></div>
+      <div class="sub-txt">Zero clicks. Zero delays. Fully automated — in real time.</div>
+      <div class="step-item active" id="si0" onclick="go(0)">
+        <div class="step-bar"></div><span class="step-num">01</span>
+        <span class="step-name">Comment detected</span>
+        <i class="ti ti-radio si-ic" aria-hidden="true"></i>
+      </div>
+      <div class="step-item" id="si1" onclick="go(1)">
+        <div class="step-bar"></div><span class="step-num">02</span>
+        <span class="step-name">Gate deployed</span>
+        <i class="ti ti-lock si-ic" aria-hidden="true"></i>
+      </div>
+      <div class="step-item" id="si2" onclick="go(2)">
+        <div class="step-bar"></div><span class="step-num">03</span>
+        <span class="step-name">Follow verified</span>
+        <i class="ti ti-circle-check si-ic" aria-hidden="true"></i>
+      </div>
+      <div class="step-item" id="si3" onclick="go(3)">
+        <div class="step-bar"></div><span class="step-num">04</span>
+        <span class="step-name">Reward delivered</span>
+        <i class="ti ti-send si-ic" aria-hidden="true"></i>
+      </div>
+      <div class="ctrl-row">
+        <button class="btn" onclick="prev()">Prev</button>
+        <button class="btn p" onclick="next()">Next</button>
+      </div>
+    </div>
+
+    <!-- PHONE -->
+    <div class="phone-scene">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen-inner">
+          <div class="ps-label">AUTOMATION ENGAGED</div>
+          <div class="ps-card" id="pscard">
+            <div class="ps-card-title" id="pst">"LINK" comment received</div>
+            <div class="ps-card-sub" id="pss">Trigger matched — engine active</div>
+          </div>
+          <div class="screen-flash" id="sflash"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEAM -->
+    <div class="beam-wrap">
+      <div class="beam-cone" id="bcone"></div>
+      <div class="beam-center" id="bcenter"></div>
+      <div class="beam-scan" id="bscan"></div>
+    </div>
+
+    <!-- HOLO MESSAGES -->
+    <div class="holo-stack">
+      <div class="holo-msg" id="hm0">
+        <div class="msg-icon" id="mi0"><i class="ti ti-message-circle" aria-hidden="true"></i></div>
+        <div class="msg-body"><div class="msg-title">@user123: "LINK"</div><div class="msg-sub">Comment trigger matched</div></div>
+        <div class="msg-tag" id="mt0">NEW</div>
+      </div>
+      <div class="holo-msg" id="hm1">
+        <div class="msg-icon" id="mi1"><i class="ti ti-lock" aria-hidden="true"></i></div>
+        <div class="msg-body"><div class="msg-title">Follow to unlock</div><div class="msg-sub">Gate DM sent automatically</div></div>
+        <div class="msg-tag" id="mt1">GATE</div>
+      </div>
+      <div class="holo-msg" id="hm2">
+        <div class="msg-icon" id="mi2"><i class="ti ti-circle-check" aria-hidden="true"></i></div>
+        <div class="msg-body"><div class="msg-title">Follow confirmed</div><div class="msg-sub">Meta API verified in 0.3s</div></div>
+        <div class="msg-tag" id="mt2">OK</div>
+      </div>
+      <div class="holo-msg" id="hm3">
+        <div class="msg-icon" id="mi3"><i class="ti ti-send" aria-hidden="true"></i></div>
+        <div class="msg-body"><div class="msg-title">DM sent: your free guide</div><div class="msg-sub">Reward delivered to inbox</div></div>
+        <div class="msg-tag" id="mt3">SENT</div>
+      </div>
+    </div>
+
+    <!-- PARTICLES -->
+    <div class="particles" id="particles"></div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="rp-title">Live Stats</div>
+
+      <div class="stat-card" id="sc-delivery">
+        <div class="stat-top">
+          <div class="stat-icon" id="si-delivery"><i class="ti ti-chart-bar" aria-hidden="true"></i></div>
+          <div class="stat-label">DM Delivery Rate</div>
+        </div>
+        <div class="stat-val" id="sv-delivery">98.4%</div>
+        <div class="stat-sub">Last 30 days</div>
+      </div>
+
+      <div class="trigger-count">
+        <div class="tc-label">Triggers today</div>
+        <div class="tc-bar-wrap"><div class="tc-bar" id="tcbar" style="width:73%"></div></div>
+        <div class="tc-nums"><span id="tc-cur">1,847</span><span>2,500 cap</span></div>
+      </div>
+
+      <div class="live-feed">
+        <div class="feed-header">
+          <div class="feed-dot"></div>
+          <div class="feed-label">LIVE TRIGGERS</div>
+        </div>
+        <div class="feed-row">
+          <div class="feed-avatar" id="fa0">AK</div>
+          <div class="feed-text">
+            <div class="feed-user">@akash_23</div>
+            <div class="feed-action">commented "LINK"</div>
+          </div>
+          <div class="feed-time">0s</div>
+          <div class="feed-status" id="fs0" style="background:rgba(34,197,94,0.1);color:#22C55E;font-size:10px">✓</div>
+        </div>
+        <div class="feed-row">
+          <div class="feed-avatar" id="fa1">PR</div>
+          <div class="feed-text">
+            <div class="feed-user">@priya_r</div>
+            <div class="feed-action">DM delivered</div>
+          </div>
+          <div class="feed-time">2s</div>
+          <div class="feed-status" id="fs1" style="background:rgba(34,197,94,0.1);color:#22C55E;font-size:10px">✓</div>
+        </div>
+        <div class="feed-row">
+          <div class="feed-avatar" id="fa2">MK</div>
+          <div class="feed-text">
+            <div class="feed-user">@mk_creator</div>
+            <div class="feed-action">gate triggered</div>
+          </div>
+          <div class="feed-time">5s</div>
+          <div class="feed-status" id="fs2" style="background:rgba(255,107,53,0.1);color:#FF6B35;font-size:10px">⟳</div>
+        </div>
+      </div>
+
+      <div class="cta-card" id="ctacard" onclick="sendPrompt('How do I set up the follow gate automation for my Instagram?')">
+        <div class="cta-title">Set up your gate</div>
+        <div class="cta-sub">Start automating DMs in under 5 minutes.</div>
+        <div class="cta-btn">Get started ↗</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const S=[
+  {c:'#6C63FF',ca:'rgba(108,99,255,0.16)',cb:'rgba(108,99,255,0.45)',fg:'rgba(108,99,255,0.26)',gr:'linear-gradient(90deg,#6C63FF,#a89fff)',gt:'gate fire.',pt:'"LINK" comment received',ps:'Trigger matched — engine active',bar:73,stat:'98.4%',cta:'linear-gradient(135deg,#6C63FF 0%,#8b83ff 100%)'},
+  {c:'#FF6B35',ca:'rgba(255,107,53,0.14)',cb:'rgba(255,107,53,0.45)',fg:'rgba(255,107,53,0.26)',gr:'linear-gradient(90deg,#FF6B35,#ffb38a)',gt:'gate fires.',pt:'Follow gate deployed',ps:'DM sent: "Follow to unlock"',bar:55,stat:'99.1%',cta:'linear-gradient(135deg,#FF6B35 0%,#ff9060 100%)'},
+  {c:'#00B89C',ca:'rgba(0,184,156,0.14)',cb:'rgba(0,184,156,0.45)',fg:'rgba(0,184,156,0.26)',gr:'linear-gradient(90deg,#00B89C,#5fffec)',gt:'gate checks.',pt:'Follow confirmed',ps:'Meta API verified in 0.3s',bar:88,stat:'97.8%',cta:'linear-gradient(135deg,#00B89C 0%,#00dbb5 100%)'},
+  {c:'#22C55E',ca:'rgba(34,197,94,0.14)',cb:'rgba(34,197,94,0.45)',fg:'rgba(34,197,94,0.26)',gr:'linear-gradient(90deg,#22C55E,#86efac)',gt:'gate delivers.',pt:'Reward delivered',ps:'DM sent to @user123',bar:95,stat:'98.9%',cta:'linear-gradient(135deg,#22C55E 0%,#4ade80 100%)'}
+];
+
+let cur=0;
+
+function go(i){
+  cur=i;const s=S[i];
+  document.getElementById('ambient').style.background=`radial-gradient(circle,${s.c}1a 0%,transparent 65%)`;
+  document.getElementById('fglow').style.background=`radial-gradient(ellipse,${s.fg} 0%,transparent 70%)`;
+  document.getElementById('bcone').style.background=`linear-gradient(0deg,${s.ca} 0%,${s.c}06 75%,transparent 100%)`;
+  document.getElementById('bcenter').style.background=`linear-gradient(0deg,${s.cb} 0%,${s.c}08 100%)`;
+  document.getElementById('bscan').style.background=`linear-gradient(90deg,transparent,${s.c}66,transparent)`;
+  document.getElementById('pdot').style.background=s.c;
+  const gr=document.getElementById('grad');
+  gr.style.background=s.gr;gr.style.webkitBackgroundClip='text';gr.style.backgroundClip='text';gr.textContent=s.gt;
+  document.getElementById('pst').textContent=s.pt;
+  document.getElementById('pss').textContent=s.ps;
+  document.getElementById('pscard').style.background=`${s.c}12`;
+  document.getElementById('pscard').style.borderColor=`${s.c}30`;
+  const fl=document.getElementById('sflash');
+  fl.style.background=`${s.c}12`;fl.style.opacity='1';
+  setTimeout(()=>{fl.style.opacity='0'},350);
+
+  // right panel updates
+  document.getElementById('sv-delivery').textContent=s.stat;
+  document.getElementById('sv-delivery').style.color=s.c;
+  document.getElementById('si-delivery').style.background=`${s.c}15`;
+  document.getElementById('si-delivery').style.color=s.c;
+  document.getElementById('tcbar').style.width=s.bar+'%';
+  document.getElementById('tcbar').style.background=s.c;
+  document.getElementById('ctacard').style.background=s.cta;
+
+  // feed avatars tint
+  ['fa0','fa1','fa2'].forEach(id=>{
+    document.getElementById(id).style.background=`${s.c}15`;
+    document.getElementById(id).style.color=s.c;
+  });
+
+  // steps
+  ['si0','si1','si2','si3'].forEach((id,j)=>{
+    const el=document.getElementById(id);
+    el.classList.remove('active','done');
+    el.style.background='';el.style.borderColor='';
+    const bar=el.querySelector('.step-bar');
+    const num=el.querySelector('.step-num');
+    const ic=el.querySelector('.si-ic');
+    bar.style.background='';num.style.color='';if(ic)ic.style.color='';
+    if(j<i){el.classList.add('done');}
+    else if(j===i){
+      el.classList.add('active');
+      el.style.background=`${s.c}0d`;el.style.borderColor=`${s.c}28`;
+      bar.style.background=s.c;num.style.color=s.c;if(ic)ic.style.color=s.c;
+    }
+  });
+
+  // holo messages
+  ['hm0','hm1','hm2','hm3'].forEach((id,j)=>{
+    const el=document.getElementById(id);
+    const ic=document.getElementById('mi'+j);
+    const tg=document.getElementById('mt'+j);
+    el.classList.remove('visible','past');
+    el.style.borderColor='';el.style.boxShadow='';
+    ic.style.background='';ic.style.color='';
+    tg.style.background='';tg.style.color='';tg.style.borderColor='';
+    if(j<i){
+      el.classList.add('past');el.style.borderColor='rgba(34,197,94,0.18)';
+    } else if(j===i){
+      el.classList.add('visible');
+      el.style.borderColor=`${s.c}44`;
+      el.style.boxShadow=`0 6px 30px ${s.c}18,inset 0 1px 0 #fff`;
+      ic.style.background=`${s.c}15`;ic.style.color=s.c;
+      tg.style.background=`${s.c}10`;tg.style.color=s.c;tg.style.borderColor=`${s.c}22`;
+    }
+  });
+
+  document.querySelectorAll('.particle').forEach(p=>p.style.background=s.c);
+}
+
+function next(){go(cur<3?cur+1:0);}
+function prev(){go(cur>0?cur-1:3);}
+
+const pw=document.getElementById('particles');
+for(let i=0;i<13;i++){
+  const p=document.createElement('div');p.className='particle';
+  const drift=(Math.random()-0.5)*42;
+  p.style.cssText=`left:${8+Math.random()*94}px;bottom:${Math.random()*22}px;--drift:${drift}px;animation-duration:${2.3+Math.random()*2.2}s;animation-delay:${Math.random()*3.2}s;`;
+  pw.appendChild(p);
+}
+
+// animate trigger counter
+let triggerCount=1847;
+setInterval(()=>{
+  triggerCount+=Math.floor(Math.random()*3)+1;
+  const el=document.getElementById('tc-cur');
+  if(el)el.textContent=triggerCount.toLocaleString();
+},2200);
+
+let auto=setInterval(next,2800);
+document.getElementById('wrap').addEventListener('click',()=>{clearInterval(auto);},{once:true});
+go(0);
+</script>
