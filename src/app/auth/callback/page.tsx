@@ -8,7 +8,7 @@ import { useAuthStore } from "../../../store/authStore";
 function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
 
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("Connecting your Instagram account...");
@@ -45,6 +45,12 @@ function AuthCallbackContent() {
         if (data.success) {
           setStatus("success");
           setMessage(`Successfully connected @${data.ig_username}!`);
+          
+          // Update the global auth state so the dashboard reflects the connection
+          if (user) {
+            setUser({ ...user, ig_username: data.ig_username, is_instagram_connected: true });
+          }
+
           setTimeout(() => router.push("/dashboard"), 2000);
         } else {
           throw new Error("Token exchange returned unsuccessful.");
@@ -62,7 +68,7 @@ function AuthCallbackContent() {
     };
 
     exchangeToken();
-  }, [searchParams, router, user]);
+  }, [searchParams, router, user, setUser]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
