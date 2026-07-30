@@ -17,11 +17,13 @@ export default function BulkMessageDetailsPage() {
     enabled: !!id,
   });
 
-  const { data: logs, isLoading: logsLoading } = useQuery({
+  const { data: logsData, isLoading: logsLoading } = useQuery({
     queryKey: ["whatsapp-campaign-logs", id],
     queryFn: () => api.get(`/whatsapp/campaigns/${id}/logs`).then((res) => res.data),
     enabled: !!id,
   });
+
+  const logs = logsData?.logs || [];
 
   if (isLoading) {
     return (
@@ -104,7 +106,7 @@ export default function BulkMessageDetailsPage() {
                 <p className="text-xs text-[#888]">Variables mapped from CSV.</p>
               </div>
             ) : (
-              campaign.messageContent || "No message content."
+              campaign.freeformBody || "No message content."
             )}
           </div>
         </div>
@@ -129,7 +131,7 @@ export default function BulkMessageDetailsPage() {
                 <tbody>
                   {logs.map((log: any) => (
                     <tr key={log.id} className="border-b border-[#f5f3ef] last:border-0 hover:bg-[#fafaf8]">
-                      <td className="px-[12px] py-[10px] text-[12px] font-medium text-[#1a1a18]">{log.recipientPhone}</td>
+                      <td className="px-[12px] py-[10px] text-[12px] font-medium text-[#1a1a18]">{log.phone}</td>
                       <td className="px-[12px] py-[10px]">
                         <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
                           log.status === 'sent' || log.status === 'delivered' || log.status === 'read' ? 'bg-[#f0fdf4] text-[#16a34a]' :
