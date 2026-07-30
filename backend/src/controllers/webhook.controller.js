@@ -133,6 +133,40 @@ export const handleMetaEvent = async (req, res) => {
               await startFlow(flow, eventData, targetIgAccount);
             }
           }
+          }
+        } else if (change.field === "mentions") {
+          // Handle Feature 1: Story Mention Auto-DM (from changes array)
+          const mention = change.value;
+          if (mention.media_id) {
+            console.log(`Parsed Story Mention (Changes): From: "${mention.from.username}", Media ID: "${mention.media_id}"`);
+            
+            // Find active campaigns triggered by story_mention
+            const campaigns = await prisma.campaign.findMany({
+              where: {
+                status: "active",
+                trigger_type: "story_mention"
+              },
+            });
+
+            for (const campaign of campaigns) {
+              const redisKey = `processed_mention:${campaign.id}:${mention.media_id}:${mention.from.id}`;
+              const isNew = await pollerConnection.set(redisKey, "1", "EX", 86400, "NX"); // 24h deduplication
+
+              if (!isNew) {
+                console.log(`[Webhook] Skipping mention ${mention.media_id}, already processed.`);
+                continue;
+              }
+
+              // Enqueue DM job for the story mention
+              await addDmJob({
+                campaignId: campaign.id,
+                commenterIgId: mention.from.id,
+                commenterUsername: mention.from.username,
+                commentText: "story_mention", // internal flag
+                commentId: mention.media_id, // we use media_id as commentId
+              }, { delay: 0 });
+            }
+          }
         }
       }
 
@@ -418,39 +452,6 @@ export const handleMetaEvent = async (req, res) => {
                 }
               }
             }
-        } else if (change.field === "mentions") {
-          // Handle Feature 1: Story Mention Auto-DM
-          const mention = change.value;
-          if (mention.media_id) {
-            console.log(`Parsed Story Mention: From: "${mention.from.username}", Media ID: "${mention.media_id}"`);
-            
-            // Find active campaigns triggered by story_mention
-            const campaigns = await prisma.campaign.findMany({
-              where: {
-                status: "active",
-                trigger_type: "story_mention"
-              },
-            });
-
-            for (const campaign of campaigns) {
-              const redisKey = `processed_mention:${campaign.id}:${mention.media_id}:${mention.from.id}`;
-              const isNew = await pollerConnection.set(redisKey, "1", "EX", 86400, "NX"); // 24h deduplication
-
-              if (!isNew) {
-                console.log(`[Webhook] Skipping mention ${mention.media_id}, already processed.`);
-                continue;
-              }
-
-              // Enqueue DM job for the story mention
-              await addDmJob({
-                campaignId: campaign.id,
-                commenterIgId: mention.from.id,
-                commenterUsername: mention.from.username,
-                commentText: "story_mention", // internal flag
-                commentId: mention.media_id, // we use media_id as commentId
-              }, { delay: 0 });
-            }
-          }
         }
       }
     }
