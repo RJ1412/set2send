@@ -2,10 +2,10 @@ import crypto from "crypto";
 import { env } from "../config/env.js";
 import { dmQueue, addDmJob } from "../queues/dmQueue.js";
 import { prisma } from "../utils/db.js";
-import { pollerConnection } from "../queues/commentPollerQueue.js";
 import axios from "axios";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
 import { startFlow } from "../services/flowEngine.js";
+
 
 export const verifyMetaWebhook = (req, res) => {
   console.log("=== Webhook Verification Hit ===");
@@ -148,13 +148,18 @@ export const handleMetaEvent = async (req, res) => {
             });
 
             for (const campaign of campaigns) {
-              const redisKey = `processed_mention:${campaign.id}:${mention.media_id}:${mention.from.id}`;
-              const isNew = await pollerConnection.set(redisKey, "1", "EX", 86400, "NX"); // 24h deduplication
+              // Deduplicate via DB upsert — if the row already exists, skip
+              const alreadyProcessed = await prisma.processedEvent.findUnique({
+                where: { event_key: `mention:${campaign.id}:${mention.media_id}:${mention.from.id}` }
+              }).catch(() => null);
 
-              if (!isNew) {
+              if (alreadyProcessed) {
                 console.log(`[Webhook] Skipping mention ${mention.media_id}, already processed.`);
                 continue;
               }
+              await prisma.processedEvent.create({
+                data: { event_key: `mention:${campaign.id}:${mention.media_id}:${mention.from.id}` }
+              }).catch(() => {}); // ignore duplicate errors
 
               // Enqueue DM job for the story mention
               await addDmJob({
@@ -321,10 +326,16 @@ export const handleMetaEvent = async (req, res) => {
                }
             }
 
-            // Check if we recently prompted them for an email
-            // Use redis key email_prompt:{our_ig}:{their_ig}
-            const promptKey = `email_prompt:${recipientId}:${senderId}`;
-            const campaignId = await pollerConnection.get(promptKey);
+            // Check if we recently prompted them for an email (DB-based, no Redis)
+            const promptRecord = await prisma.emailPrompt.findUnique({
+              where: {
+                ig_user_id_sender_ig_id: {
+                  ig_user_id: recipientId,
+                  sender_ig_id: senderId
+                }
+              }
+            }).catch(() => null);
+            const campaignId = promptRecord && new Date() < new Date(promptRecord.expiresAt) ? promptRecord.campaign_id : null;
 
             if (campaignId) {
               // Validate email
@@ -378,7 +389,14 @@ export const handleMetaEvent = async (req, res) => {
                   }
 
                   // Clear prompt so we don't save multiple times
-                  await pollerConnection.del(promptKey);
+                  await prisma.emailPrompt.delete({
+                    where: {
+                      ig_user_id_sender_ig_id: {
+                        ig_user_id: recipientId,
+                        sender_ig_id: senderId
+                      }
+                    }
+                  }).catch(() => {});
                 }
               }
             }
@@ -421,12 +439,17 @@ export const handleMetaEvent = async (req, res) => {
                 }
 
                 if (isMatch) {
-                  // Deduplication using message ID (mid)
+                  // Deduplicate using message mid stored in DB
                   const mid = messaging.message?.mid || `dm_${Date.now()}`;
-                  const redisKey = `processed_dm_trigger:${campaign.id}:${mid}`;
-                  const isNew = await pollerConnection.set(redisKey, "1", "EX", 604800, "NX");
+                  const alreadyProcessed = await prisma.processedEvent.findUnique({
+                    where: { event_key: `dm_trigger:${campaign.id}:${mid}` }
+                  }).catch(() => null);
 
-                  if (isNew) {
+                  if (!alreadyProcessed) {
+                    await prisma.processedEvent.create({
+                      data: { event_key: `dm_trigger:${campaign.id}:${mid}` }
+                    }).catch(() => {});
+
                     console.log(`[Webhook] Matched DM/Story Reply trigger for campaign ${campaign.id}`);
                     
                     // Fetch username if possible

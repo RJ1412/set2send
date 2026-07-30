@@ -226,11 +226,26 @@ export const processDm = async (job) => {
     if (!isGateMessage) {
       // Trigger Email Collection
       if (campaign.collect_email) {
-        const promptKey = `email_prompt:${campaign.instagram_account.ig_user_id}:${commenterIgId}`;
+        // Store in DB instead of Redis to avoid Upstash usage
         try {
-          await pollerConnection.set(promptKey, campaignId, "EX", 86400); 
+          const expiresAt = new Date(Date.now() + 86400 * 1000); // 24h
+          await prisma.emailPrompt.upsert({
+            where: {
+              ig_user_id_sender_ig_id: {
+                ig_user_id: campaign.instagram_account.ig_user_id,
+                sender_ig_id: commenterIgId
+              }
+            },
+            update: { campaign_id: campaignId, expiresAt },
+            create: {
+              ig_user_id: campaign.instagram_account.ig_user_id,
+              sender_ig_id: commenterIgId,
+              campaign_id: campaignId,
+              expiresAt
+            }
+          });
         } catch (err) {
-          console.warn("[Memory DM Fallback] Could not save email_prompt key to Redis, skipping.", err.message);
+          console.warn("[Email Prompt] Could not save to DB:", err.message);
         }
         
         try {

@@ -439,3 +439,21 @@ model SuggestionLog {
   @@unique([userId])
 }
 
+// Replaces Redis email_prompt keys — tracks pending email collection state
+model EmailPrompt {
+  id                String   @id @default(cuid())
+  ig_user_id        String   // our IG account (recipientId)
+  sender_ig_id      String   // the commenter's IG ID (senderId)
+  campaign_id       String
+  createdAt         DateTime @default(now())
+  expiresAt         DateTime // set to 24h from now
+
+  @@unique([ig_user_id, sender_ig_id])
+}
+
+// Replaces Redis processed_* keys — deduplication for webhook events
+model ProcessedEvent {
+  id        String   @id @default(cuid())
+  event_key String   @unique
+  createdAt DateTime @default(now())
+}
