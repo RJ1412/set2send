@@ -1997,7 +1997,7 @@ function LoginView() {
       store.navigate("dashboard");
     } catch (err: any) {
       setError(err.response?.data?.error || "Login failed");
-      store.pushNotification("Access Denied", err.response?.data?.error || "Invalid credentials", "error");
+      store.pushNotification("Access Denied", err.response?.data?.error || "Invalid credentials", "warning");
     } finally {
       setLoading(false);
     }
@@ -2067,7 +2067,7 @@ function RegisterView() {
       store.navigate("dashboard");
     } catch (err: any) {
       setError(err.response?.data?.error || "Registration failed");
-      store.pushNotification("Registration Failed", err.response?.data?.error || "An error occurred", "error");
+      store.pushNotification("Registration Failed", err.response?.data?.error || "An error occurred", "warning");
     } finally {
       setLoading(false);
     }
