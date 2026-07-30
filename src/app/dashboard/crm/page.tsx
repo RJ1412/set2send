@@ -1,20 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Download, Filter, Search, UserCheck } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import api from "../../../lib/api";
 
 export default function ContactsCRMPage() {
-  const [contacts, setContacts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    setContacts([
-      { id: 1, username: "rahulsharma_ig", source: "Comment", score: 85, tags: ["creator"], lastActive: "2h ago" },
-      { id: 2, username: "priyamehta", source: "Story", score: 42, tags: ["coach", "wa"], lastActive: "1d ago" },
-      { id: 3, username: "amitkumar", source: "WA", score: 120, tags: ["buyer"], lastActive: "30m ago" },
-    ]);
-    setLoading(false);
-  }, []);
+  const { data: contactsData, isLoading: loading } = useQuery({
+    queryKey: ["crm-leads"],
+    queryFn: () => api.get("/crm/leads").then((res) => res.data),
+  });
+
+  const contacts = Array.isArray(contactsData) ? contactsData : [];
+  
+  const filteredContacts = contacts.filter((c: any) => 
+    c.username?.toLowerCase().includes(search.toLowerCase()) ||
+    c.name?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="p-6 md:p-10 max-w-7xl mx-auto w-full font-sans">
@@ -42,6 +46,8 @@ export default function ContactsCRMPage() {
             <input 
               type="text" 
               placeholder="Search contacts by username..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E8E4D9] rounded-xl text-sm text-[#1A1A1A] focus:outline-none focus:border-[#D4AF37] transition-colors placeholder-[#1A1A1A]/30 shadow-sm" 
             />
           </div>
@@ -62,30 +68,42 @@ export default function ContactsCRMPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E8E4D9]">
-              {contacts.map(c => (
-                <tr key={c.id} className="hover:bg-[#FAF9F6] transition-colors cursor-pointer group">
-                  <td className="p-5 text-center">
-                    <input type="checkbox" className="rounded border-[#E8E4D9] bg-white text-[#D4AF37] focus:ring-[#D4AF37]/50 cursor-pointer w-4 h-4 accent-[#D4AF37]" />
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="p-12 text-center text-[#1A1A1A]/50 font-medium">
+                    Loading contacts...
                   </td>
-                  <td className="p-5 font-bold text-[#1A1A1A] flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#FAF9F6] border border-[#E8E4D9] flex items-center justify-center text-[#D4AF37] shrink-0">
-                      <UserCheck size={14} />
-                    </div>
-                    @{c.username}
-                  </td>
-                  <td className="p-5 font-medium text-[#1A1A1A]/70">{c.source}</td>
-                  <td className="p-5 flex flex-wrap gap-2">
-                    {c.tags.map((t: string) => (
-                      <span key={t} className="px-2.5 py-1 bg-[#FAF9F6] text-[#1A1A1A] border border-[#E8E4D9] rounded-md text-[10px] font-mono font-bold uppercase tracking-wider">
-                        {t}
-                      </span>
-                    ))}
-                  </td>
-                  <td className="p-5 text-emerald-600 font-black font-mono">{c.score}</td>
-                  <td className="p-5 text-[#1A1A1A]/50 font-medium text-xs">{c.lastActive}</td>
                 </tr>
-              ))}
-              {contacts.length === 0 && (
+              ) : filteredContacts.length > 0 ? (
+                filteredContacts.map((c: any) => (
+                  <tr key={c.id} className="hover:bg-[#FAF9F6] transition-colors cursor-pointer group">
+                    <td className="p-5 text-center">
+                      <input type="checkbox" className="rounded border-[#E8E4D9] bg-white text-[#D4AF37] focus:ring-[#D4AF37]/50 cursor-pointer w-4 h-4 accent-[#D4AF37]" />
+                    </td>
+                    <td className="p-5 font-bold text-[#1A1A1A] flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#FAF9F6] border border-[#E8E4D9] flex items-center justify-center text-[#D4AF37] shrink-0">
+                        <UserCheck size={14} />
+                      </div>
+                      @{c.username || c.name || "user"}
+                    </td>
+                    <td className="p-5 font-medium text-[#1A1A1A]/70">{c.source || "Unknown"}</td>
+                    <td className="p-5 flex flex-wrap gap-2">
+                      {c.tags?.map((t: any) => (
+                        <span key={t.id || t} className="px-2.5 py-1 bg-[#FAF9F6] text-[#1A1A1A] border border-[#E8E4D9] rounded-md text-[10px] font-mono font-bold uppercase tracking-wider">
+                          {t.name || t}
+                        </span>
+                      ))}
+                      {(!c.tags || c.tags.length === 0) && (
+                        <span className="text-xs text-[#1A1A1A]/30">No tags</span>
+                      )}
+                    </td>
+                    <td className="p-5 text-emerald-600 font-black font-mono">{c.score || 0}</td>
+                    <td className="p-5 text-[#1A1A1A]/50 font-medium text-xs">
+                      {c.last_active ? new Date(c.last_active).toLocaleDateString() : (c.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'Just now')}
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
                   <td colSpan={6} className="p-12 text-center text-[#1A1A1A]/50 font-medium">
                     No contacts found.
