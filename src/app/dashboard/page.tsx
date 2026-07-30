@@ -134,7 +134,7 @@ export default function DashboardPage() {
               Instagram <span className="text-[11px] text-[#aaa]">· tap to connect</span>
             </div>
           )}
-          <div className="flex items-center gap-[6px] px-[14px] py-[7px] rounded-[20px] text-[12px] font-medium cursor-pointer border border-[#86efac] bg-[#f0fdf4] text-[#16a34a] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all">
+          <div className="flex items-center gap-[6px] px-[14px] py-[7px] rounded-[20px] text-[12px] font-medium border border-[#86efac] bg-[#f0fdf4] text-[#16a34a] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all">
             <span className="w-[7px] h-[7px] rounded-full bg-[#25d366]"></span>
             WhatsApp <span className="text-[11px] text-[#16a34a]">· connected</span> 
             <div className="relative w-[6px] h-[6px] rounded-full bg-[#22c55e] ml-[2px]">
@@ -402,38 +402,46 @@ export default function DashboardPage() {
             <div className="flex items-center gap-[6px] text-[13px] font-semibold text-[#1a1a18]">
               <Activity className="w-[15px] h-[15px]" /> Recent activity
             </div>
-            <div className="text-[11px] text-[#aaa]">Today</div>
           </div>
+
+          {/* Account created — always shown */}
           <div className="flex items-start gap-[10px] py-[10px] border-b border-[#f0ede8]">
             <div className="w-[30px] h-[30px] rounded-[8px] flex items-center justify-center shrink-0 bg-[#fff7ed] text-[#ea580c]">
               <UserPlus className="w-[14px] h-[14px]" />
             </div>
             <div>
               <div className="text-[12px] font-medium text-[#1a1a18]">Account created</div>
-              <div className="text-[11px] text-[#aaa] mt-[2px]">Welcome! Connect your first platform to get started.</div>
+              <div className="text-[11px] text-[#aaa] mt-[2px]">Welcome to Set2Send. Connect your first platform to get started.</div>
               <div className="inline-flex items-center text-[10px] px-[7px] py-[2px] rounded-[20px] font-medium mt-[4px] bg-[#fff7ed] text-[#ea580c]">Getting started</div>
             </div>
           </div>
-          <div className="flex items-start gap-[10px] py-[10px] border-b border-[#f0ede8]">
-            <div className="w-[30px] h-[30px] rounded-[8px] flex items-center justify-center shrink-0 bg-[#f0fdf4] text-[#16a34a]">
-              <MessageCircle className="w-[14px] h-[14px]" />
+
+          {/* Instagram — only if connected */}
+          {session?.ig_username && (
+            <div className="flex items-start gap-[10px] py-[10px] border-b border-[#f0ede8]">
+              <div className="w-[30px] h-[30px] rounded-[8px] flex items-center justify-center shrink-0 bg-[#fdf2f8] text-[#db2777]">
+                <MessageSquare className="w-[14px] h-[14px]" />
+              </div>
+              <div>
+                <div className="text-[12px] font-medium text-[#1a1a18]">Instagram connected</div>
+                <div className="text-[11px] text-[#aaa] mt-[2px]">@{session.ig_username} is live and ready for automations.</div>
+                <div className="inline-flex items-center text-[10px] px-[7px] py-[2px] rounded-[20px] font-medium mt-[4px] bg-[#fdf2f8] text-[#db2777]">Connected</div>
+              </div>
             </div>
-            <div>
-              <div className="text-[12px] font-medium text-[#1a1a18]">WhatsApp connected</div>
-              <div className="text-[11px] text-[#aaa] mt-[2px]">Your WhatsApp account is live and ready for bulk messaging.</div>
-              <div className="inline-flex items-center text-[10px] px-[7px] py-[2px] rounded-[20px] font-medium mt-[4px] bg-[#f0fdf4] text-[#16a34a]">Connected</div>
-            </div>
-          </div>
+          )}
+
+          {/* Plan info — always shown */}
           <div className="flex items-start gap-[10px] py-[10px]">
             <div className="w-[30px] h-[30px] rounded-[8px] flex items-center justify-center shrink-0 bg-[#eff6ff] text-[#2563eb]">
               <Sparkles className="w-[14px] h-[14px]" />
             </div>
             <div>
-              <div className="text-[12px] font-medium text-[#1a1a18]">Free plan activated</div>
-              <div className="text-[11px] text-[#aaa] mt-[2px]">100 DMs per month included. Upgrade anytime for unlimited sends.</div>
+              <div className="text-[12px] font-medium text-[#1a1a18]">{planLoading ? "Loading plan..." : `${planStatus?.plan || "Free"} plan activated`}</div>
+              <div className="text-[11px] text-[#aaa] mt-[2px]">{planLoading ? "" : `${dmsLimit} DMs per month included. Upgrade anytime for unlimited sends.`}</div>
               <div className="inline-flex items-center text-[10px] px-[7px] py-[2px] rounded-[20px] font-medium mt-[4px] bg-[#eff6ff] text-[#2563eb]">Plan</div>
             </div>
           </div>
+
         </motion.div>
 
       </div>

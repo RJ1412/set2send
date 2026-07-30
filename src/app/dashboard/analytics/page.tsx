@@ -57,10 +57,10 @@ export default function AnalyticsPage() {
                 <div className="p-2 bg-[#FAF9F6] rounded-lg border border-[#E8E4D9]">
                   <MessageSquare className="w-5 h-5 text-[#D4AF37]" />
                 </div>
-                <span className="text-emerald-600 text-xs font-bold px-2 py-1 bg-emerald-50 rounded-md border border-emerald-100">+12%</span>
               </div>
               <p className="text-xs font-bold text-[#1A1A1A]/50 uppercase tracking-wider mb-1">Total DMs Sent</p>
               <h3 className="text-3xl font-black text-[#1A1A1A]">{currentPlan?.dms_used_this_month || 0}</h3>
+              <p className="text-xs text-[#1A1A1A]/40 mt-1">of {currentPlan?.dms_limit || 100} limit</p>
             </div>
 
             <div className="bg-white border border-[#E8E4D9] p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:border-[#D4AF37] transition-all">
@@ -68,10 +68,10 @@ export default function AnalyticsPage() {
                 <div className="p-2 bg-[#FAF9F6] rounded-lg border border-[#E8E4D9]">
                   <MousePointerClick className="w-5 h-5 text-[#D4AF37]" />
                 </div>
-                <span className="text-emerald-600 text-xs font-bold px-2 py-1 bg-emerald-50 rounded-md border border-emerald-100">+4.5%</span>
               </div>
-              <p className="text-xs font-bold text-[#1A1A1A]/50 uppercase tracking-wider mb-1">Open Rate</p>
-              <h3 className="text-3xl font-black text-[#1A1A1A]">84.2%</h3>
+              <p className="text-xs font-bold text-[#1A1A1A]/50 uppercase tracking-wider mb-1">Active Campaigns</p>
+              <h3 className="text-3xl font-black text-[#1A1A1A]">{campaigns?.filter((c: any) => c.status === "active").length || 0}</h3>
+              <p className="text-xs text-[#1A1A1A]/40 mt-1">of {campaigns?.length || 0} total</p>
             </div>
 
             <div className="bg-white border border-[#E8E4D9] p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:border-[#D4AF37] transition-all">
@@ -79,10 +79,10 @@ export default function AnalyticsPage() {
                 <div className="p-2 bg-[#FAF9F6] rounded-lg border border-[#E8E4D9]">
                   <Users className="w-5 h-5 text-[#D4AF37]" />
                 </div>
-                <span className="text-emerald-600 text-xs font-bold px-2 py-1 bg-emerald-50 rounded-md border border-emerald-100">+22%</span>
               </div>
-              <p className="text-xs font-bold text-[#1A1A1A]/50 uppercase tracking-wider mb-1">Leads Captured</p>
-              <h3 className="text-3xl font-black text-[#1A1A1A]">342</h3>
+              <p className="text-xs font-bold text-[#1A1A1A]/50 uppercase tracking-wider mb-1">Visual Flows</p>
+              <h3 className="text-3xl font-black text-[#1A1A1A]">{flows?.length || 0}</h3>
+              <p className="text-xs text-[#1A1A1A]/40 mt-1">{flows?.filter((f: any) => f.status === "live").length || 0} live</p>
             </div>
 
             <div className="bg-white border border-[#E8E4D9] p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:border-[#D4AF37] transition-all">
@@ -90,10 +90,10 @@ export default function AnalyticsPage() {
                 <div className="p-2 bg-[#FAF9F6] rounded-lg border border-[#E8E4D9]">
                   <TrendingUp className="w-5 h-5 text-[#D4AF37]" />
                 </div>
-                <span className="text-emerald-600 text-xs font-bold px-2 py-1 bg-emerald-50 rounded-md border border-emerald-100">+1.5%</span>
               </div>
-              <p className="text-xs font-bold text-[#1A1A1A]/50 uppercase tracking-wider mb-1">Conversion Rate</p>
-              <h3 className="text-3xl font-black text-[#1A1A1A]">9.5%</h3>
+              <p className="text-xs font-bold text-[#1A1A1A]/50 uppercase tracking-wider mb-1">Current Plan</p>
+              <h3 className="text-2xl font-black text-[#1A1A1A] capitalize">{currentPlan?.plan || "Free"}</h3>
+              <p className="text-xs text-[#1A1A1A]/40 mt-1">{currentPlan?.dms_limit || 100} DMs/month</p>
             </div>
           </div>
 

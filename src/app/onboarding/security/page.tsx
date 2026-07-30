@@ -16,7 +16,7 @@ import {
   HelpCircle,
   QrCode
 } from "lucide-react";
-
+import api from "../../../lib/api";
 // Inline QR code mockup helper SVG
 const MockQRCode = () => (
   <svg viewBox="0 0 100 100" className="w-28 h-28 text-white bg-white p-2.5 rounded-xl border border-gray-200">
@@ -118,18 +118,19 @@ export default function SecuritySetupPage() {
 
     setIsVerifyingAuth(true);
 
-    setTimeout(() => {
-      setIsVerifyingAuth(false);
-      // Validate code (123456 is dev bypass)
-      if (code === "123456") {
+    // Send the code to backend for TOTP verification
+    api.post("/auth/2fa/verify-totp", { code })
+      .then(() => {
+        setIsVerifyingAuth(false);
         setSavedMethod("authenticator");
         setSecuritySaved(true);
         setErrorMsg("");
-      } else {
-        setErrorMsg("Invalid authenticator PIN. Try entering 123456.");
+      })
+      .catch(() => {
+        setIsVerifyingAuth(false);
+        setErrorMsg("Invalid authenticator PIN. Please check your authenticator app and try again.");
         setAuthPin(["", "", "", "", "", ""]);
-      }
-    }, 1200);
+      });
   };
 
   // Trigger SMS sending
@@ -141,11 +142,15 @@ export default function SecuritySetupPage() {
     setErrorMsg("");
     setIsSendingSms(true);
 
-    setTimeout(() => {
-      setIsSendingSms(false);
-      setSmsSent(true);
-      console.log(`[Set2Send DEV] 2FA SMS Code dispatched: 123456`);
-    }, 1200);
+    api.post("/auth/2fa/send-sms", { phone: smsPhone })
+      .then(() => {
+        setIsSendingSms(false);
+        setSmsSent(true);
+      })
+      .catch(() => {
+        setIsSendingSms(false);
+        setErrorMsg("Failed to send SMS. Please check the phone number and try again.");
+      });
   };
 
   // Verify SMS Pin
@@ -161,17 +166,18 @@ export default function SecuritySetupPage() {
 
     setIsVerifyingSms(true);
 
-    setTimeout(() => {
-      setIsVerifyingSms(false);
-      if (code === "123456") {
+    api.post("/auth/2fa/verify-sms", { code })
+      .then(() => {
+        setIsVerifyingSms(false);
         setSavedMethod("sms");
         setSecuritySaved(true);
         setErrorMsg("");
-      } else {
-        setErrorMsg("Incorrect code. Try entering 123456.");
+      })
+      .catch(() => {
+        setIsVerifyingSms(false);
+        setErrorMsg("Incorrect code. Please check your SMS and try again.");
         setSmsPin(["", "", "", "", "", ""]);
-      }
-    }, 1200);
+      });
   };
 
   // Enable Email OTP immediately
