@@ -64,7 +64,8 @@ export const handleMetaEvent = async (req, res) => {
   // Return 200 immediately to Meta
   res.status(200).send("EVENT_RECEIVED");
 
-  // 3. Process Async
+  // 3. Process Async (wrapped in try/catch so errors are visible)
+  try {
   if (body.object === "instagram") {
     for (const entry of body.entry || []) {
       const igUserId = entry.id; // The Instagram Account ID receiving the webhook
@@ -195,7 +196,9 @@ export const handleMetaEvent = async (req, res) => {
         }
 
         if (messageText || eventType !== "dm") {
+            console.log(`[Webhook] Processing ${eventType} from sender ${senderId} to ${recipientId}`);
             const igAccount = await prisma.instagramAccount.findUnique({ where: { ig_user_id: recipientId } });
+            console.log(`[Webhook] igAccount lookup: ${igAccount ? igAccount.ig_username : 'NOT FOUND (null)'}`);
             
             // Flow Engine Integration for Messages/Mentions
             if (igAccount) {
@@ -231,6 +234,7 @@ export const handleMetaEvent = async (req, res) => {
 
             // Campaign-based story mention handling (direct DM, no queue needed)
             if (igAccount && eventType === "story_mention") {
+              console.log(`[Webhook] Story mention detected. Looking for active story_mention campaigns for account ${igAccount.id}...`);
               const mentionCampaigns = await prisma.campaign.findMany({
                 where: {
                   status: "active",
@@ -239,6 +243,7 @@ export const handleMetaEvent = async (req, res) => {
                 }
               });
 
+              console.log(`[Webhook] Found ${mentionCampaigns.length} story_mention campaign(s).`);
               for (const campaign of mentionCampaigns) {
                 const eventKey = `mention:${campaign.id}:${senderId}:${messaging.message?.mid}`;
                 const alreadyProcessed = await prisma.processedEvent.findUnique({
@@ -513,5 +518,8 @@ export const handleMetaEvent = async (req, res) => {
         }
       }
     }
+  }
+  } catch (err) {
+    console.error(err);
   }
 };
