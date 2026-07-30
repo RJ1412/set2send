@@ -145,9 +145,12 @@ export const handleMetaEvent = async (req, res) => {
         let messageText = messaging.message?.text || "";
         let eventType = "dm";
         
-        if (messaging.message?.story?.mention) {
+        const attachments = messaging.message?.attachments || [];
+        const hasStoryMentionAttachment = attachments.some(a => a.type === 'story_mention' || a.type === 'ig_story_mention');
+        
+        if (messaging.message?.story?.mention || hasStoryMentionAttachment) {
            eventType = "story_mention";
-           messageText = "[Story Mention]";
+           messageText = messageText || "[Story Mention]";
         } else if (messaging.message?.reply_to?.story) {
            eventType = "story_reply";
         }
@@ -297,11 +300,28 @@ export const handleMetaEvent = async (req, res) => {
                 const email = emailMatch[1];
                 
                 if (igAccount) {
+                  let senderUsername = senderId;
+                  try {
+                    const res = await axios.get(`https://graph.facebook.com/v25.0/${senderId}?fields=username,name&access_token=${igAccount.access_token}`);
+                    if (res.data) senderUsername = res.data.username || res.data.name || senderId;
+                  } catch(e) {}
+
+                  // Update the lead in CRM
+                  await prisma.lead.updateMany({
+                    where: {
+                      userId: igAccount.user_id,
+                      username: senderUsername
+                    },
+                    data: {
+                      email: email
+                    }
+                  });
+
                   // Actually we can get username from instagram api, but we might just save without it for now
                   await prisma.collectedEmail.create({
                     data: {
                       campaign_id: campaignId,
-                      commenter_username: senderId, // Fallback to ID
+                      commenter_username: senderUsername, // Save the actual username
                       email: email
                     }
                   });
