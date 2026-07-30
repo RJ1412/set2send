@@ -20,19 +20,13 @@ import crmRoutes from "./routes/crm.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 // Initialize the background workers
 import "./jobs/dmWorker.js"; // Initialize the background worker
-import { initCommentPoller } from "./queues/commentPollerQueue.js";
-import "./jobs/commentPollerWorker.js"; // Initialize the poller worker
 import "./queues/followUpQueue.js";
 import { initSilentRecheckPoller } from "./queues/silentRecheckQueue.js";
 import "./jobs/silentRecheckWorker.js"; // Initialize the silent recheck worker
-import { initDmPoller } from "./queues/dmPollerQueue.js";
-import "./jobs/dmPollerWorker.js";
 import { setupCrmCronJobs } from "./jobs/crmJobs.js";
 
-// Initialize the poller queue scheduling
-initCommentPoller().catch(console.error);
+// Initialize the queue scheduling
 initSilentRecheckPoller().catch(console.error);
-initDmPoller().catch(console.error);
 setupCrmCronJobs().catch(console.error);
 
 const app = express();

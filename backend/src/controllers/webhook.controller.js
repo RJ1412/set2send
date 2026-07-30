@@ -86,16 +86,6 @@ export const handleMetaEvent = async (req, res) => {
           });
 
           for (const campaign of campaigns) {
-            // Deduplication Check
-            // This ensures that if the poller caught this comment first, the webhook ignores it, and vice versa.
-            const redisKey = `processed_comment:${campaign.id}:${comment.id}`;
-            const isNew = await pollerConnection.set(redisKey, "1", "EX", 604800, "NX");
-
-            if (!isNew) {
-              console.log(`[Webhook] Skipping comment ${comment.id}, already processed (deduplicated).`);
-              continue;
-            }
-
             // Check for Viral Mode
             const waitingCount = await dmQueue.getWaitingCount();
             const VIRAL_THRESHOLD = 50;
@@ -150,10 +140,52 @@ export const handleMetaEvent = async (req, res) => {
       for (const messaging of entry.messaging || []) {
         const senderId = messaging.sender?.id;
         const recipientId = messaging.recipient?.id;
-        const messageText = messaging.message?.text;
+        
+        // Detect Event Type
+        let messageText = messaging.message?.text || "";
+        let eventType = "dm";
+        
+        if (messaging.message?.story?.mention) {
+           eventType = "story_mention";
+           messageText = "[Story Mention]";
+        } else if (messaging.message?.reply_to?.story) {
+           eventType = "story_reply";
+        }
 
-          if (messageText) {
+        if (messageText || eventType !== "dm") {
             const igAccount = await prisma.instagramAccount.findUnique({ where: { ig_user_id: recipientId } });
+            
+            // Flow Engine Integration for Messages/Mentions
+            if (igAccount) {
+              const flows = await prisma.flow.findMany({
+                where: {
+                  status: 'live',
+                  account_id: igAccount.user_id
+                }
+              });
+
+              // Only trigger startFlow if this isn't a follow gate setup message (we handle those below)
+              // We'll pass the message text and type to the flow engine
+              if (flows.length > 0) {
+                 // Try to get username for flow engine (fallback to ID)
+                 let senderUsername = senderId;
+                 try {
+                    const res = await axios.get(`https://graph.facebook.com/v25.0/${senderId}?fields=username,name&access_token=${igAccount.access_token}`);
+                    if (res.data) senderUsername = res.data.username || res.data.name || senderId;
+                 } catch(e) {}
+                 
+                 const eventData = {
+                   type: eventType,
+                   text: messageText,
+                   username: senderUsername,
+                   senderId: senderId
+                 };
+                 
+                 for (const flow of flows) {
+                   await startFlow(flow, eventData, igAccount);
+                 }
+              }
+            }
             
             // Check Follow Gate Reply
             if (igAccount) {
