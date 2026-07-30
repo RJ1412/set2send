@@ -23,7 +23,7 @@ export const getCampaigns = async (req, res, next) => {
 export const createCampaign = async (req, res, next) => {
   try {
     let { 
-      instagram_account_id, ig_media_id, ig_media_url, keyword, fuzzy_match, dm_template,
+      instagram_account_id, trigger_type, ig_media_id, ig_media_url, keyword, fuzzy_match, dm_template,
       require_follow, follow_message, collect_email, email_prompt_message, follow_up_message, follow_up_time_hours,
       retrigger_mode, retrigger_days, returning_dm_template
     } = req.body;
@@ -61,6 +61,7 @@ export const createCampaign = async (req, res, next) => {
     const campaign = await prisma.campaign.create({
       data: {
         instagram_account_id,
+        trigger_type,
         ig_media_id,
         ig_media_url,
         keyword,
