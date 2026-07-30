@@ -133,7 +133,6 @@ export const handleMetaEvent = async (req, res) => {
               await startFlow(flow, eventData, targetIgAccount);
             }
           }
-          }
         } else if (change.field === "mentions") {
           // Handle Feature 1: Story Mention Auto-DM (from changes array)
           const mention = change.value;
