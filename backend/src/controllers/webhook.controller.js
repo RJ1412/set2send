@@ -396,7 +396,7 @@ export const handleMetaEvent = async (req, res) => {
 
               for (const campaign of campaigns) {
                 // Determine if this messaging event is a story reply
-                const replyToStory = messaging.message.reply_to?.story;
+                const replyToStory = messaging.message?.reply_to?.story;
                 const storyId = replyToStory?.id;
                 
                 // If the user specified a specific story, it MUST match the story ID
@@ -423,7 +423,7 @@ export const handleMetaEvent = async (req, res) => {
 
                 if (isMatch) {
                   // Deduplication using message ID (mid)
-                  const mid = messaging.message.mid || `dm_${Date.now()}`;
+                  const mid = messaging.message?.mid || `dm_${Date.now()}`;
                   const redisKey = `processed_dm_trigger:${campaign.id}:${mid}`;
                   const isNew = await pollerConnection.set(redisKey, "1", "EX", 604800, "NX");
 
