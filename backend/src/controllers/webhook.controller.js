@@ -5,6 +5,7 @@ import { prisma } from "../utils/db.js";
 import axios from "axios";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
 import { startFlow } from "../services/flowEngine.js";
+import { sendCampaignDm } from "../services/sendDm.js";
 
 
 export const verifyMetaWebhook = (req, res) => {
@@ -225,6 +226,41 @@ export const handleMetaEvent = async (req, res) => {
                  for (const flow of flows) {
                    await startFlow(flow, eventData, igAccount);
                  }
+              }
+            }
+
+            // Campaign-based story mention handling (direct DM, no queue needed)
+            if (igAccount && eventType === "story_mention") {
+              const mentionCampaigns = await prisma.campaign.findMany({
+                where: {
+                  status: "active",
+                  trigger_type: "story_mention",
+                  instagram_account_id: igAccount.id
+                }
+              });
+
+              for (const campaign of mentionCampaigns) {
+                const eventKey = `mention:${campaign.id}:${senderId}:${messaging.message?.mid}`;
+                const alreadyProcessed = await prisma.processedEvent.findUnique({
+                  where: { event_key: eventKey }
+                }).catch(() => null);
+
+                if (alreadyProcessed) continue;
+                await prisma.processedEvent.create({ data: { event_key: eventKey } }).catch(() => {});
+
+                let senderUsername = senderId;
+                try {
+                  const r = await axios.get(`https://graph.facebook.com/v25.0/${senderId}?fields=username,name&access_token=${igAccount.access_token}`);
+                  if (r.data) senderUsername = r.data.username || r.data.name || senderId;
+                } catch(e) {}
+
+                await sendCampaignDm({
+                  campaignId: campaign.id,
+                  commenterIgId: senderId,
+                  commenterUsername: senderUsername,
+                  commentText: "story_mention",
+                  commentId: messaging.message?.mid || senderId,
+                });
               }
             }
             
