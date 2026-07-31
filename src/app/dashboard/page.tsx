@@ -57,8 +57,6 @@ export default function DashboardPage() {
   const activeCampaignsCount = campaigns?.filter((c: any) => c.status === "active").length || 0;
   
   const dmsUsed = planStatus?.dms_used_this_month || 0;
-  const dmsLimit = planStatus?.dms_limit || 100;
-  const progressPercent = Math.min(100, (dmsUsed / dmsLimit) * 100);
 
   const handleConnectInstagram = async () => {
     try {
@@ -157,21 +155,8 @@ export default function DashboardPage() {
             <div className="text-[26px] font-semibold text-[#1a1a18] leading-none">
               {planLoading ? "..." : dmsUsed}
             </div>
-            <div className="text-[11px] text-[#aaa] mt-[5px]">
-              of {planLoading ? "..." : dmsLimit} on {planStatus?.plan || "Free"} plan
-            </div>
-            <div className="h-[4px] bg-[#f0ede8] rounded-[4px] mt-[10px] overflow-hidden">
-               {mounted && (
-                 <motion.div 
-                   initial={{ width: 0 }} 
-                   animate={{ width: `${progressPercent}%` }} 
-                   transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }} 
-                   className="h-[4px] rounded-[4px] bg-gradient-to-r from-[#f97316] to-[#fb923c]" 
-                 />
-               )}
-            </div>
             <Link href="/dashboard/billing" className="text-[11px] text-[#8b5cf6] mt-[8px] font-medium inline-flex items-center gap-[3px] hover:opacity-80">
-              Upgrade for unlimited <ArrowRight className="w-[11px] h-[11px]" />
+              Upgrade for other premium features <ArrowRight className="w-[11px] h-[11px]" />
             </Link>
           </div>
 

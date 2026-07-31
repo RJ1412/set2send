@@ -21,6 +21,7 @@ import {
   LogOut,
   Menu,
   X,
+  Coins,
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -62,6 +63,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const navItemsAccount = [
     { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
+    { name: "Coins & Wallet", href: "/dashboard/wallet", icon: Coins },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 

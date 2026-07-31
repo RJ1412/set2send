@@ -282,7 +282,7 @@ export default function Navbar() {
             </div>
 
             <Link href="/" className={textLinkClass}>Agencies</Link>
-            <Link href="/" className={textLinkClass}>Pricing</Link>
+            <Link href="/pricing" className={textLinkClass}>Pricing</Link>
             <Link href="/" className={textLinkClass}>Resources</Link>
           </nav>
 
@@ -556,7 +556,7 @@ export default function Navbar() {
               </div>
 
               <Link href="/" className="border-b border-zinc-800 pb-4 text-zinc-200 hover:text-white uppercase tracking-wider text-sm font-extrabold">Agencies</Link>
-              <Link href="/" className="border-b border-zinc-800 pb-4 text-zinc-200 hover:text-white uppercase tracking-wider text-sm font-extrabold">Pricing</Link>
+              <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="border-b border-zinc-800 pb-4 text-zinc-200 hover:text-white uppercase tracking-wider text-sm font-extrabold">Pricing</Link>
               <Link href="/" className="border-b border-zinc-800 pb-4 text-zinc-200 hover:text-white uppercase tracking-wider text-sm font-extrabold">Resources</Link>
             </div>
 

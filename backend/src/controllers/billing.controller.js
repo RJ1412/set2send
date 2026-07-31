@@ -220,7 +220,29 @@ export const currentPlan = async (req, res, next) => {
       include: { subscription: true }
     });
 
-    res.json(user?.subscription || { plan: "free", dms_used_this_month: 0, dms_limit: 100 });
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const dmsUsedCount = await prisma.dmLog.count({
+      where: {
+        campaign: { 
+          instagram_account: {
+            user_id: req.userId 
+          }
+        },
+        dm_status: "sent",
+        dm_sent_at: { gte: startOfMonth }
+      }
+    });
+
+    const response = {
+      ...(user?.subscription || { plan: "free" }),
+      dms_used_this_month: dmsUsedCount,
+      dms_limit: "Unlimited" // Handled properly in frontend now
+    };
+
+    res.json(response);
   } catch (err) {
     next(err);
   }
