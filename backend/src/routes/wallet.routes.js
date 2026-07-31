@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getWallet, redeemCoins } from "../controllers/wallet.controller.js";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
