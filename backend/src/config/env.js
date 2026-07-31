@@ -18,8 +18,11 @@ const envSchema = z.object({
   RAZORPAY_KEY_ID: z.string().optional(),
   RAZORPAY_KEY_SECRET: z.string().optional(),
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
-  FRONTEND_URL: z.string().trim().default("http://localhost:5173"),
+  FRONTEND_URL: z.string().trim().default("http://localhost:3000"),
   GOOGLE_CLIENT_ID: z.string().optional(),
+  // S2S Coins referral bonus amounts (in coins, 1 coin = ₹1)
+  REFERRER_BONUS: z.string().default("200"),   // coins credited to person who shared code
+  REFEREE_BONUS: z.string().default("100"),    // coins credited to new user on first paid charge
 });
 
 const _env = envSchema.safeParse(process.env);
@@ -30,3 +33,4 @@ if (!_env.success) {
 }
 
 export const env = _env.data;
+

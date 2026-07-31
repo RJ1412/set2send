@@ -17,6 +17,11 @@ model User {
   razorpay_customer_id  String?
   trial_ends_at         DateTime?
   created_at            DateTime            @default(now())
+
+  // S2S Coins + Referral
+  referral_code         String?             @unique // auto-generated on signup, nullable for existing rows
+  referred_by_code      String?             // nullable, set once at signup, immutable
+  is_admin              Boolean             @default(false)
   
   instagram_accounts    InstagramAccount[]
   subscription          Subscription?
@@ -25,6 +30,11 @@ model User {
   leads                 Lead[]
   analytics_snapshots   AnalyticsSnapshot[]
   suggestion_log        SuggestionLog?
+  coin_ledger_entries   CoinLedger[]
+  payout_requests       PayoutRequest[]
+  coin_reservations     CoinReservation[]
+  referrals_made        Referral[]          @relation("ReferrerRelation")
+  referral_received     Referral?           @relation("ReferredRelation")
   
   @@map("users")
 }
@@ -225,17 +235,21 @@ model AlertConfig {
 }
 
 model Subscription {
-  id                    String    @id @default(uuid()) 
-  user_id               String    @unique 
-  plan                  String
-  razorpay_sub_id       String?
-  status                String    @default("active")
-  dms_used_this_month   Int       @default(0)
-  dms_limit             Int       @default(100)
-  current_period_end    DateTime?
-  created_at            DateTime  @default(now())
+  id                      String    @id @default(uuid()) 
+  user_id                 String    @unique 
+  plan                    String    // free / creator / growth / biz
+  plan_key                String    @default("free") // canonical plan key
+  razorpay_sub_id         String?   // Razorpay subscription ID
+  razorpay_order_id       String?   // last order ID
+  status                  String    @default("active") // active / cancelled / past_due
+  purchased_addons        String?   // JSON array of addon keys e.g. ["crm","wa"]
+  extra_ig_accounts       Int       @default(0)
+  extra_wa_accounts       Int       @default(0)
+  current_period_end      DateTime?
+  first_paid_at           DateTime? // timestamp of first successful paid charge
+  created_at              DateTime  @default(now())
 
-  user                  User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user                    User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   
   @@map("subscriptions")
 }
@@ -456,4 +470,87 @@ model ProcessedEvent {
   id        String   @id @default(cuid())
   event_key String   @unique
   createdAt DateTime @default(now())
+}
+
+// ── S2S COINS SYSTEM ──
+
+// Append-only ledger — balance is always SUM(delta) per user
+model CoinLedger {
+  id            String   @id @default(cuid())
+  user_id       String
+  delta         Int      // positive = credit, negative = debit
+  reason        String   // referral_bonus_referrer | referral_bonus_referee | applied_to_invoice | redeemed_cash | admin_adjustment
+  reference_id  String?  // e.g. order_id, payout_request_id, referral_id
+  balance_after Int      // snapshot of balance after this entry
+  created_at    DateTime @default(now())
+
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("coin_ledger")
+}
+
+// Tracks referrer-to-referred relationships
+model Referral {
+  id                      String    @id @default(cuid())
+  referrer_id             String    // user who shared the code
+  referred_user_id        String    @unique // user who used the code (unique — one referral per user)
+  status                  String    @default("pending") // pending | converted | rewarded | flagged
+  converted_at            DateTime? // when first paid charge happened
+  reward_txn_referrer_id  String?   // CoinLedger.id for referrer reward
+  reward_txn_referee_id   String?   // CoinLedger.id for referee reward
+  flagged_reason          String?   // reason for flagging (self-referral/suspicious)
+  created_at              DateTime  @default(now())
+
+  referrer                User      @relation("ReferrerRelation", fields: [referrer_id], references: [id], onDelete: Cascade)
+  referred_user           User      @relation("ReferredRelation", fields: [referred_user_id], references: [id], onDelete: Cascade)
+
+  @@index([referrer_id])
+  @@map("referrals")
+}
+
+// Redemption requests — manual admin approval only
+model PayoutRequest {
+  id               String    @id @default(cuid())
+  user_id          String
+  coin_amount      Int       // coins being redeemed
+  inr_amount       Int       // INR equivalent (= coin_amount × 1)
+  bank_details     String?   // JSON: account_number, ifsc, account_name, bank_name
+  status           String    @default("pending") // pending | approved | rejected | paid
+  requested_at     DateTime  @default(now())
+  processed_at     DateTime?
+  processed_by     String?   // admin user_id
+  admin_note       String?
+
+  user             User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([status])
+  @@map("payout_requests")
+}
+
+// Pending coin deductions tied to a Razorpay order (released on failure)
+model CoinReservation {
+  id           String   @id @default(cuid())
+  user_id      String
+  order_id     String   @unique // Razorpay order_id
+  coin_amount  Int
+  status       String   @default("pending") // pending | finalized | released
+  created_at   DateTime @default(now())
+  expires_at   DateTime // order expiry time
+
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("coin_reservations")
+}
+
+// Razorpay webhook event deduplication
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  event_id    String   @unique // Razorpay event.id (x-razorpay-event-id header)
+  event_type  String   // e.g. payment.captured
+  processed_at DateTime @default(now())
+
+  @@map("webhook_events")
 }

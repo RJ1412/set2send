@@ -18,8 +18,8 @@ export default function BillingPage() {
 
   const handleSubscribe = async (planId: string) => {
     try {
-      const { data } = await api.post("/billing/create-subscription", { plan: planId });
-      alert(`Razorpay Checkout triggered for Subscription ID: ${data.subscriptionId}`);
+      const { data } = await api.post("/billing/create-order", { plan: planId });
+      alert(`Razorpay Checkout triggered for Order ID: ${data.orderId}`);
     } catch (err: any) {
       alert(err.response?.data?.error || "Error initiating billing");
     }

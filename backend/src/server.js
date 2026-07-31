@@ -18,6 +18,8 @@ import whatsappRoutes from "./routes/whatsapp.routes.js";
 import flowsRoutes from "./routes/flows.routes.js";
 import crmRoutes from "./routes/crm.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
+import walletRoutes from "./routes/wallet.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 // Initialize the background workers
 import "./jobs/dmWorker.js"; // Initialize the background worker
 import "./queues/followUpQueue.js";
@@ -95,6 +97,8 @@ app.use("/api/whatsapp", whatsappRoutes);
 app.use("/api/flows", flowsRoutes);
 app.use("/api/crm", crmRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/wallet", walletRoutes);
+app.use("/api/admin", adminRoutes);
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);

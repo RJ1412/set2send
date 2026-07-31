@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>set2send — Pricing</title>
+<meta name="description" content="set2send pricing: Instagram automation and WhatsApp bulk messaging plans for Indian creators, D2C brands and agencies. Start free, pay only for what you use.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Light theme with gold royal accent */
+  --bg:#F7F5F0;
+  --bg-card:#FFFFFF;
+  --bg-raised:#F0EDE6;
+  --bg-hover:#EDE9E0;
+  --text:#1A1714;
+  --text-muted:#6B6560;
+  --text-dim:#B0AB9E;
+  --border:#E4DDD0;
+  --border-soft:#EDE9E2;
+  --gold:#9A7B3A;
+  --gold-light:#B8942E;
+  --gold-bg:#FDF8EE;
+  --gold-border:#E8D5A0;
+  --green:#2A7D4F;
+  --green-bg:#EEF8F3;
+  --green-border:#A8D8BE;
+  --orange:#C2601A;
+  --orange-bg:#FEF4EC;
+  --orange-border:#F0C099;
+  --blue:#2B5FA0;
+  --blue-bg:#EEF3FB;
+  --blue-border:#A8C0E4;
+  --red:#B83232;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 8px rgba(0,0,0,.04);
+  --shadow-md:0 2px 8px rgba(0,0,0,.08),0 1px 16px rgba(0,0,0,.05);
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+
+/* ── HEADER ── */
+.header{text-align:center;padding:52px 24px 40px;border-bottom:1px solid var(--border-soft)}
+.logo{font-size:15px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:block}
+.header h1{font-size:clamp(26px,4vw,44px);font-weight:400;line-height:1.2;color:var(--text);margin-bottom:10px;letter-spacing:-.02em}
+.header h1 strong{font-weight:600}
+.header p{color:var(--text-muted);font-size:14.5px;max-width:400px;margin:0 auto 20px}
+
+/* INFRA JUSTIFICATION STRIP */
+.infra-strip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--text-dim)}
+.infra-pill{background:var(--bg-raised);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text-muted);display:flex;align-items:center;gap:5px}
+.infra-pill b{color:var(--text)}
+
+/* ── CONTAINER ── */
+.container{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* ── BILLING TOGGLE ── */
+.billing-row{display:flex;align-items:center;justify-content:center;gap:12px;padding:28px 0 24px}
+.billing-row label{font-size:13px;color:var(--text-muted);font-weight:500;cursor:pointer;transition:color .2s}
+.billing-row label.active{color:var(--text);font-weight:600}
+.t-track{width:42px;height:22px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.t-track.on{background:var(--gold)}
+.t-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .22s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.t-track.on .t-thumb{transform:translateX(20px)}
+.save-pill{font-size:11px;font-weight:600;color:var(--green);background:var(--green-bg);padding:2px 9px;border-radius:20px;border:1px solid var(--green-border)}
+
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px}
+
+/* ── PLAN CARDS ── */
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
+.plan-card{
+  background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;
+  padding:20px 18px;cursor:pointer;
+  transition:border-color .2s,box-shadow .2s,transform .15s;
+  position:relative;display:flex;flex-direction:column;box-shadow:var(--shadow)
+}
+.plan-card:hover{border-color:var(--gold-border);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.plan-card.selected{border-color:var(--gold);box-shadow:0 0 0 3px rgba(154,123,58,.1),var(--shadow-md)}
+.plan-chip{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:12px;width:fit-content}
+.chip-free{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.chip-popular{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.chip-pro{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border)}
+.chip-agency{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
+.plan-name{font-size:20px;font-weight:500;color:var(--text);margin-bottom:2px;letter-spacing:-.01em}
+.plan-price-row{display:flex;align-items:baseline;gap:3px;margin-bottom:3px}
+.plan-price{font-size:28px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em;transition:color .2s}
+.plan-card.selected .plan-price{color:var(--gold)}
+.plan-per{font-size:12.5px;color:var(--text-muted)}
+.plan-tagline{font-size:11.5px;color:var(--text-muted);margin-bottom:14px}
+.plan-divider{height:1px;background:var(--border-soft);margin:0 0 12px}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:6px;flex:1}
+.plan-features li{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:var(--text-muted);line-height:1.4}
+.plan-features li.on{color:var(--text)}
+.feat-ck{width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800}
+.feat-ck.yes{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.feat-ck.no{background:var(--bg-raised);color:transparent;border:1px solid var(--border)}
+.plan-sel-badge{display:none;position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.05em;text-transform:uppercase}
+.plan-card.selected .plan-sel-badge{display:block}
+
+/* ── COINS BANNER ── */
+.coins-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:linear-gradient(90deg,var(--gold-bg),var(--bg-card));border:1px solid var(--gold-border);border-radius:var(--radius);padding:14px 18px;margin:24px 0 8px}
+.coins-banner-left{display:flex;align-items:center;gap:10px;min-width:220px}
+.coins-icon{width:34px;height:34px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.coins-banner-title{font-size:13.5px;font-weight:600;color:var(--text)}
+.coins-banner-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
+.coins-banner-sub b{color:var(--gold)}
+.coins-banner-cta{font-size:12.5px;font-weight:600;color:#fff;background:var(--gold);padding:9px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;border:none;font-family:'Inter',sans-serif;transition:background .2s}
+.coins-banner-cta:hover{background:var(--gold-light)}
+
+/* ── COINS WALLET (summary card) ── */
+.coins-wallet{padding:12px 18px;border-bottom:1px solid var(--border-soft)}
+.cw-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cw-label{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.cw-balance{font-size:13px;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
+.cw-apply-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.cw-apply-lbl{font-size:12px;color:var(--text)}
+.cw-progress{height:5px;border-radius:3px;background:var(--border-soft);margin-top:9px;overflow:hidden}
+.cw-progress-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .3s}
+.cw-progress-note{font-size:10.5px;color:var(--text-dim);margin-top:5px}
+.cw-progress-note b{color:var(--green)}
+
+/* ── SCALE NOTE ── */
+.scale-note{background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.sn-item{font-size:12px;color:var(--text-muted);line-height:1.5}
+.sn-item strong{color:var(--text);display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+
+/* ── DIVIDER ── */
+.section-divider{height:1px;background:var(--border);margin:28px 0 24px}
+
+/* ── ADDON LAYOUT ── */
+.addon-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;padding-bottom:60px}
+
+/* CONFIG PANEL */
+.config-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.config-section{padding:18px 20px;border-bottom:1px solid var(--border-soft)}
+.config-section:last-child{border-bottom:none}
+.config-title{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:14px}
+
+/* ACCOUNT ROWS */
+.acct-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-soft);gap:12px}
+.acct-row:last-child{border-bottom:none;padding-bottom:0}
+.acct-left{flex:1}
+.acct-label{font-size:13.5px;font-weight:500;color:var(--text)}
+.acct-sub{font-size:11.5px;color:var(--text-muted);margin-top:1px}
+.acct-extra{font-size:11px;color:var(--gold);margin-top:1px;font-weight:500}
+.acct-counter{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.cnt-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg-raised);color:var(--text-muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;user-select:none;line-height:1}
+.cnt-btn:hover{border-color:var(--gold-border);color:var(--gold);background:var(--gold-bg)}
+.cnt-btn.disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+.cnt-val{font-size:15px;font-weight:600;color:var(--text);min-width:20px;text-align:center;font-variant-numeric:tabular-nums}
+
+/* FEATURE ROWS */
+.feat-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border-soft)}
+.feat-row:last-child{border-bottom:none;padding-bottom:0}
+.feat-row-info{flex:1;min-width:0}
+.feat-row-name{font-size:13.5px;font-weight:500;color:var(--text-muted);transition:color .2s}
+.feat-row.active .feat-row-name{color:var(--text)}
+.feat-row-desc{font-size:11.5px;color:var(--text-dim);margin-top:1px}
+.addon-ptag{font-size:12px;color:var(--text-dim);white-space:nowrap;flex-shrink:0;font-variant-numeric:tabular-nums}
+.feat-row.active .addon-ptag{color:var(--gold)}
+.in-plan-tag{font-size:10.5px;color:var(--green);background:var(--green-bg);padding:2px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;border:1px solid var(--green-border);font-weight:500}
+
+/* SMALL TOGGLE */
+.sm-tog{width:34px;height:18px;background:var(--border);border-radius:9px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s}
+.sm-tog.on{background:var(--gold)}
+.sm-tog-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.sm-tog.on .sm-tog-thumb{transform:translateX(16px)}
+
+/* WA CONFIGURATOR */
+.wa-config-box{background:var(--bg-raised);border-radius:var(--radius);padding:14px 16px;margin-top:10px}
+.wa-type-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.wa-tr-left{flex:1;min-width:0}
+.wa-tr-name{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
+.wa-tr-rates{font-size:11px;color:var(--text-muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.wa-your-rate{color:var(--gold);font-weight:600}
+.wa-margin{color:var(--text-dim);font-weight:500}
+.wa-margin.wa-low{color:var(--orange)}
+.wa-popular-tag{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border);padding:1px 7px;border-radius:20px}
+.wa-type-divider{height:1px;background:var(--border-soft);margin:0}
+.wa-tr-cost{font-size:13px;font-weight:600;color:var(--text);min-width:44px;text-align:right;font-variant-numeric:tabular-nums;flex-shrink:0}
+/* SPINNER */
+.wa-spinner{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.sp-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .15s;user-select:none;font-weight:400;flex-shrink:0}
+.sp-btn:hover{border-color:var(--gold-border);color:var(--gold);background:var(--gold-bg)}
+.sp-input{width:72px;height:28px;border:1px solid var(--border);border-radius:7px;background:var(--bg-card);color:var(--text);font-size:13px;font-weight:600;text-align:center;outline:none;font-variant-numeric:tabular-nums;font-family:'Inter',sans-serif;transition:border-color .15s;-moz-appearance:textfield}
+.sp-input::-webkit-inner-spin-button,.sp-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.sp-input:focus{border-color:var(--gold-border)}
+/* CONVERSION BOX */
+.wa-convert-box{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:8px;padding:10px 12px;margin-top:12px}
+.wa-convert-title{font-size:11.5px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.wa-convert-body{font-size:11px;color:var(--blue);line-height:1.6}
+.wa-convert-body b{font-weight:700}
+/* TOTALS */
+.wa-totals-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.wa-totals-lbl{font-size:13px;font-weight:600;color:var(--text)}
+.wa-totals-val{font-size:18px;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
+.wa-never-exp{font-size:11px;color:var(--green);font-weight:500;margin-top:3px}
+/* TOKEN BILL ROWS */
+.tok-bill-row{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--border-soft)}
+.tok-bill-row:last-child{border-bottom:none}
+.tok-bill-key{color:var(--text-muted)}
+.tok-bill-val{font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+/* ADD TO ORDER BTN */
+.tok-add-btn{width:100%;padding:10px;border-radius:var(--radius);background:var(--text);color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;letter-spacing:.01em}
+.tok-add-btn:hover{background:var(--gold)}
+
+/* ── SUMMARY CARD ── */
+.summary-sticky{position:sticky;top:20px}
+.summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-md)}
+
+/* BILL AREA — no big decorative number, just clean itemized bill */
+.bill-head{padding:16px 18px 12px;border-bottom:1px solid var(--border-soft);background:var(--bg-raised)}
+.bill-head-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px}
+.bill-plan-name{font-size:14px;font-weight:600;color:var(--text)}
+
+/* REC BANNER */
+.rec-banner{margin:10px 14px;border-radius:8px;padding:10px 12px;font-size:12.5px;line-height:1.45;display:none}
+.rec-banner strong{display:block;font-weight:600;margin-bottom:2px}
+.rec-banner.orange{background:var(--orange-bg);border:1px solid var(--orange-border);color:var(--orange)}
+.rec-banner.blue{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue)}
+
+/* BILL LINE ITEMS */
+.bill-lines{padding:4px 18px}
+.bl-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--border-soft);font-size:13px;gap:6px}
+.bl-row:last-child{border-bottom:none}
+.bl-key{color:var(--text-muted);display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+.bl-dot{width:4px;height:4px;border-radius:50%;background:var(--text-dim);flex-shrink:0}
+.bl-val{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0;color:var(--text)}
+.bl-green{color:var(--green)}
+.bl-gold{color:var(--gold)}
+.bl-dim{color:var(--text-dim);font-weight:400;font-style:italic}
+
+/* SUBTOTAL */
+.bill-subtotal{display:flex;justify-content:space-between;align-items:center;padding:9px 18px;border-top:1px solid var(--border);border-bottom:1px solid var(--border-soft);background:var(--bg-raised);font-size:12.5px}
+.bst-lbl{color:var(--text-muted);font-weight:500}
+.bst-val{font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+
+/* TOKEN SECTION */
+.token-section{padding:12px 18px;border-bottom:1px solid var(--border-soft)}
+.token-lbl{font-size:11.5px;color:var(--text-muted);margin-bottom:8px;font-weight:500}
+.token-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.tok-chip{padding:7px 6px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-raised);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;line-height:1.3}
+.tok-chip:hover{border-color:var(--gold-border);color:var(--text)}
+.tok-chip.sel{border-color:var(--gold);color:var(--gold);background:var(--gold-bg);box-shadow:0 0 0 2px rgba(154,123,58,.08)}
+.tok-price{font-size:13px;font-weight:700;display:block;font-variant-numeric:tabular-nums}
+.tok-lbl{font-size:10.5px;opacity:.8}
+.tok-skip{grid-column:span 2}
+
+/* TOTAL */
+.bill-total{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid var(--border)}
+.bt-lbl-wrap{}
+.bt-lbl{font-size:13px;font-weight:600;color:var(--text)}
+.bt-sub{font-size:11px;color:var(--text-dim);margin-top:1px}
+.bt-val{font-size:24px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em;transition:all .2s}
+
+/* CTA */
+.cta-area{padding:12px 18px 16px}
+.cta-btn{width:100%;padding:12px;border-radius:var(--radius);background:var(--gold);color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;letter-spacing:.01em;transition:background .2s;font-family:'Inter',sans-serif}
+.cta-btn:hover{background:var(--gold-light)}
+.cta-note{text-align:center;font-size:11px;color:var(--text-dim);margin-top:7px}
+
+/* HOW CALC */
+.how-calc{border-top:1px solid var(--border-soft)}
+.hc-toggle{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;cursor:pointer;font-size:12px;color:var(--text-dim);user-select:none}
+.hc-toggle:hover{color:var(--text-muted)}
+.hc-body{font-size:12px;color:var(--text-dim);line-height:1.65;max-height:0;overflow:hidden;transition:max-height .25s ease,padding .25s}
+.hc-body.open{max-height:200px;padding:0 18px 14px}
+
+/* ── COMPARISON TABLE ── */
+.compare-wrap{overflow-x:auto;padding-bottom:40px;-webkit-overflow-scrolling:touch}
+.compare-table{width:100%;border-collapse:collapse;min-width:680px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.compare-table th,.compare-table td{padding:11px 14px;text-align:center;font-size:12.5px;border-bottom:1px solid var(--border-soft);white-space:nowrap}
+.compare-table thead th{background:var(--bg-raised);font-size:13.5px;font-weight:600;color:var(--text);padding-top:16px;padding-bottom:16px;position:sticky;top:0}
+.compare-table .ct-feat-col{text-align:left;min-width:220px;white-space:normal}
+.compare-table td.ct-feat-col,.compare-table td:first-child{text-align:left;color:var(--text-muted);font-weight:500;white-space:normal}
+.compare-table .ct-price{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-top:2px}
+.compare-table th.ct-hi,.compare-table td.ct-hi{background:var(--gold-bg)}
+.compare-table th.ct-hi{color:var(--gold);border-bottom:2px solid var(--gold-border)}
+.compare-table .ct-group{text-align:left!important;background:var(--bg-raised);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);padding:9px 14px}
+.compare-table .ct-yes{color:var(--green);font-weight:700}
+.compare-table .ct-no{color:var(--text-dim)}
+.compare-table tbody tr:last-child td{border-bottom:none}
+
+@media(max-width:800px){
+  .plans-grid{grid-template-columns:repeat(2,1fr)}
+  .addon-layout{grid-template-columns:1fr}
+  .summary-sticky{position:static}
+  .scale-note{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .plans-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="logo">set2send</span>
+  <h1>Pay for what you <strong>actually use</strong></h1>
+  <p>Pick a base plan, layer on exactly what you need. WhatsApp is always pay-as-you-go — never a flat surprise bill.</p>
+  <div class="infra-strip">
+    <span class="infra-pill">✓ <b>No setup fee</b></span>
+    <span class="infra-pill">✓ <b>Cancel anytime</b></span>
+    <span class="infra-pill">✓ <b>Free plan, no card needed</b></span>
+    <span class="infra-pill">✓ <b>GST invoice</b></span>
+    <span class="infra-pill">✓ <b>Earn coins, redeem as cash</b></span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="billing-row">
+    <label id="lbl-mo" class="active" onclick="setBilling('monthly')">Monthly</label>
+    <div class="t-track" id="bil-track" onclick="flipBilling()"><div class="t-thumb"></div></div>
+    <label id="lbl-yr" onclick="setBilling('annual')">Annual</label>
+    <span class="save-pill">Save 20%</span>
+  </div>
+
+  <!-- S2S COINS BANNER -->
+  <div class="coins-banner">
+    <div class="coins-banner-left">
+      <div class="coins-icon">◎</div>
+      <div>
+        <div class="coins-banner-title">S2S Coins — earn, spend, or cash out</div>
+        <div class="coins-banner-sub">Refer a friend — you both earn coins (<b>1 coin = ₹1</b>) when they subscribe using your code. Spend coins on any plan, add-on or WhatsApp usage below, or redeem as real cash once you cross <b>1,000 coins</b>.</div>
+      </div>
+    </div>
+    <button class="coins-banner-cta" onclick="window.location.href='/referrals'">Get your referral link</button>
+  </div>
+
+  <!-- STEP 1: PLAN CARDS -->
+  <p class="eyebrow">Step 1 — Choose your base plan</p>
+  <div class="plans-grid">
+
+    <div class="plan-card" id="pc-free" onclick="selectPlan('free')">
+      <span class="plan-chip chip-free">Free</span>
+      <div class="plan-name">Starter</div>
+      <div class="plan-price-row"><span class="plan-price" id="pp-free">₹0</span><span class="plan-per">/mo</span></div>
+      <div class="plan-tagline">Test before you commit</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li class="on"><span class="feat-ck yes">✓</span>Comment-to-DM (unlimited)</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Story reply (100/mo)</li>
+        <li class="on"><span class="feat-ck yes">✓</span>1 Instagram account</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Basic CRM (50 contacts)</li>
+        <li><span class="feat-ck no">–</span>Comment public reply</li>
+        <li><span class="feat-ck no">–</span>Follow-gate</li>
+        <li><span class="feat-ck no">–</span>WhatsApp bulk</li>
+        <li><span class="feat-ck no">–</span>Email collection</li>
+      </ul>
+      <span class="plan-sel-badge">Selected ✓</span>
+    </div>
+
+    <div class="plan-card selected" id="pc-creator" onclick="selectPlan('creator')">
+      <span class="plan-chip chip-popular">Most popular</span>
+      <div class="plan-name">Creator</div>
+      <div class="plan-price-row"><span class="plan-price" id="pp-creator">₹299</span><span class="plan-per">/mo</span></div>
+      <div class="plan-tagline">Solo creators & small brands</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li class="on"><span class="feat-ck yes">✓</span>Comment-to-DM (unlimited)</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Story reply (unlimited)</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Comment public reply</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Follow-gate</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Email collection</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Top post analytics</li>
+        <li class="on"><span class="feat-ck yes">✓</span>1 IG + 1 WA account</li>
+        <li><span class="feat-ck no">–</span>CRM & contacts</li>
+      </ul>
+      <span class="plan-sel-badge">Selected ✓</span>
+    </div>
+
+    <div class="plan-card" id="pc-growth" onclick="selectPlan('growth')">
+      <span class="plan-chip chip-pro">Pro</span>
+      <div class="plan-name">Growth</div>
+      <div class="plan-price-row"><span class="plan-price" id="pp-growth">₹699</span><span class="plan-per">/mo</span></div>
+      <div class="plan-tagline">D2C brands scaling fast</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li class="on"><span class="feat-ck yes">✓</span>Comment-to-DM (unlimited)</li>
+        <li class="on"><span class="feat-ck yes">✓</span>All story & comment triggers</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Follow-gate + custom flows</li>
+        <li class="on"><span class="feat-ck yes">✓</span>CRM (unlimited contacts)</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Email collect + CSV export</li>
+        <li class="on"><span class="feat-ck yes">✓</span>WA bulk (tokens-based)</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Full analytics dashboard</li>
+        <li class="on"><span class="feat-ck yes">✓</span>2 IG + 2 WA accounts</li>
+      </ul>
+      <span class="plan-sel-badge">Selected ✓</span>
+    </div>
+
+    <div class="plan-card" id="pc-biz" onclick="selectPlan('biz')">
+      <span class="plan-chip chip-agency">Agency</span>
+      <div class="plan-name">Business</div>
+      <div class="plan-price-row"><span class="plan-price" id="pp-biz">₹1,999</span><span class="plan-per">/mo</span></div>
+      <div class="plan-tagline">Agencies, multiple clients</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li class="on"><span class="feat-ck yes">✓</span>Unlimited DMs</li>
+        <li class="on"><span class="feat-ck yes">✓</span>All features unlocked</li>
+        <li class="on"><span class="feat-ck yes">✓</span>5 IG + 5 WA accounts</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Unlimited CRM</li>
+        <li class="on"><span class="feat-ck yes">✓</span>WA bulk (tokens at discount)</li>
+        <li class="on"><span class="feat-ck yes">✓</span>AI suggestions</li>
+        <li class="on"><span class="feat-ck yes">✓</span>Priority support</li>
+        <li class="on"><span class="feat-ck yes">✓</span>White-label (coming soon)</li>
+      </ul>
+      <span class="plan-sel-badge">Selected ✓</span>
+    </div>
+
+  </div>
+
+  <!-- TRUST NOTE -->
+  <div class="scale-note">
+    <div class="sn-item">
+      <strong>Upgrade or downgrade anytime</strong>
+      Move between plans whenever your usage changes — no lock-in, no penalty, pro-rated instantly.
+    </div>
+    <div class="sn-item">
+      <strong>WhatsApp, billed transparently</strong>
+      Every message type has a fixed per-message rate shown below. You only pay for what you actually send — no bundles that expire unused.
+    </div>
+    <div class="sn-item">
+      <strong>Built for the Indian market</strong>
+      INR pricing, GST-ready invoices, and local payment methods — no currency conversion surprises.
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- STEP 2: ADDONS -->
+  <p class="eyebrow">Step 2 — Add extras (optional)</p>
+
+  <div class="addon-layout">
+
+    <!-- LEFT PANEL -->
+    <div class="config-panel">
+
+      <!-- ACCOUNTS -->
+      <div class="config-section">
+        <div class="config-title">Connected accounts</div>
+
+        <div class="acct-row">
+          <div class="acct-left">
+            <div class="acct-label">Instagram accounts</div>
+            <div class="acct-sub" id="ig-sub">1 included · extras at ₹99/mo each</div>
+            <div class="acct-extra" id="ig-extra"></div>
+          </div>
+          <div class="acct-counter">
+            <div class="cnt-btn disabled" id="ig-minus" onclick="changeAcct('ig',-1)">−</div>
+            <span class="cnt-val" id="ig-val">1</span>
+            <div class="cnt-btn" onclick="changeAcct('ig',1)">+</div>
+          </div>
+        </div>
+
+        <div class="acct-row">
+          <div class="acct-left">
+            <div class="acct-label">WhatsApp numbers</div>
+            <div class="acct-sub" id="wa-acct-sub">Not in this plan — add WA bulk below</div>
+            <div class="acct-extra" id="wa-extra"></div>
+          </div>
+          <div class="acct-counter">
+            <div class="cnt-btn disabled" id="wa-minus" onclick="changeAcct('wa',-1)">−</div>
+            <span class="cnt-val" id="wa-val">—</span>
+            <div class="cnt-btn disabled" id="wa-plus" onclick="changeAcct('wa',1)">+</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FEATURE ADDONS -->
+      <div class="config-section">
+        <div class="config-title">Feature add-ons</div>
+        <div id="addon-rows"></div>
+      </div>
+
+      <!-- WA BULK -->
+      <div class="config-section">
+        <div class="config-title">WhatsApp bulk messaging</div>
+        <div class="feat-row active" id="wa-bulk-row">
+          <div class="feat-row-info">
+            <div class="feat-row-name">WA bulk send</div>
+            <div class="feat-row-desc">Usage-based · billed monthly for exactly what you send</div>
+          </div>
+          <span id="wa-status-tag"></span>
+        </div>
+        <div id="wa-vol-wrap" style="display:none">
+          <div class="wa-config-box">
+
+            <!-- TYPE ROWS -->
+            <div class="wa-type-row" id="row-auth">
+              <div class="wa-tr-left">
+                <div class="wa-tr-name">Authentication</div>
+                <div class="wa-tr-rates">₹0.1150 Meta · <span class="wa-your-rate">₹0.14/credit</span> · <span class="wa-margin">15% margin</span></div>
+              </div>
+              <div class="wa-spinner">
+                <button class="sp-btn" onclick="stepWa('auth',-100)">−</button>
+                <input class="sp-input" id="inp-auth" type="number" value="0" min="0" step="1" oninput="updateWa('auth',this.value)" onchange="updateWa('auth',this.value)" placeholder="0" title="Type any exact number">
+                <button class="sp-btn" onclick="stepWa('auth',100)">+</button>
+              </div>
+              <div class="wa-tr-cost" id="cost-auth">₹0</div>
+            </div>
+
+            <div class="wa-type-divider"></div>
+
+            <div class="wa-type-row" id="row-mkt">
+              <div class="wa-tr-left">
+                <div class="wa-tr-name">Marketing <span class="wa-popular-tag">most used</span></div>
+                <div class="wa-tr-rates">₹0.8631 Meta · <span class="wa-your-rate">₹0.94/credit</span> · <span class="wa-margin wa-low">8% margin</span></div>
+              </div>
+              <div class="wa-spinner">
+                <button class="sp-btn" onclick="stepWa('mkt',-100)">−</button>
+                <input class="sp-input" id="inp-mkt" type="number" value="0" min="0" step="1" oninput="updateWa('mkt',this.value)" onchange="updateWa('mkt',this.value)" placeholder="0" title="Type any exact number">
+                <button class="sp-btn" onclick="stepWa('mkt',100)">+</button>
+              </div>
+              <div class="wa-tr-cost" id="cost-mkt">₹0</div>
+            </div>
+
+            <div class="wa-type-divider"></div>
+
+            <div class="wa-type-row" id="row-util">
+              <div class="wa-tr-left">
+                <div class="wa-tr-name">Utility</div>
+                <div class="wa-tr-rates">₹0.1150 Meta · <span class="wa-your-rate">₹0.14/credit</span> · <span class="wa-margin">15% margin</span></div>
+              </div>
+              <div class="wa-spinner">
+                <button class="sp-btn" onclick="stepWa('util',-100)">−</button>
+                <input class="sp-input" id="inp-util" type="number" value="0" min="0" step="1" oninput="updateWa('util',this.value)" onchange="updateWa('util',this.value)" placeholder="0" title="Type any exact number">
+                <button class="sp-btn" onclick="stepWa('util',100)">+</button>
+              </div>
+              <div class="wa-tr-cost" id="cost-util">₹0</div>
+            </div>
+
+            <div class="wa-type-divider"></div>
+
+            <div class="wa-type-row" id="row-intl">
+              <div class="wa-tr-left">
+                <div class="wa-tr-name">Auth International</div>
+                <div class="wa-tr-rates">₹2.4971 Meta · <span class="wa-your-rate">₹3.20/credit</span> · <span class="wa-margin">22% margin</span></div>
+              </div>
+              <div class="wa-spinner">
+                <button class="sp-btn" onclick="stepWa('intl',-50)">−</button>
+                <input class="sp-input" id="inp-intl" type="number" value="0" min="0" step="1" oninput="updateWa('intl',this.value)" onchange="updateWa('intl',this.value)" placeholder="0" title="Type any exact number">
+                <button class="sp-btn" onclick="stepWa('intl',50)">+</button>
+              </div>
+              <div class="wa-tr-cost" id="cost-intl">₹0</div>
+            </div>
+
+            <div class="wa-type-divider"></div>
+
+            <!-- Service free -->
+            <div class="wa-type-row">
+              <div class="wa-tr-left">
+                <div class="wa-tr-name">Service <span style="font-size:10.5px;font-weight:400;color:var(--text-muted)">(customer-initiated)</span></div>
+                <div class="wa-tr-rates" style="color:var(--green);font-weight:500">Always free · no tokens needed</div>
+              </div>
+              <div style="font-size:12px;font-weight:600;color:var(--green)">₹0</div>
+            </div>
+
+            <!-- TOKEN CONVERSION INFO -->
+            <div class="wa-convert-box">
+              <div class="wa-convert-title">♻️ Universal credit pool</div>
+              <div class="wa-convert-body">
+                All credits go into one pool — no type lock-in. Since Marketing carries the thinnest margin, <b>1 Auth credit converts to 0.15 Marketing credits</b> and <b>1 Utility credit converts to 0.15 Marketing credits</b>. <b>1 Intl Auth credit converts to 3.62 Marketing credits</b>. Buy whichever pack fits your total spend, then use it across any message type — no manual conversion needed, it's applied automatically at checkout.
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--text-dim);margin-top:8px;text-align:center">Prefer an exact number? Just type it straight into any box above — the bill updates instantly as you type.</div>
+
+            <!-- TOTAL -->
+            <div class="wa-totals-row">
+              <div>
+                <div class="wa-totals-lbl">Est. monthly WhatsApp usage</div>
+                <div class="wa-never-exp">Added straight to your monthly total</div>
+              </div>
+              <span class="wa-totals-val" id="wa-total-cost">₹0</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: SUMMARY BILL -->
+    <div class="summary-sticky">
+      <div class="summary-card">
+
+        <div class="bill-head">
+          <div class="bill-head-label">Your bill</div>
+          <div class="bill-plan-name" id="sum-plan-name">Creator plan</div>
+        </div>
+
+        <div class="rec-banner" id="rec-banner"></div>
+
+        <div class="bill-lines" id="line-items"></div>
+
+        <div class="bill-subtotal">
+          <span class="bst-lbl">Subscription / mo</span>
+          <span class="bst-val" id="sub-total-val">₹299</span>
+        </div>
+
+        <div class="coins-wallet">
+          <div class="cw-top">
+            <span class="cw-label">◎ S2S Coins balance</span>
+            <span class="cw-balance" id="cw-balance-val">0 coins</span>
+          </div>
+          <div class="cw-apply-row">
+            <span class="cw-apply-lbl">Apply coins to this bill</span>
+            <div class="sm-tog" id="cw-toggle" onclick="toggleUseCoins()"><div class="sm-tog-thumb"></div></div>
+          </div>
+          <div class="cw-progress"><div class="cw-progress-fill" id="cw-progress-fill" style="width:0%"></div></div>
+          <div class="cw-progress-note" id="cw-progress-note"><b>1,000 coins</b> needed to unlock cash redemption — refer a friend to start earning
+        </div>
+
+        <div class="token-section" id="token-section" style="display:none">
+          <div class="token-lbl">WhatsApp usage — billed exactly for what you typed above</div>
+          <div id="token-bill-rows" style="margin-bottom:2px">
+            <!-- per-type cost rows filled by JS, only for types with qty > 0 -->
+          </div>
+        </div>
+
+        <div class="bill-total">
+          <div class="bt-lbl-wrap">
+            <div class="bt-lbl" id="bt-lbl">Total / month</div>
+            <div class="bt-sub" id="bt-sub"></div>
+          </div>
+          <div class="bt-val" id="bt-val">₹299</div>
+        </div>
+
+        <div class="cta-area">
+          <button class="cta-btn" id="main-cta" onclick="goToSignup()">Get started free</button>
+          <div class="cta-note">Free plan available · upgrade or cancel anytime</div>
+        </div>
+
+        <div class="how-calc">
+          <div class="hc-toggle" onclick="toggleCalc()">
+            <span>How this is calculated</span>
+            <span id="hc-arr">▾</span>
+          </div>
+          <div class="hc-body" id="hc-body">
+            The subscription line covers your plan + any feature add-ons + extra accounts, billed monthly or annually. WhatsApp usage is billed at the per-message rate for exactly what you type into the boxes above, and is added straight into the total — no separate credit purchase step. Annual billing gives 20% off subscriptions only; WhatsApp usage is always the same rate either way.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- COMPARISON TABLE -->
+  <p class="eyebrow" id="compare">Compare all plans</p>
+  <div class="compare-wrap">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th class="ct-feat-col">Feature</th>
+          <th>Starter<span class="ct-price">Free</span></th>
+          <th class="ct-hi">Creator<span class="ct-price">₹299/mo</span></th>
+          <th>Growth<span class="ct-price">₹699/mo</span></th>
+          <th>Business<span class="ct-price">₹1,999/mo</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="5" class="ct-group">Instagram automation</td></tr>
+        <tr><td>Comment-to-DM replies</td><td>Unlimited</td><td class="ct-hi">Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+        <tr><td>Story reply automation</td><td>100/mo</td><td class="ct-hi">Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+        <tr><td>Comment public reply</td><td class="ct-no">–</td><td class="ct-hi ct-yes">✓</td><td class="ct-yes">✓</td><td class="ct-yes">✓</td></tr>
+        <tr><td>Follow-gate (DM only followers)</td><td class="ct-no">–</td><td class="ct-hi ct-yes">✓</td><td class="ct-yes">✓</td><td class="ct-yes">✓</td></tr>
+        <tr><td>Custom flow builder</td><td class="ct-no">–</td><td class="ct-no">–</td><td class="ct-yes">✓</td><td class="ct-yes">✓</td></tr>
+        <tr><td>Instagram accounts included</td><td>1</td><td class="ct-hi">1</td><td>2</td><td>5</td></tr>
+
+        <tr><td colspan="5" class="ct-group">Contacts &amp; data</td></tr>
+        <tr><td>Email collection + CSV export</td><td class="ct-no">–</td><td class="ct-hi ct-yes">✓</td><td class="ct-yes">✓</td><td class="ct-yes">✓</td></tr>
+        <tr><td>CRM &amp; contact tagging</td><td class="ct-no">–</td><td class="ct-hi">Basic (50 contacts)</td><td>Unlimited</td><td>Unlimited</td></tr>
+        <tr><td>Analytics dashboard</td><td class="ct-no">–</td><td class="ct-hi">Top posts only</td><td>Full dashboard</td><td>Full dashboard</td></tr>
+        <tr><td>AI keyword &amp; timing suggestions</td><td class="ct-no">–</td><td class="ct-hi ct-no">–</td><td class="ct-yes">✓</td><td class="ct-yes">✓</td></tr>
+
+        <tr><td colspan="5" class="ct-group">WhatsApp</td></tr>
+        <tr><td>WhatsApp bulk messaging</td><td class="ct-no">–</td><td class="ct-hi">Add-on (+₹149/mo)</td><td class="ct-yes">✓ Included</td><td class="ct-yes">✓ Included, discounted rate</td></tr>
+        <tr><td>WhatsApp numbers included</td><td>0</td><td class="ct-hi">1 (with add-on)</td><td>2</td><td>5</td></tr>
+        <tr><td>Pay-as-you-go message pricing</td><td class="ct-no">–</td><td class="ct-hi ct-yes">✓</td><td class="ct-yes">✓</td><td class="ct-yes">✓</td></tr>
+
+        <tr><td colspan="5" class="ct-group">Support &amp; extras</td></tr>
+        <tr><td>Extra Instagram account</td><td>–</td><td class="ct-hi">₹99/mo each</td><td>₹99/mo each</td><td>₹99/mo each</td></tr>
+        <tr><td>Extra WhatsApp number</td><td>–</td><td class="ct-hi">₹49/mo each</td><td>₹49/mo each</td><td>₹49/mo each</td></tr>
+        <tr><td>Support</td><td>Community</td><td class="ct-hi">Email</td><td>Priority email</td><td>Priority + white-glove</td></tr>
+        <tr><td>White-label branding</td><td class="ct-no">–</td><td class="ct-hi ct-no">–</td><td class="ct-no">–</td><td>Coming soon</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+// ── DATA ──
+const PLANS = {
+  free:    { name:'Starter',  price:0,    igIncl:1, waIncl:0, waAccess:false, features:['ctd','smr'] },
+  creator: { name:'Creator',  price:299,  igIncl:1, waIncl:1, waAccess:false, features:['ctd','smr','cpr','fg','ec','an'] },
+  growth:  { name:'Growth',   price:699,  igIncl:2, waIncl:2, waAccess:true,  features:['ctd','smr','cpr','fg','ec','crm','an','ai'] },
+  biz:     { name:'Business', price:1999, igIncl:5, waIncl:5, waAccess:true,  features:['ctd','smr','cpr','fg','ec','crm','an','ai'] },
+};
+const ADDONS = [
+  { key:'cpr', name:'Comment public reply', desc:'Auto-reply publicly on posts & reels',     price:69  },
+  { key:'fg',  name:'Follow-gate',          desc:'Only DM users who follow your account',     price:99  },
+  { key:'ec',  name:'Email collection',     desc:'Capture emails via DM flow · CSV export',  price:79  },
+  { key:'crm', name:'CRM & contacts',       desc:'Tag, segment & track unlimited contacts',  price:99  },
+  { key:'an',  name:'Analytics dashboard',  desc:'Top posts, DM rates, funnel metrics',       price:69  },
+  { key:'ai',  name:'AI suggestions',       desc:'Smart keyword & timing recommendations',    price:49  },
+  { key:'wa',  name:'WA bulk access',       desc:'Unlock WhatsApp bulk for ₹149/mo',          price:149 },
+];
+const EXTRA_IG=99, EXTRA_WA=49;
+
+// S2S Coins — 1 coin = ₹1. Demo balance below; in production this comes from the user's account.
+const COIN_VALUE=1, COIN_REDEEM_MIN=1000;
+const DEMO_COIN_BALANCE=0; // new users always start at 0 — coins only come from referrals
+
+// WA message type rates (Meta cost, your price, margin label)
+const WA_TYPES = {
+  auth: { label:'Authentication',       metaRate:0.1150, yourRate:0.14  }, // ~15% margin
+  mkt:  { label:'Marketing',            metaRate:0.8631, yourRate:0.94  }, // ~8% margin (thinnest — highest volume type)
+  util: { label:'Utility',              metaRate:0.1150, yourRate:0.14  }, // ~15% margin
+  intl: { label:'Auth International',   metaRate:2.4971, yourRate:3.40  }, // unchanged
+};
+
+// ── STATE ──
+const S = {
+  plan:'creator', billing:'monthly',
+  ig:1, wa:1,
+  addons:{}, calcOpen:false,
+  waVols:{ auth:0, mkt:0, util:0, intl:0 }, // msgs per type
+  coinBalance:DEMO_COIN_BALANCE, useCoins:false,
+};
+ADDONS.forEach(a => S.addons[a.key]=false);
+
+const fmt  = n  => Math.round(n).toLocaleString('en-IN');
+const fmtD = n  => n.toFixed(2);
+const disc = p  => S.billing==='annual' ? Math.round(p*0.8) : p;
+const planBase  = k => disc(PLANS[k].price);
+const waEnabled = () => PLANS[S.plan].waAccess || S.addons['wa'];
+const waBase    = () => waEnabled() ? (PLANS[S.plan].waAccess ? PLANS[S.plan].waIncl : 1) : 0;
+
+// Calculate total estimated token spend per month from volumes
+function calcWaMonthlyEst() {
+  let total = 0;
+  for (const [k, t] of Object.entries(WA_TYPES)) {
+    total += (S.waVols[k] || 0) * t.yourRate;
+  }
+  return Math.ceil(total); // round up to nearest rupee
+}
+
+// Generate suggested packs based on estimated monthly spend
+// Packs: just above estimate (1x), top-up (1.5x), bulk (3x)
+function suggestedPacks(est) {
+  if (est === 0) return [];
+  const one   = Math.ceil(est / 100) * 100;         // round to 100
+  const threeM = one * 3;
+  return [
+    { label: '1 month',   price: one,    note: 'Covers ~1 month' },
+    { label: '3 months',  price: threeM, note: 'Save on top-ups' },
+  ];
+}
+
+function calcSub() {
+  const plan=PLANS[S.plan];
+  let t=planBase(S.plan);
+  t += Math.max(0,S.ig-plan.igIncl)*disc(EXTRA_IG);
+  t += waEnabled() ? Math.max(0,S.wa-waBase())*disc(EXTRA_WA) : 0;
+  ADDONS.forEach(a=>{
+    if(!plan.features.includes(a.key) && S.addons[a.key]) t+=disc(a.price);
+  });
+  return t;
+}
+
+// ── BILLING ──
+function flipBilling(){ setBilling(S.billing==='monthly'?'annual':'monthly'); }
+function setBilling(m){
+  S.billing=m;
+  const on=m==='annual';
+  document.getElementById('bil-track').classList.toggle('on',on);
+  document.getElementById('lbl-mo').classList.toggle('active',!on);
+  document.getElementById('lbl-yr').classList.toggle('active',on);
+  document.getElementById('pp-creator').textContent='₹'+fmt(planBase('creator'));
+  document.getElementById('pp-growth').textContent='₹'+fmt(planBase('growth'));
+  document.getElementById('pp-biz').textContent='₹'+fmt(planBase('biz'));
+  render();
+}
+
+// ── PLAN SELECT ──
+function selectPlan(key){
+  S.plan=key;
+  const plan=PLANS[key];
+  ADDONS.forEach(a=>S.addons[a.key]=false);
+  S.ig=plan.igIncl; S.wa=plan.waAccess?plan.waIncl:0;
+  // clean injected WA toggle
+  ['tog-wa-inline','wa-addon-price'].forEach(id=>{ const el=document.getElementById(id); if(el)el.remove(); });
+  ['free','creator','growth','biz'].forEach(k=>document.getElementById('pc-'+k).classList.toggle('selected',k===key));
+  renderAddonRows(); updateAcctUI(); updateWaSummary(); render();
+}
+
+// ── ACCOUNTS ──
+function changeAcct(type,delta){
+  const plan=PLANS[S.plan];
+  if(type==='ig'){
+    S.ig=Math.max(plan.igIncl,Math.min(20,S.ig+delta));
+  } else {
+    if(!waEnabled()) return;
+    S.wa=Math.max(waBase(),Math.min(20,S.wa+delta));
+  }
+  updateAcctUI(); render();
+}
+
+function updateAcctUI(){
+  const plan=PLANS[S.plan], we=waEnabled(), wb=waBase();
+  const exIG=Math.max(0,S.ig-plan.igIncl);
+  document.getElementById('ig-val').textContent=S.ig;
+  document.getElementById('ig-sub').textContent=plan.igIncl+' included · extras at ₹'+fmt(disc(EXTRA_IG))+'/mo each';
+  document.getElementById('ig-extra').textContent=exIG>0?'+₹'+fmt(exIG*disc(EXTRA_IG))+'/mo':'';
+  document.getElementById('ig-minus').classList.toggle('disabled',S.ig<=plan.igIncl);
+  if(!we){
+    document.getElementById('wa-val').textContent='—';
+    document.getElementById('wa-acct-sub').textContent='Not in this plan — add WA bulk below';
+    document.getElementById('wa-extra').textContent='';
+    document.getElementById('wa-minus').classList.add('disabled');
+    document.getElementById('wa-plus').classList.add('disabled');
+  } else {
+    if(S.wa<wb) S.wa=wb;
+    const exWA=Math.max(0,S.wa-wb);
+    document.getElementById('wa-val').textContent=S.wa;
+    document.getElementById('wa-acct-sub').textContent=(plan.waAccess?plan.waIncl:1)+' included · extras at ₹'+fmt(disc(EXTRA_WA))+'/mo each';
+    document.getElementById('wa-extra').textContent=exWA>0?'+₹'+fmt(exWA*disc(EXTRA_WA))+'/mo':'';
+    document.getElementById('wa-minus').classList.toggle('disabled',S.wa<=wb);
+    document.getElementById('wa-plus').classList.remove('disabled');
+  }
+}
+
+// ── ADDON ROWS ──
+function renderAddonRows(){
+  const plan=PLANS[S.plan], cont=document.getElementById('addon-rows');
+  cont.innerHTML='';
+  ADDONS.filter(a=>a.key!=='wa').forEach(a=>{
+    const inPlan=plan.features.includes(a.key), isOn=S.addons[a.key];
+    const row=document.createElement('div');
+    row.className='feat-row'+(inPlan||isOn?' active':'');
+    row.id='feat-row-'+a.key;
+    if(inPlan){
+      row.innerHTML=`<div class="feat-row-info"><div class="feat-row-name">${a.name}</div><div class="feat-row-desc">${a.desc}</div></div><span class="in-plan-tag">In plan</span>`;
+    } else {
+      row.innerHTML=`<div class="feat-row-info"><div class="feat-row-name">${a.name}</div><div class="feat-row-desc">${a.desc}</div></div><span class="addon-ptag">+₹${fmt(disc(a.price))}/mo</span><div class="sm-tog ${isOn?'on':''}" id="tog-${a.key}" onclick="toggleAddon('${a.key}')"><div class="sm-tog-thumb"></div></div>`;
+    }
+    cont.appendChild(row);
+  });
+  // WA bulk row
+  const waTag=document.getElementById('wa-status-tag'), waWrap=document.getElementById('wa-vol-wrap');
+  if(plan.waAccess){
+    waTag.className='in-plan-tag'; waTag.textContent='Included in plan'; waWrap.style.display='block';
+  } else {
+    waTag.className=''; waTag.textContent=''; waWrap.style.display=S.addons['wa']?'block':'none';
+    const ex=document.getElementById('tog-wa-inline');
+    if(!ex){
+      const pt=document.createElement('span'); pt.className='addon-ptag'; pt.id='wa-addon-price'; pt.textContent='+₹'+fmt(disc(149))+'/mo';
+      const tg=document.createElement('div'); tg.className='sm-tog'+(S.addons['wa']?' on':''); tg.id='tog-wa-inline'; tg.onclick=()=>toggleAddon('wa'); tg.innerHTML='<div class="sm-tog-thumb"></div>';
+      waTag.parentNode.insertBefore(pt,waTag); waTag.parentNode.insertBefore(tg,waTag);
+    } else {
+      ex.classList.toggle('on',S.addons['wa']);
+      const pt=document.getElementById('wa-addon-price'); if(pt) pt.textContent='+₹'+fmt(disc(149))+'/mo';
+    }
+  }
+}
+
+// ── TOGGLE ADDON ──
+function toggleAddon(key){
+  const plan=PLANS[S.plan];
+  if(plan.features.includes(key)) return;
+  if(key==='wa'&&plan.waAccess) return;
+  S.addons[key]=!S.addons[key];
+  if(key==='wa'){ S.wa=S.addons['wa']?1:0; updateAcctUI(); }
+  renderAddonRows(); updateWaSummary(); render();
+}
+
+// ── WA VOLUME BOX (spinner + / − plus free typing) ──
+function stepWa(type, delta) {
+  const inp = document.getElementById('inp-'+type);
+  const cur = parseInt(inp.value) || 0;
+  const next = Math.max(0, cur + delta);
+  inp.value = next;
+  updateWa(type, next);
+}
+
+function updateWa(type, val) {
+  S.waVols[type] = Math.max(0, parseInt(val) || 0);
+  const t = WA_TYPES[type];
+  const msgs = S.waVols[type];
+  const metaCost = msgs * t.metaRate;
+  const yourRev  = msgs * t.yourRate;
+  const margin   = t.metaRate > 0 ? Math.round(((t.yourRate - t.metaRate) / t.yourRate) * 100) : 0;
+  document.getElementById('cost-'+type).textContent = msgs > 0
+    ? '₹'+fmtD(yourRev)+'/mo tokens · margin: '+margin+'%'
+    : '₹0/mo · margin: '+margin+'%';
+  updateWaSummary();
+}
+
+function updateWaSummary() {
+  const est = calcWaMonthlyEst();
+  // total row
+  document.getElementById('wa-total-cost').textContent = est > 0 ? '₹'+fmt(est) : '₹0';
+
+  // update token grid in summary
+  renderTokenGrid(est);
+  render();
+}
+
+function renderTokenGrid(est) {
+  const grid = document.getElementById('token-bill-rows');
+  if(!grid) return;
+  grid.innerHTML = '';
+  if(est <= 0) return;
+
+  Object.entries(WA_TYPES).forEach(([k, t]) => {
+    const msgs = S.waVols[k] || 0;
+    if (msgs <= 0) return;
+    const cost = Math.ceil(msgs * t.yourRate);
+    const row = document.createElement('div');
+    row.className = 'tok-bill-row';
+    row.innerHTML = `<span class="tok-bill-key">${t.label} · ${fmt(msgs)} msgs</span><span class="tok-bill-val">₹${fmt(cost)}</span>`;
+    grid.appendChild(row);
+  });
+
+  const totalRow = document.createElement('div');
+  totalRow.className = 'tok-bill-row';
+  totalRow.style.borderTop = '1px solid var(--border)';
+  totalRow.style.marginTop = '4px';
+  totalRow.style.paddingTop = '7px';
+  totalRow.innerHTML = `<span class="tok-bill-key" style="font-weight:600;color:var(--text)">Added to your total</span><span class="tok-bill-val" style="color:var(--gold)">₹${fmt(est)}/mo</span>`;
+  grid.appendChild(totalRow);
+}
+
+// ── MAIN RENDER ──
+function render(){
+  const plan=PLANS[S.plan], we=waEnabled(), wb=waBase();
+  const exIG=Math.max(0,S.ig-plan.igIncl);
+  const exWA=we?Math.max(0,S.wa-wb):0;
+  const baseP=planBase(S.plan);
+  const sub=calcSub(), est=calcWaMonthlyEst(), grand=sub+est;
+
+  document.getElementById('sum-plan-name').textContent=plan.name+' plan';
+
+  // ── LINE ITEMS ──
+  const li=document.getElementById('line-items'); li.innerHTML='';
+  const row=(k,v,cls)=>li.innerHTML+=`<div class="bl-row"><span class="bl-key"><span class="bl-dot"></span>${k}</span><span class="bl-val ${cls||''}">${v}</span></div>`;
+  if(baseP===0) row(plan.name+' plan','Free','bl-green');
+  else row(plan.name+' plan','₹'+fmt(baseP)+'/mo');
+  if(S.billing==='annual'&&baseP>0) row('Annual discount (−20%)','','bl-green');
+  if(exIG>0) row('+'+exIG+' extra IG account'+(exIG>1?'s':''),'+₹'+fmt(exIG*disc(EXTRA_IG))+'/mo','bl-gold');
+  if(exWA>0) row('+'+exWA+' extra WA number'+(exWA>1?'s':''),'+₹'+fmt(exWA*disc(EXTRA_WA))+'/mo','bl-gold');
+  ADDONS.forEach(a=>{
+    if(a.key==='wa') return;
+    if(!plan.features.includes(a.key)&&S.addons[a.key]) row(a.name,'+₹'+fmt(disc(a.price))+'/mo','bl-gold');
+  });
+  if(!plan.waAccess&&S.addons['wa']) row('WA bulk access','+₹'+fmt(disc(149))+'/mo','bl-gold');
+  if(est>0) row('WhatsApp usage (billed as sent)','+₹'+fmt(est)+'/mo','bl-gold');
+
+  const coinsApplied = S.useCoins ? Math.min(S.coinBalance, Math.floor(grand/COIN_VALUE)) : 0;
+  if(coinsApplied>0) row('◎ S2S Coins applied','−₹'+fmt(coinsApplied*COIN_VALUE),'bl-green');
+
+  // subtotal
+  document.getElementById('sub-total-val').textContent='₹'+fmt(sub);
+
+  // coins wallet
+  renderCoinsWallet(grand);
+
+  // token section
+  document.getElementById('token-section').style.display=we?'block':'none';
+
+  // total
+  const netTotal = grand - coinsApplied*COIN_VALUE;
+  const btLbl=document.getElementById('bt-lbl'), btSub=document.getElementById('bt-sub'), btVal=document.getElementById('bt-val');
+  btLbl.textContent='Total / month';
+  let subParts = est>0 ? ('₹'+fmt(sub)+'/mo sub + ₹'+fmt(est)+'/mo WhatsApp usage') : '';
+  if(coinsApplied>0) subParts += (subParts?' · ':'') + fmt(coinsApplied)+' coins applied';
+  btSub.textContent = subParts;
+  btVal.textContent='₹'+fmt(netTotal);
+
+  // CTA LABEL
+  const cta=document.getElementById('main-cta');
+  cta.textContent = plan.price===0 ? 'Get started free' : ('Start '+plan.name+' plan');
+
+  // REC BANNER
+  const banner=document.getElementById('rec-banner'); banner.style.display='none'; banner.className='rec-banner';
+  const order=['free','creator','growth','biz'], idx=order.indexOf(S.plan);
+  if(idx<order.length-1){
+    const nk=order[idx+1], np=planBase(nk), diff=sub-np;
+    if(sub>=np*0.8){
+      banner.style.display='block';
+      banner.className='rec-banner '+(diff>=0?'orange':'blue');
+      banner.innerHTML=diff>=0
+        ?`<strong>Switch to ${PLANS[nk].name} — save ₹${fmt(diff)}/mo</strong>You're spending more than the ${PLANS[nk].name} plan and getting fewer features.`
+        :`<strong>${PLANS[nk].name} plan worth considering</strong>For just ₹${fmt(Math.abs(diff))}/mo more, unlock everything in ${PLANS[nk].name}.`;
+    }
+  }
+}
+
+// ── COINS ──
+function toggleUseCoins(){
+  S.useCoins=!S.useCoins;
+  document.getElementById('cw-toggle').classList.toggle('on',S.useCoins);
+  render();
+}
+
+function renderCoinsWallet(grand){
+  document.getElementById('cw-balance-val').textContent=fmt(S.coinBalance)+' coins';
+  const pct=Math.min(100,Math.round((S.coinBalance/COIN_REDEEM_MIN)*100));
+  document.getElementById('cw-progress-fill').style.width=pct+'%';
+  const note=document.getElementById('cw-progress-note');
+  if(S.coinBalance>=COIN_REDEEM_MIN){
+    note.innerHTML='<b>Eligible for cash redemption</b> — withdraw anytime from your wallet';
+  } else {
+    note.innerHTML='<b>'+fmt(COIN_REDEEM_MIN-S.coinBalance)+' more coins</b> to unlock cash redemption (1,000 coin minimum)';
+  }
+}
+
+// ── CALC TOGGLE ──
+function toggleCalc(){
+  S.calcOpen=!S.calcOpen;
+  document.getElementById('hc-body').classList.toggle('open',S.calcOpen);
+  document.getElementById('hc-arr').textContent=S.calcOpen?'▴':'▾';
+}
+
+// ── CTA NAVIGATION ──
+function goToSignup(){
+  const params = new URLSearchParams({
+    plan: S.plan,
+    billing: S.billing,
+    ig: S.ig,
+    wa: S.wa
+  });
+  Object.entries(S.addons).forEach(([k,v])=>{ if(v) params.append('addon',k); });
+  window.location.href = '/signup?' + params.toString();
+}
+
+// ── BOOT ──
+renderAddonRows(); updateAcctUI(); render();
+</script>
+</body>
+</html>

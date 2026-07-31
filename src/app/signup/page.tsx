@@ -37,6 +37,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [referralCode, setReferralCode] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -84,6 +85,7 @@ export default function SignUpPage() {
         businessName,
         email,
         password,
+        referral_code: referralCode,
       });
 
       const { user, accessToken } = response.data;
@@ -313,6 +315,20 @@ export default function SignUpPage() {
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Referral Code (Optional)</label>
+              <div className="relative flex items-center">
+                <ShieldCheck className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
+                <input
+                  type="text"
+                  placeholder="e.g. abcd123"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
+                  className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
+                />
               </div>
             </div>
 

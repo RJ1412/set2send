@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 import { prisma } from "../utils/db.js";
 import { env } from "../config/env.js";
+import crypto from "crypto";
 
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ userId }, env.JWT_SECRET, { expiresIn: "7d" });
@@ -12,7 +13,7 @@ const generateTokens = (userId) => {
 
 export const register = async (req, res, next) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, referral_code } = req.body;
     if (!email || !password || !name) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -23,17 +24,25 @@ export const register = async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const generatedReferralCode = crypto.randomBytes(4).toString("hex");
+
+    let referrer = null;
+    if (referral_code) {
+      referrer = await prisma.user.findUnique({ where: { referral_code } });
+    }
 
     const user = await prisma.user.create({
       data: {
         email,
         name,
         password_hash: hashedPassword,
+        referral_code: generatedReferralCode,
+        referred_by_code: referrer ? referral_code : null,
         subscription: {
           create: {
             plan: "free",
             status: "active",
-            dms_limit: 100,
+            dms_limit: 100, // kept for backward compat with other systems
           },
         },
         alert_config: {
@@ -41,6 +50,16 @@ export const register = async (req, res, next) => {
         },
       },
     });
+
+    if (referrer && referrer.id !== user.id) {
+      await prisma.referral.create({
+        data: {
+          referrer_id: referrer.id,
+          referred_user_id: user.id,
+          status: "pending",
+        }
+      });
+    }
 
     const { accessToken, refreshToken } = generateTokens(user.id);
     
@@ -114,7 +133,7 @@ import axios from "axios";
 
 export const googleLogin = async (req, res, next) => {
   try {
-    const { token } = req.body;
+    const { token, referral_code } = req.body;
     if (!token) return res.status(400).json({ error: "Missing Google token" });
 
     // Fetch user profile from Google using the access_token
@@ -139,11 +158,20 @@ export const googleLogin = async (req, res, next) => {
         });
       } else {
         // Create new user
+        const generatedReferralCode = crypto.randomBytes(4).toString("hex");
+
+        let referrer = null;
+        if (referral_code) {
+          referrer = await prisma.user.findUnique({ where: { referral_code } });
+        }
+
         user = await prisma.user.create({
           data: {
             email,
             name,
             google_id: googleId,
+            referral_code: generatedReferralCode,
+            referred_by_code: referrer ? referral_code : null,
             subscription: {
               create: {
                 plan: "free",
@@ -156,6 +184,16 @@ export const googleLogin = async (req, res, next) => {
             },
           },
         });
+
+        if (referrer && referrer.id !== user.id) {
+          await prisma.referral.create({
+            data: {
+              referrer_id: referrer.id,
+              referred_user_id: user.id,
+              status: "pending",
+            }
+          });
+        }
       }
     }
 
