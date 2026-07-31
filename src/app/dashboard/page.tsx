@@ -422,7 +422,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <div className="text-[12px] font-medium text-[#1a1a18]">{planLoading ? "Loading plan..." : `${planStatus?.plan || "Free"} plan activated`}</div>
-              <div className="text-[11px] text-[#aaa] mt-[2px]">{planLoading ? "" : `${dmsLimit} DMs per month included. Upgrade anytime for unlimited sends.`}</div>
+              <div className="text-[11px] text-[#aaa] mt-[2px]">{planLoading ? "" : "Unlimited DMs per month included. Upgrade anytime for more features."}</div>
               <div className="inline-flex items-center text-[10px] px-[7px] py-[2px] rounded-[20px] font-medium mt-[4px] bg-[#eff6ff] text-[#2563eb]">Plan</div>
             </div>
           </div>
