@@ -185,7 +185,7 @@ export default function DashboardPage() {
               {planLoading ? "..." : planStatus?.plan || "Free"}
             </div>
             <div className="text-[11px] text-[#aaa] mt-[5px]">
-              {dmsLimit} DMs · 1 flow · basic analytics
+              Unlimited DMs · basic analytics
             </div>
             <Link href="/dashboard/billing" className="text-[11px] text-[#8b5cf6] mt-[8px] font-medium inline-flex items-center gap-[3px] hover:opacity-80">
               Upgrade to Pro <ArrowRight className="w-[11px] h-[11px]" />
