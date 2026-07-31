@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getPayoutRequests, updatePayoutRequest } from "../controllers/admin.controller.js";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 // Note: Ensure `requireAdmin` middleware exists or add a basic check
 export const requireAdmin = async (req, res, next) => {
