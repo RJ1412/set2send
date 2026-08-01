@@ -43,14 +43,26 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Platform Features */}
+        {/* By Use Case */}
         <div className="text-left">
-          <h4 className="text-white text-xs font-bold uppercase tracking-widest font-mono mb-4">Features</h4>
-          <div className="flex flex-col gap-2.5 text-xs font-medium">
-            <Link href="/dashboard/comment-replies" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">Comment Auto-Reply</Link>
-            <Link href="/dashboard/story-replies" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">Story Automations</Link>
-            <Link href="/dashboard/flows" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">Visual Flow Canvas</Link>
-            <Link href="/dashboard/crm" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">Lead Scoring & CRM</Link>
+          <h4 className="text-white text-xs font-bold uppercase tracking-widest font-mono mb-4">By Use Case</h4>
+          <div className="flex flex-col gap-4 text-[13px]">
+            <Link href="/use-cases/collect-emails" className="group block">
+              <div className="text-white font-bold mb-0.5 group-hover:text-[#e2ff3c] transition-colors">Collect Emails</div>
+              <div className="text-gray-400 text-xs">Generate list growth via DMs</div>
+            </Link>
+            <Link href="/use-cases/request-to-follow" className="group block">
+              <div className="text-white font-bold mb-0.5 group-hover:text-[#e2ff3c] transition-colors">Request To Follow</div>
+              <div className="text-gray-400 text-xs">Acquire followers automatically</div>
+            </Link>
+            <Link href="/use-cases/respond-to-comments" className="group block">
+              <div className="text-white font-bold mb-0.5 group-hover:text-[#e2ff3c] transition-colors">Respond To Comments</div>
+              <div className="text-gray-400 text-xs">Auto-reply to all video comments</div>
+            </Link>
+            <Link href="/use-cases/follow-to-dm" className="group block">
+              <div className="text-white font-bold mb-0.5 group-hover:text-[#e2ff3c] transition-colors">Follow To DM</div>
+              <div className="text-gray-400 text-xs">Deliver links to followers only</div>
+            </Link>
           </div>
         </div>
 
@@ -59,9 +71,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto border-t border-white/10 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-500 font-mono">
         <span>© 2026 set2send. All rights reserved.</span>
         <div className="flex gap-4">
-          <Link href="#" className="hover:text-gray-300 transition-colors">Privacy Policy</Link>
-          <Link href="#" className="hover:text-gray-300 transition-colors">Terms of Service</Link>
-          <Link href="#" className="hover:text-gray-300 transition-colors">Security Hub</Link>
+          <Link href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</Link>
+          <Link href="/terms-of-service" className="hover:text-gray-300 transition-colors">Terms of Service</Link>
+          <Link href="/security-hub" className="hover:text-gray-300 transition-colors">Security Hub</Link>
         </div>
       </div>
     </footer>
