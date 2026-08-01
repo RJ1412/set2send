@@ -192,20 +192,6 @@ export default function Navbar() {
       iconBg: "bg-[#25D366]",
     },
     {
-      name: "Messenger",
-      route: "/product/messenger",
-      description: "Facebook Messenger chatbot automation",
-      icon: <MessengerIcon className="w-5 h-5 text-white" />,
-      iconBg: "bg-[#0084FF]",
-    },
-    {
-      name: "TikTok",
-      route: "/product/tiktok",
-      description: "Turn TikTok views into profits with automation",
-      icon: <TikTokIcon className="w-5 h-5 text-white" />,
-      iconBg: "bg-black border border-gray-200",
-    },
-    {
       name: "Set2Send AI",
       route: "/product/set2send-ai",
       description: "Smart Conversations Powered by Automation",

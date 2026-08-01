@@ -37,8 +37,6 @@ export default function Footer() {
           <div className="flex flex-col gap-2.5 text-xs font-medium">
             <Link href="/product/instagram" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">Instagram</Link>
             <Link href="/product/whatsapp" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">WhatsApp</Link>
-            <Link href="/product/messenger" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">Facebook Messenger</Link>
-            <Link href="/product/tiktok" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">TikTok Marketing</Link>
             <Link href="/product/set2send-ai" className="text-gray-400 hover:text-[#e2ff3c] transition-colors">Set2Send AI Spark</Link>
           </div>
         </div>

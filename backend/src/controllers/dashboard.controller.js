@@ -11,8 +11,6 @@ export const getPlatforms = async (req, res, next) => {
     const platformData = {
       instagram: { connected: false, messages: 0, flow: "None", leads: 0, status: "Inactive" },
       whatsapp: { connected: false, messages: 0, flow: "None", leads: 0, status: "Inactive" },
-      messenger: { connected: false, messages: 0, flow: "None", leads: 0, status: "Inactive" },
-      tiktok: { connected: false, messages: 0, flow: "None", leads: 0, status: "Inactive" },
       telegram: { connected: false, messages: 0, flow: "None", leads: 0, status: "Inactive" }
     };
 
