@@ -48,20 +48,16 @@ export default function Footer() {
           <h4 className="text-white text-xs font-bold uppercase tracking-widest font-mono mb-4">By Use Case</h4>
           <div className="flex flex-col gap-4 text-[13px]">
             <Link href="/use-cases/collect-emails" className="group block">
-              <div className="text-white font-bold mb-0.5 group-hover:text-[#e2ff3c] transition-colors">Collect Emails</div>
-              <div className="text-gray-400 text-xs">Generate list growth via DMs</div>
+              <div className="text-gray-400 text-xs">Collect Emails</div>
             </Link>
             <Link href="/use-cases/request-to-follow" className="group block">
-              <div className="text-white font-bold mb-0.5 group-hover:text-[#e2ff3c] transition-colors">Request To Follow</div>
-              <div className="text-gray-400 text-xs">Acquire followers automatically</div>
+              <div className="text-gray-400 text-xs">Request To Follow</div>
             </Link>
             <Link href="/use-cases/respond-to-comments" className="group block">
-              <div className="text-white font-bold mb-0.5 group-hover:text-[#e2ff3c] transition-colors">Respond To Comments</div>
-              <div className="text-gray-400 text-xs">Auto-reply to all video comments</div>
+              <div className="text-gray-400 text-xs">Respond To Comments</div>
             </Link>
             <Link href="/use-cases/follow-to-dm" className="group block">
-              <div className="text-white font-bold mb-0.5 group-hover:text-[#e2ff3c] transition-colors">Follow To DM</div>
-              <div className="text-gray-400 text-xs">Deliver links to followers only</div>
+              <div className="text-gray-400 text-xs">Follow To DM</div>
             </Link>
           </div>
         </div>
