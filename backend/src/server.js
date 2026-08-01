@@ -25,6 +25,7 @@ import "./jobs/dmWorker.js"; // Initialize the background worker
 import "./queues/followUpQueue.js";
 import { initSilentRecheckPoller } from "./queues/silentRecheckQueue.js";
 import "./jobs/silentRecheckWorker.js"; // Initialize the silent recheck worker
+import "./jobs/whatsappBulkWorker.js"; // Initialize the WhatsApp bulk worker
 import { setupCrmCronJobs } from "./jobs/crmJobs.js";
 
 // Initialize the queue scheduling

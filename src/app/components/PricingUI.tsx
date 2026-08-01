@@ -86,6 +86,9 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
 
   const calcSub = () => {
     let t = disc(plan.price);
+    if (selectedPlan === "biz" && billing === "annual") {
+      t = Math.round(t * 0.9); // 10% extra discount
+    }
     t += Math.max(0, ig - plan.igIncl) * disc(EXTRA_IG);
     t += waEnabled ? Math.max(0, wa - waBase) * disc(EXTRA_WA) : 0;
     ADDONS.forEach(a => {
@@ -144,9 +147,9 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
 
   const planFeatureList: Record<string, string[]> = {
     free:    ["Comment-to-DM (unlimited)", "Story reply (100/mo)", "1 Instagram account", "Basic CRM (50 contacts)"],
-    creator: ["Comment-to-DM (unlimited)", "Story reply (unlimited)", "Comment public reply", "Follow-gate", "Email collection", "Top post analytics", "1 IG + 1 WA account"],
-    growth:  ["Comment-to-DM (unlimited)", "All story & comment triggers", "Follow-gate + custom flows", "CRM (unlimited contacts)", "Email collect + CSV export", "WA bulk (tokens-based)", "Full analytics dashboard", "2 IG + 2 WA accounts"],
-    biz:     ["Unlimited DMs", "All features unlocked", "5 IG + 5 WA accounts", "Unlimited CRM", "WA bulk (tokens at discount)", "AI suggestions", "Priority support", "White-label (coming soon)"],
+    creator: ["Comment-to-DM (unlimited)", "Story reply (unlimited)", "Comment public reply", "Follow-gate", "Email collection", "Top post analytics", "1 IG + 1 WA account", "WhatsApp (500 texts/mo)"],
+    growth:  ["Comment-to-DM (unlimited)", "All story & comment triggers", "Follow-gate + custom flows", "CRM (unlimited contacts)", "Email collect + CSV export", "Full analytics dashboard", "2 IG + 2 WA accounts", "WhatsApp (2,000 texts/mo)"],
+    biz:     ["Unlimited IG DMs", "All features unlocked", "5 IG + 5 WA accounts", "Unlimited CRM", "AI suggestions", "Priority support", "White-label (coming soon)", "WhatsApp (5,000 texts/mo)"],
   };
   const planFeaturesOff: Record<string, string[]> = {
     free:    ["Comment public reply", "Follow-gate", "WhatsApp bulk", "Email collection"],

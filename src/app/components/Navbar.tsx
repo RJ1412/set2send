@@ -79,7 +79,7 @@ export default function Navbar() {
   const isTikTokPage = pathname === "/product/tiktok";
   const isAiPage = pathname === "/product/set2send-ai";
   const isCreatorsPage = pathname === "/solutions/creators" || pathname === "/solutions/contentcreators";
-  const isLightPage = pathname === "/use-cases/collect-emails" || pathname === "/usecase/email" || pathname === "/use-cases/follow-to-dm" || pathname === "/use-cases/request-to-follow" || pathname === "/use-cases/respond-to-comments" || (pathname.startsWith("/solutions/") && !isCreatorsPage);
+  const isLightPage = pathname === "/use-cases/collect-emails" || pathname === "/pricing" || pathname === "/usecase/email" || pathname === "/use-cases/follow-to-dm" || pathname === "/use-cases/request-to-follow" || pathname === "/use-cases/respond-to-comments" || (pathname.startsWith("/solutions/") && !isCreatorsPage);
 
   const navbarBgClass = scrolled
     ? isInstagramPage
@@ -219,7 +219,6 @@ export default function Navbar() {
       { name: "For Creators", route: "/solutions/creators", desc: "Turn views into fans & buyers" },
       { name: "For eCommerce", route: "/solutions/ecommerce", desc: "Recover carts & sell catalog products" },
       { name: "For SM Marketers", route: "/solutions/marketers", desc: "Manage communities at scale" },
-      { name: "For Agencies", route: "/solutions/agencies", desc: "Scale client results without workload" },
       { name: "For Brands", route: "/solutions/brands", desc: "Build stronger customer relationships" },
     ],
     useCases: [
@@ -281,7 +280,6 @@ export default function Navbar() {
               </span>
             </div>
 
-            <Link href="/" className={textLinkClass}>Agencies</Link>
             <Link href="/pricing" className={textLinkClass}>Pricing</Link>
             <Link href="/" className={textLinkClass}>Resources</Link>
           </nav>
@@ -555,7 +553,6 @@ export default function Navbar() {
                 )}
               </div>
 
-              <Link href="/" className="border-b border-zinc-800 pb-4 text-zinc-200 hover:text-white uppercase tracking-wider text-sm font-extrabold">Agencies</Link>
               <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="border-b border-zinc-800 pb-4 text-zinc-200 hover:text-white uppercase tracking-wider text-sm font-extrabold">Pricing</Link>
               <Link href="/" className="border-b border-zinc-800 pb-4 text-zinc-200 hover:text-white uppercase tracking-wider text-sm font-extrabold">Resources</Link>
             </div>

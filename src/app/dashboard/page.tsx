@@ -50,6 +50,49 @@ export default function DashboardPage() {
     enabled: !!session,
   });
 
+  const { data: walletData, isLoading: walletLoading } = useQuery({
+    queryKey: ["walletBalance"],
+    queryFn: () => api.get("/wallet/balance").then((res) => res.data),
+    enabled: !!session,
+  });
+
+  const [showReferralModal, setShowReferralModal] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+  const [referralStatus, setReferralStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [referralMsg, setReferralMsg] = useState("");
+
+  useEffect(() => {
+    if (mounted && session && session.google_id && !session.referred_by_code) {
+      const dismissed = localStorage.getItem("referralPromptDismissed");
+      if (!dismissed) {
+        setShowReferralModal(true);
+      }
+    }
+  }, [mounted, session]);
+
+  const handleApplyReferral = async () => {
+    if (!referralCode.trim()) return;
+    setReferralStatus("loading");
+    try {
+      await api.post("/wallet/referral/apply", { code: referralCode.trim() });
+      setReferralStatus("success");
+      setReferralMsg("Referral code applied successfully!");
+      setTimeout(() => {
+        setShowReferralModal(false);
+        // Refresh session if needed or just dismiss
+        localStorage.setItem("referralPromptDismissed", "true");
+      }, 1500);
+    } catch (err: any) {
+      setReferralStatus("error");
+      setReferralMsg(err.response?.data?.message || "Invalid or expired referral code");
+    }
+  };
+
+  const handleDismissReferral = () => {
+    localStorage.setItem("referralPromptDismissed", "true");
+    setShowReferralModal(false);
+  };
+
   const currentDate = new Date().toLocaleDateString('en-GB', { 
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
   });
@@ -93,6 +136,10 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-[8px]">
+          <Link href="/dashboard/wallet" className="flex items-center gap-[6px] px-[12px] py-[7px] rounded-[8px] text-[12px] font-medium cursor-pointer border border-[#d0cdc6] bg-[#fdf8ee] text-[#9a7b3a] hover:bg-[#faf4e5]">
+             <span className="w-[14px] h-[14px] rounded-full bg-[#9A7B3A] text-white flex items-center justify-center text-[10px] font-bold">◎</span>
+             {walletLoading ? "..." : (walletData?.balance || 0)} Coins
+          </Link>
           <button className="flex items-center gap-[6px] px-[12px] py-[7px] rounded-[8px] text-[12px] font-medium cursor-pointer border border-[#d0cdc6] bg-white text-[#444] hover:bg-[#fafafa]">
             <Bell className="w-[14px] h-[14px]" /> Alerts
           </button>
@@ -112,6 +159,42 @@ export default function DashboardPage() {
           )}
         </div>
       </header>
+
+      {/* REFERRAL MODAL */}
+      {showReferralModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-xl shadow-xl border border-zinc-200 p-6 w-full max-w-sm relative">
+            <button onClick={handleDismissReferral} className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-700">✕</button>
+            <h3 className="text-lg font-bold text-zinc-900 mb-2">Got a referral code?</h3>
+            <p className="text-xs text-zinc-500 mb-4">You signed up with Google. If a friend referred you, enter their code now to claim your S2S coins bonus!</p>
+            
+            <input 
+              type="text" 
+              placeholder="e.g. S2S-ABCD-1234" 
+              value={referralCode}
+              onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg text-sm mb-2 font-mono outline-none focus:border-[#9a7b3a]"
+            />
+            
+            {referralStatus === "error" && <p className="text-xs text-red-500 mb-3">{referralMsg}</p>}
+            {referralStatus === "success" && <p className="text-xs text-green-600 mb-3">{referralMsg}</p>}
+            
+            <button 
+              onClick={handleApplyReferral}
+              disabled={referralStatus === "loading" || !referralCode.trim()}
+              className="w-full bg-[#9a7b3a] hover:bg-[#8a6b2a] text-white font-semibold py-2 rounded-lg text-sm transition-colors disabled:opacity-50"
+            >
+              {referralStatus === "loading" ? "Applying..." : "Apply Code"}
+            </button>
+            <button 
+              onClick={handleDismissReferral}
+              className="w-full mt-2 bg-transparent text-zinc-500 hover:text-zinc-700 font-medium py-2 rounded-lg text-sm transition-colors"
+            >
+              Skip for now
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* SCROLLABLE CONTENT */}
       <div className="flex-1 overflow-y-auto p-[20px] md:px-[24px] flex flex-col gap-[20px]">
