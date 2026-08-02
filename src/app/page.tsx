@@ -2322,7 +2322,7 @@ function BuilderView() {
 
   const nodeData = selectedNode?.data as any;
 
-  const onConnect = (params: Connection) => setEdges((eds) => addEdge(params, eds));
+  const onConnect = (params: Connection) => setEdges((eds: any) => addEdge(params, eds));
 
   const handleSave = () => {
     store.saveFlow(store.activeFlowId, nodes, edges);
