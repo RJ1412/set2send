@@ -51,27 +51,72 @@ export default function BillingPage() {
         return;
       }
 
-      // Open Razorpay checkout if configured
+      // Open Razorpay checkout
       const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-      if (razorpayKey && typeof window !== "undefined" && (window as any).Razorpay) {
-        const options = {
-          key: razorpayKey,
-          amount: invoice.total_paise,
-          currency: "INR",
-          name: "set2send",
-          description: `${params.plan} plan — ${params.billing}`,
-          order_id: orderId,
-          notes: {
-            user_id: currentPlan?.user_id,
-            plan_key: params.plan,
-          },
-          theme: { color: "#9A7B3A" },
-        };
-        const rzp = new (window as any).Razorpay(options);
-        rzp.open();
-      } else {
-        alert(`Order created! ID: ${orderId}\nAmount: ₹${invoice.total}\n\nIntegrate Razorpay SDK to complete payment.`);
+      if (!razorpayKey) {
+        alert("Payment gateway is not configured. Please contact support.");
+        return;
       }
+
+      if (typeof window === "undefined" || !(window as any).Razorpay) {
+        alert("Payment gateway is loading. Please try again in a moment.");
+        return;
+      }
+
+      const options = {
+        key: razorpayKey,
+        amount: invoice.total_paise,
+        currency: "INR",
+        name: "set2send",
+        description: `${params.plan} plan — ${params.billing}`,
+        order_id: orderId,
+        notes: {
+          user_id: currentPlan?.user_id,
+          plan_key: params.plan,
+        },
+        theme: { color: "#9A7B3A" },
+        handler: async (response: {
+          razorpay_payment_id: string;
+          razorpay_order_id: string;
+          razorpay_signature: string;
+        }) => {
+          // Verify payment signature on backend
+          try {
+            const { data: verifyData } = await api.post("/billing/verify-payment", {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            if (verifyData.success) {
+              alert("Payment successful! Your plan has been activated.");
+              window.location.reload();
+            }
+          } catch (verifyErr: any) {
+            alert(
+              verifyErr.response?.data?.error ||
+                "Payment was received but verification failed. Please contact support."
+            );
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            // User closed the Razorpay modal without completing payment
+            setCheckoutLoading(false);
+          },
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+
+      rzp.on("payment.failed", (response: any) => {
+        const errorDesc =
+          response.error?.description || "Payment failed. Please try again.";
+        const errorCode = response.error?.code || "";
+        alert(`Payment failed: ${errorDesc}${errorCode ? ` (${errorCode})` : ""}`);
+        setCheckoutLoading(false);
+      });
+
+      rzp.open();
     } catch (err: any) {
       alert(err.response?.data?.error || "Error creating order. Please try again.");
     } finally {

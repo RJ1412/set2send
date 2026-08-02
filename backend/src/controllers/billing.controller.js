@@ -38,10 +38,17 @@ export const createOrder = async (req, res, next) => {
     let orderId = `mock_order_${Date.now()}`;
     
     if (razorpay && invoice.total_paise > 0) {
+      if (invoice.total_paise < 100) {
+        return res.status(400).json({ error: "Minimum payable amount is ₹1 (100 paise)" });
+      }
       const order = await razorpay.orders.create({
         amount: invoice.total_paise,
         currency: "INR",
-        receipt: `receipt_${req.userId}_${Date.now()}`
+        receipt: `receipt_${req.userId}_${Date.now()}`,
+        notes: {
+          user_id: req.userId,
+          plan_key: plan,
+        },
       });
       orderId = order.id;
     }
@@ -62,6 +69,61 @@ export const createOrder = async (req, res, next) => {
     res.json({
       orderId,
       invoice
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const verifyPayment = async (req, res, next) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ error: "Missing required payment fields" });
+    }
+
+    if (!env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).json({ error: "Payment verification not configured" });
+    }
+
+    const expectedSignature = crypto
+      .createHmac("sha256", env.RAZORPAY_KEY_SECRET)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ error: "Payment verification failed — signature mismatch" });
+    }
+
+    // Signature verified — activate the user's subscription
+    const order = razorpay
+      ? await razorpay.orders.fetch(razorpay_order_id)
+      : null;
+
+    if (order && order.notes?.user_id) {
+      await prisma.subscription.upsert({
+        where: { user_id: order.notes.user_id },
+        update: {
+          status: "active",
+          plan_key: order.notes.plan_key || "creator",
+          first_paid_at: new Date(),
+        },
+        create: {
+          user_id: order.notes.user_id,
+          plan: "creator",
+          plan_key: order.notes.plan_key || "creator",
+          status: "active",
+          first_paid_at: new Date(),
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Payment verified successfully",
+      order_id: razorpay_order_id,
+      payment_id: razorpay_payment_id,
     });
   } catch (err) {
     next(err);
