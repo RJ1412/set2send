@@ -135,7 +135,7 @@ export default function BillingPage() {
               <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#2A7D4F" }}>Active</span>
             </div>
             <div>
-              <span style={{ fontSize: 14, fontWeight: 600, textTransform: "capitalize" }}>{currentPlan.plan || "Free"} Plan</span>
+              <span style={{ fontSize: 14, fontWeight: 600, textTransform: "capitalize" }}>{currentPlan.plan_key || currentPlan.plan || "free"} Plan</span>
               <span style={{ fontSize: 12, color: "#6B6560", marginLeft: 8 }}>· {currentPlan.dms_used_this_month || 0} DMs sent this month</span>
             </div>
           </div>

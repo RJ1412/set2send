@@ -1,5 +1,6 @@
 import { prisma } from "../utils/db.js";
 import axios from "axios";
+import { getUserEntitlements } from "../services/entitlement.service.js";
 
 export const getCampaigns = async (req, res, next) => {
   try {
@@ -24,7 +25,7 @@ export const createCampaign = async (req, res, next) => {
   try {
     let { 
       instagram_account_id, trigger_type, ig_media_id, ig_media_url, keyword, fuzzy_match, dm_template,
-      require_follow, follow_message, collect_email, email_prompt_message, follow_up_message, follow_up_time_hours,
+      require_follow, follow_message, collect_email, email_prompt_message, public_reply_enabled, public_reply_text, follow_up_message, follow_up_time_hours,
       retrigger_mode, retrigger_days, returning_dm_template
     } = req.body;
 
@@ -33,6 +34,11 @@ export const createCampaign = async (req, res, next) => {
     });
 
     if (!account) return res.status(403).json({ error: "Invalid account" });
+
+    const entitlements = await getUserEntitlements(req.userId);
+    const requestedFeatures = [trigger_type === "story_mention" && "smr", require_follow && "fg", collect_email && "ec", public_reply_enabled && "cpr"].filter(Boolean);
+    const unavailable = requestedFeatures.find((feature) => !entitlements.features.includes(feature));
+    if (unavailable) return res.status(403).json({ error: "This campaign requires the " + unavailable + " feature." });
 
     // Meta Webhooks return numeric Media IDs, but the frontend sends shortcodes from URLs
     if (ig_media_id !== "ALL_POSTS" && isNaN(ig_media_id)) {
@@ -67,7 +73,7 @@ export const createCampaign = async (req, res, next) => {
         keyword,
         fuzzy_match,
         dm_template,
-        require_follow, follow_message, collect_email, email_prompt_message, follow_up_message, follow_up_time_hours,
+        require_follow, follow_message, collect_email, email_prompt_message, public_reply_enabled, public_reply_text, follow_up_message, follow_up_time_hours,
         retrigger_mode, retrigger_days, returning_dm_template
       }
     });
@@ -113,6 +119,11 @@ export const updateCampaign = async (req, res, next) => {
     if (!campaign || campaign.instagram_account.user_id !== req.userId) {
       return res.status(404).json({ error: "Not found" });
     }
+
+    const entitlements = await getUserEntitlements(req.userId);
+    const requestedFeatures = [require_follow && "fg", collect_email && "ec"].filter(Boolean);
+    const unavailable = requestedFeatures.find((feature) => !entitlements.features.includes(feature));
+    if (unavailable) return res.status(403).json({ error: "This campaign requires the " + unavailable + " feature." });
 
     const updated = await prisma.campaign.update({
       where: { id: req.params.id },

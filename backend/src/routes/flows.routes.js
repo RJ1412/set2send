@@ -1,10 +1,12 @@
 import express from 'express';
 import { requireAuth } from '../middleware/auth.middleware.js';
+import { requireFeature } from '../services/entitlement.service.js';
 import * as flowsController from '../controllers/flows.controller.js';
 
 const router = express.Router();
 
 router.use(requireAuth);
+router.use(requireFeature("custom_flows"));
 
 router.post('/', flowsController.createFlow);
 router.get('/', flowsController.getFlows);

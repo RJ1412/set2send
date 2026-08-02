@@ -6,6 +6,7 @@ import { pollerConnection } from "../queues/commentPollerQueue.js";
 import { env } from "../config/env.js";
 import { addFollowUpJob } from "../queues/followUpQueue.js";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
+import { getUserEntitlements } from "../services/entitlement.service.js";
 
 export const processDm = async (job) => {
   console.log(`[Queue] Processing job:`, job.data);
@@ -28,9 +29,11 @@ export const processDm = async (job) => {
     include: { subscription: true },
   });
 
-  if (!user?.subscription || user.subscription.dms_used_this_month >= user.subscription.dms_limit) {
-    console.log(`[Queue] Limit reached for user ${user?.id}`);
-    throw new Error("DM limit reached");
+  const entitlements = await getUserEntitlements(campaign.instagram_account.user_id);
+  if (entitlements.dm_limit !== null) {
+    const startOfMonth = new Date(); startOfMonth.setDate(1); startOfMonth.setHours(0, 0, 0, 0);
+    const sentThisMonth = await prisma.dmLog.count({ where: { campaign: { instagram_account: { user_id: campaign.instagram_account.user_id } }, dm_status: "sent", dm_sent_at: { gte: startOfMonth } } });
+    if (sentThisMonth >= entitlements.dm_limit) { console.log("[Queue] DM limit reached"); return; }
   }
 
   // 3. Match Keyword or Trigger Type
@@ -179,7 +182,7 @@ export const processDm = async (job) => {
     );
     
     // 4b. Send Public Comment Reply (if enabled)
-    if (campaign.trigger_type === 'comment') {
+    if (campaign.trigger_type === 'comment' && campaign.public_reply_enabled) {
       try {
         const replyText = campaign.public_reply_text || "You're on the list! Check your DMs soon.";
         await axios.post(
@@ -217,10 +220,6 @@ export const processDm = async (job) => {
     await prisma.campaign.update({
       where: { id: campaignId },
       data: { dms_sent: { increment: 1 } },
-    });
-    await prisma.subscription.update({
-      where: { id: user.subscription.id },
-      data: { dms_used_this_month: { increment: 1 } },
     });
 
     if (!isGateMessage) {

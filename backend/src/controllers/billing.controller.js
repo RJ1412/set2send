@@ -2,7 +2,7 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import { env } from "../config/env.js";
 import { prisma } from "../utils/db.js";
-import { computeInvoice, REFEREE_BONUS, REFERRER_BONUS } from "../config/plans.js";
+import { computeInvoice, isPlanKey, PLAN_RANK, REFEREE_BONUS, REFERRER_BONUS, sanitizeAddons } from "../config/plans.js";
 
 let razorpay = null;
 if (env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET) {
@@ -14,7 +14,14 @@ if (env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET) {
 
 export const createOrder = async (req, res, next) => {
   try {
-    const { plan, billing = "monthly", addons = [], extra_ig = 0, extra_wa = 0, wa_usage_estimate = 0, use_coins = false } = req.body;
+    const { plan, billing = "monthly", addons = [], extra_ig = 0, extra_wa = 0, use_coins = false } = req.body;
+    if (!isPlanKey(plan) || !["monthly", "annual"].includes(billing)) return res.status(400).json({ error: "Invalid plan or billing period" });
+    const selectedAddons = sanitizeAddons(addons);
+    const selectedExtraIg = Math.max(0, Math.min(20, Number.parseInt(extra_ig, 10) || 0));
+    const selectedExtraWa = Math.max(0, Math.min(20, Number.parseInt(extra_wa, 10) || 0));
+    const currentSubscription = await prisma.subscription.findUnique({ where: { user_id: req.userId } });
+    const currentPlanKey = currentSubscription?.status === "active" && isPlanKey(currentSubscription?.plan_key) ? currentSubscription.plan_key : "free";
+    if (PLAN_RANK[plan] < PLAN_RANK[currentPlanKey]) return res.status(400).json({ error: "Downgrades are not available from checkout. Select a higher plan." });
 
     let coins_to_apply = 0;
     if (use_coins) {
@@ -28,10 +35,10 @@ export const createOrder = async (req, res, next) => {
     const invoice = computeInvoice({
       plan_key: plan,
       billing,
-      addons,
-      extra_ig,
-      extra_wa,
-      wa_usage_estimate,
+      addons: selectedAddons,
+      extra_ig: selectedExtraIg,
+      extra_wa: selectedExtraWa,
+      wa_usage_estimate: 0,
       coins_to_apply
     });
 
@@ -57,6 +64,10 @@ export const createOrder = async (req, res, next) => {
           notes: {
             user_id: req.userId,
             plan_key: plan,
+            billing,
+            addons: JSON.stringify(selectedAddons),
+            extra_ig: String(selectedExtraIg),
+            extra_wa: String(selectedExtraWa),
           },
         });
         orderId = order.id;
@@ -138,21 +149,13 @@ export const verifyPayment = async (req, res, next) => {
     }
 
     if (order.notes?.user_id) {
-      await prisma.subscription.upsert({
-        where: { user_id: order.notes.user_id },
-        update: {
-          status: "active",
-          plan_key: order.notes.plan_key || "creator",
-          first_paid_at: new Date(),
-        },
-        create: {
-          user_id: order.notes.user_id,
-          plan: "creator",
-          plan_key: order.notes.plan_key || "creator",
-          status: "active",
-          first_paid_at: new Date(),
-        },
-      });
+      const purchasedPlan = isPlanKey(order.notes.plan_key) ? order.notes.plan_key : "creator";
+      let purchasedAddons = [];
+      try { purchasedAddons = sanitizeAddons(JSON.parse(order.notes.addons || "[]")); } catch {}
+      const periodEnd = new Date();
+      periodEnd.setMonth(periodEnd.getMonth() + (order.notes.billing === "annual" ? 12 : 1));
+      const subscriptionData = { plan: purchasedPlan, plan_key: purchasedPlan, status: "active", purchased_addons: JSON.stringify(purchasedAddons), extra_ig_accounts: Math.max(0, Number.parseInt(order.notes.extra_ig || "0", 10) || 0), extra_wa_accounts: Math.max(0, Number.parseInt(order.notes.extra_wa || "0", 10) || 0), razorpay_order_id: razorpay_order_id, current_period_end: periodEnd, first_paid_at: new Date() };
+      await prisma.$transaction([prisma.subscription.upsert({ where: { user_id: order.notes.user_id }, update: subscriptionData, create: { user_id: order.notes.user_id, ...subscriptionData } }),prisma.user.update({ where: { id: order.notes.user_id }, data: { plan: purchasedPlan } })]);
     }
 
     res.json({
@@ -337,7 +340,7 @@ export const currentPlan = async (req, res, next) => {
     const response = {
       ...(user?.subscription || { plan: "free" }),
       dms_used_this_month: dmsUsedCount,
-      dms_limit: "Unlimited" // Handled properly in frontend now
+      dms_limit: user?.subscription?.plan_key === "free" || !user?.subscription ? 2000 : "Unlimited"
     };
 
     res.json(response);

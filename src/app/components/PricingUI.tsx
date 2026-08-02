@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -54,6 +54,7 @@ const WA_TYPES: Record<string, { label: string; metaRate: number; yourRate: numb
 };
 
 const EXTRA_IG = 99, EXTRA_WA = 49;
+const PLAN_RANK: Record<string, number> = { free: 0, creator: 1, growth: 2, biz: 3 };
 const COIN_REDEEM_MIN = 1000;
 const fmt = (n: number) => Math.round(n).toLocaleString("en-IN");
 
@@ -106,6 +107,7 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
 
   // ─── Actions ───────────────────────────────────────────────────────────
   const handleSelectPlan = (key: string) => {
+    if (currentPlanKey && PLAN_RANK[key] < PLAN_RANK[currentPlanKey]) return;
     setSelectedPlan(key);
     const p = PLANS[key];
     setIg(p.igIncl);
@@ -124,6 +126,7 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
   };
 
   const handleCta = () => {
+    if (currentPlanKey === selectedPlan || (currentPlanKey && PLAN_RANK[selectedPlan] < PLAN_RANK[currentPlanKey])) return;
     if (onCheckout) {
       const addonKeys = ADDONS.filter(a => addons[a.key]).map(a => a.key);
       onCheckout({ plan: selectedPlan, billing, addons: addonKeys, extra_ig: ig - plan.igIncl, extra_wa: wa - waBase, wa_usage_estimate: est, use_coins: useCoins });
@@ -146,7 +149,7 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
   };
 
   const planFeatureList: Record<string, string[]> = {
-    free:    ["Comment-to-DM (unlimited)", "Story reply (100/mo)", "1 Instagram account", "Basic CRM (50 contacts)"],
+    free:    ["Comment-to-DM (2,000/mo)", "Story reply (100/mo)", "1 Instagram account", "Basic CRM (50 contacts)"],
     creator: ["Comment-to-DM (unlimited)", "Story reply (unlimited)", "Comment public reply", "Follow-gate", "Email collection", "Top post analytics", "1 IG + 1 WA account", "WhatsApp (500 texts/mo)"],
     growth:  ["Comment-to-DM (unlimited)", "All story & comment triggers", "Follow-gate + custom flows", "CRM (unlimited contacts)", "Email collect + CSV export", "Full analytics dashboard", "2 IG + 2 WA accounts", "WhatsApp (2,000 texts/mo)"],
     biz:     ["Unlimited IG DMs", "All features unlocked", "5 IG + 5 WA accounts", "Unlimited CRM", "AI suggestions", "Priority support", "White-label (coming soon)", "WhatsApp (5,000 texts/mo)"],
@@ -481,12 +484,14 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
 
               {/* CTA */}
               <div style={{ padding: "12px 18px 16px" }}>
-                <button onClick={handleCta}
-                  style={{ width: "100%", padding: 12, borderRadius: 10, background: "#9A7B3A", color: "#fff", fontSize: 14, fontWeight: 600, border: "none", cursor: "pointer", fontFamily: "Inter, sans-serif", transition: "background .2s" }}
+                <button onClick={handleCta} disabled={currentPlanKey === selectedPlan || Boolean(currentPlanKey && PLAN_RANK[selectedPlan] < PLAN_RANK[currentPlanKey]) || isLoading}
+                  style={{ width: "100%", padding: 12, borderRadius: 10, background: currentPlanKey === selectedPlan ? "#B0AB9E" : "#9A7B3A", color: "#fff", fontSize: 14, fontWeight: 600, border: "none", cursor: currentPlanKey === selectedPlan ? "not-allowed" : "pointer", fontFamily: "Inter, sans-serif", transition: "background .2s" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "#B8942E")}
                   onMouseLeave={e => (e.currentTarget.style.background = "#9A7B3A")}>
                   {currentPlanKey === selectedPlan
                     ? "Current Plan"
+                    : currentPlanKey && PLAN_RANK[selectedPlan] < PLAN_RANK[currentPlanKey]
+                    ? "Choose a higher plan"
                     : isLoading
                     ? "Processing…"
                     : plan.price === 0
@@ -533,7 +538,7 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
             <tbody>
               {[
                 { group: "Instagram automation", rows: [
-                  { label: "Comment-to-DM replies", free: "Unlimited", creator: "Unlimited", growth: "Unlimited", biz: "Unlimited" },
+                  { label: "Comment-to-DM replies", free: "2,000/mo", creator: "Unlimited", growth: "Unlimited", biz: "Unlimited" },
                   { label: "Story reply automation", free: "100/mo", creator: "Unlimited", growth: "Unlimited", biz: "Unlimited" },
                   { label: "Comment public reply", free: "–", creator: "✓", growth: "✓", biz: "✓" },
                   { label: "Follow-gate (DM only followers)", free: "–", creator: "✓", growth: "✓", biz: "✓" },

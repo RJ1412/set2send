@@ -17,7 +17,7 @@
  */
 
 import { prisma } from "../utils/db.js";
-import { PLAN_FEATURES } from "../config/plans.js";
+import { PLAN_FEATURES, PLAN_LIMITS, PLAN_RANK } from "../config/plans.js";
 
 /**
  * Get complete entitlement object for a user.
@@ -31,8 +31,8 @@ export async function getUserEntitlements(userId) {
     where: { user_id: userId },
   });
 
-  // Default: free plan entitlements
-  const planKey = subscription?.plan_key || subscription?.plan || "free";
+  const isSubscriptionActive = Boolean(subscription) && subscription.status === "active" && (!subscription.current_period_end || new Date(subscription.current_period_end) > new Date());
+  const planKey = isSubscriptionActive && PLAN_FEATURES[subscription.plan_key || subscription.plan] ? (subscription.plan_key || subscription.plan) : "free";
   const planConfig = PLAN_FEATURES[planKey] || PLAN_FEATURES["free"];
 
   // Parse purchased add-ons
@@ -48,19 +48,21 @@ export async function getUserEntitlements(userId) {
   // Build feature set: plan features + purchased add-ons
   const allFeatures = new Set([...planConfig.features, ...purchasedAddons]);
 
-  // Check subscription status
-  const isActive = !subscription || subscription.status === "active";
-  const isPastDue = subscription?.status === "past_due";
+  const isActive = !subscription || isSubscriptionActive;
 
   return {
     plan_key: planKey,
-    status: subscription?.status || "active",
+    plan_rank: PLAN_RANK[planKey],
+    status: isActive ? "active" : subscription?.status || "active",
     is_active: isActive,
-    features: isActive || isPastDue ? [...allFeatures] : ["ctd"], // on past_due: only free features
+    features: isActive ? [...allFeatures] : [...PLAN_FEATURES.free.features],
     ig_accounts_included: planConfig.igIncl + (subscription?.extra_ig_accounts || 0),
-    wa_accounts_included: planConfig.waIncl + (subscription?.extra_wa_accounts || 0),
+    wa_accounts_included: (planConfig.waAccess || purchasedAddons.includes("wa")) ? planConfig.waIncl + (subscription?.extra_wa_accounts || 0) : 0,
     wa_access: planConfig.waAccess || purchasedAddons.includes("wa"),
     crm_contacts: planConfig.crmContacts,
+    dm_limit: PLAN_LIMITS[planKey].dmsPerMonth,
+    story_replies_limit: PLAN_LIMITS[planKey].storyRepliesPerMonth,
+    wa_messages_limit: (planConfig.waAccess || purchasedAddons.includes("wa")) ? PLAN_LIMITS[planKey].waMessagesPerMonth : 0,
     current_period_end: subscription?.current_period_end,
     purchased_addons: purchasedAddons,
     extra_ig_accounts: subscription?.extra_ig_accounts || 0,

@@ -1,5 +1,6 @@
 import express from "express";
 import { requireAuth } from "../middleware/auth.middleware.js";
+import { requireFeature } from "../services/entitlement.service.js";
 import {
   parseCsv,
   createCampaign,
@@ -21,6 +22,7 @@ router.post("/webhook", handleWebhook);
 
 // Protected routes
 router.use(requireAuth);
+router.use(requireFeature("wa"));
 
 router.post("/parse-csv", parseCsv);
 router.post("/campaigns", createCampaign);

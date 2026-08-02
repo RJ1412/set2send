@@ -15,6 +15,18 @@ export const PLAN_PRICES = {
   biz:     1999,
 };
 
+export const PLAN_RANK = { free: 0, creator: 1, growth: 2, biz: 3 };
+
+export const PLAN_LIMITS = {
+  free: { dmsPerMonth: 2000, storyRepliesPerMonth: 100, waMessagesPerMonth: 0 },
+  creator: { dmsPerMonth: null, storyRepliesPerMonth: null, waMessagesPerMonth: 500 },
+  growth: { dmsPerMonth: null, storyRepliesPerMonth: null, waMessagesPerMonth: 2000 },
+  biz: { dmsPerMonth: null, storyRepliesPerMonth: null, waMessagesPerMonth: 5000 },
+};
+
+export const PLAN_NAMES = {
+  free: "Starter", creator: "Creator", growth: "Growth", biz: "Business",
+};
 // Annual discount factor
 export const ANNUAL_DISCOUNT = 0.8;
 
@@ -44,7 +56,7 @@ export const WA_RATES = {
 // Features included per plan (free add-on logic for paid plans)
 export const PLAN_FEATURES = {
   free: {
-    features: ["ctd"],           // comment-to-DM only (unlimited)
+    features: ["ctd", "smr"],
     igIncl: 1,
     waIncl: 0,
     waAccess: false,
@@ -149,6 +161,7 @@ export function computeInvoice({ plan_key, billing, addons = [], extra_ig = 0, e
     subtotal,
     coins_applied: coinsApplied,
     coins_discount: coinsDiscount,
+
     total,             // amount to charge in INR
     total_paise: total * 100, // for Razorpay (paise)
   };
@@ -159,6 +172,14 @@ export function computeInvoice({ plan_key, billing, addons = [], extra_ig = 0, e
  */
 export function isPaidPlan(plan_key) {
   return plan_key !== "free" && PLAN_PRICES[plan_key] > 0;
+}
+
+export function isPlanKey(planKey) {
+  return Object.hasOwn(PLAN_PRICES, planKey);
+}
+
+export function sanitizeAddons(addons) {
+  return [...new Set(Array.isArray(addons) ? addons.filter((key) => Object.hasOwn(ADDON_PRICES, key)) : [])];
 }
 
 // S2S Coins Constants

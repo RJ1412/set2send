@@ -1,6 +1,7 @@
 import { env } from "../config/env.js";
 import { prisma } from "../utils/db.js";
 import axios from "axios";
+import { checkIgAccountLimit } from "../services/entitlement.service.js";
 
 export const connect = (req, res) => {
   const redirectUri = env.META_REDIRECT_URI;
@@ -106,7 +107,14 @@ export const exchangeToken = async (req, res) => {
       console.log("Failed to fetch IG username, using default.");
     }
 
-    // 7. Save to DB (Store the PAGE Access Token, not the user token!)
+    // 7. Enforce the plan capacity before connecting a new account.
+    const existingAccount = await prisma.instagramAccount.findUnique({ where: { ig_user_id: igUserId } });
+    if (!existingAccount) {
+      const capacity = await checkIgAccountLimit(userId);
+      if (!capacity.allowed) return res.status(403).json({ error: "Instagram account limit reached (" + capacity.limit + "). Upgrade or add an account add-on." });
+    }
+
+    // 8. Save to DB (Store the PAGE Access Token, not the user token!)
     await prisma.instagramAccount.upsert({
       where: { ig_user_id: igUserId },
       update: {
