@@ -1,5 +1,20 @@
 import { prisma } from "../utils/db.js";
 
+
+// Campaign counters are authoritative because legacy delivery paths may not create DmLog rows.
+export const getStats = async (req, res, next) => {
+  try {
+    const totals = await prisma.campaign.aggregate({
+      where: { instagram_account: { user_id: req.userId } },
+      _sum: { dms_sent: true },
+    });
+
+    res.json({ dms_sent: totals._sum.dms_sent ?? 0 });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getPlatforms = async (req, res, next) => {
   try {
     const platforms = await prisma.platformConnection.findMany({
@@ -129,3 +144,5 @@ export const addTestLead = async (req, res, next) => {
     next(error);
   }
 };
+
+

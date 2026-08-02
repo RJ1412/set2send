@@ -44,6 +44,13 @@ export default function DashboardPage() {
     enabled: !!session,
   });
 
+  const { data: dashboardStats, isLoading: statsLoading } = useQuery({
+    queryKey: ["dashboardStats"],
+    queryFn: () => api.get("/dashboard/stats").then((res) => res.data),
+    enabled: !!session,
+    refetchInterval: 10000,
+  });
+
   const { data: flows, isLoading: flowsLoading } = useQuery({
     queryKey: ["flows"],
     queryFn: () => api.get("/flows").then((res) => res.data),
@@ -100,7 +107,7 @@ export default function DashboardPage() {
 
   const activeCampaignsCount = campaigns?.filter((c: any) => c.status === "active").length || 0;
   
-  const dmsUsed = planStatus?.dms_used_this_month || 0;
+  const dmsSent = dashboardStats?.dms_sent ?? 0;
 
   const handleConnectInstagram = async () => {
     try {
@@ -237,7 +244,7 @@ export default function DashboardPage() {
               <Send className="w-[13px] h-[13px]" /> DMs sent
             </div>
             <div className="text-[26px] font-semibold text-[#1a1a18] leading-none">
-              {planLoading ? "..." : dmsUsed}
+              {statsLoading ? "..." : dmsSent}
             </div>
             <Link href="/dashboard/billing" className="text-[11px] text-[#8b5cf6] mt-[8px] font-medium inline-flex items-center gap-[3px] hover:opacity-80">
               Upgrade for other premium features <ArrowRight className="w-[11px] h-[11px]" />
@@ -517,4 +524,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
 
