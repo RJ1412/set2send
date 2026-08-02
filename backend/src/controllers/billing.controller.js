@@ -44,7 +44,7 @@ export const createOrder = async (req, res, next) => {
       const order = await razorpay.orders.create({
         amount: invoice.total_paise,
         currency: "INR",
-        receipt: `receipt_${req.userId}_${Date.now()}`,
+        receipt: `rcpt_${req.userId.substring(0, 8)}_${Date.now()}`,
         notes: {
           user_id: req.userId,
           plan_key: plan,

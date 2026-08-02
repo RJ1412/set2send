@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
   const { data: walletData, isLoading: walletLoading } = useQuery({
     queryKey: ["walletBalance"],
-    queryFn: () => api.get("/wallet/balance").then((res) => res.data),
+    queryFn: () => api.get("/wallet").then((res) => res.data),
     enabled: !!session,
   });
 
