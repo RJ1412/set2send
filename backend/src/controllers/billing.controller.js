@@ -68,7 +68,8 @@ export const createOrder = async (req, res, next) => {
 
     res.json({
       orderId,
-      invoice
+      invoice,
+      razorpayKey: env.RAZORPAY_KEY_ID,
     });
   } catch (err) {
     next(err);

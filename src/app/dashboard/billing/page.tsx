@@ -45,6 +45,7 @@ export default function BillingPage() {
 
       const invoice = data.invoice;
       const orderId = data.orderId;
+      const responseRazorpayKey = data.razorpayKey;
 
       if (invoice.total_paise === 0) {
         alert("Order created successfully! Total: ₹0 (covered by coins). Order ID: " + orderId);
@@ -52,7 +53,7 @@ export default function BillingPage() {
       }
 
       // Open Razorpay checkout
-      const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || responseRazorpayKey;
       if (!razorpayKey) {
         alert("Payment gateway is not configured. Please contact support.");
         return;
