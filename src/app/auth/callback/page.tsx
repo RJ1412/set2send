@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import api from "../../../lib/api";
 import { useAuthStore } from "../../../store/authStore";
@@ -9,11 +9,14 @@ function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, setUser } = useAuthStore();
+  const hasExchanged = useRef(false);
 
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("Connecting your Instagram account...");
 
   useEffect(() => {
+    if (hasExchanged.current) return;
+    
     const code = searchParams.get("code");
     const state = searchParams.get("state"); // This is the userId passed by the backend
     const error = searchParams.get("error");
@@ -33,6 +36,8 @@ function AuthCallbackContent() {
       setTimeout(() => router.push("/dashboard"), 3000);
       return;
     }
+
+    hasExchanged.current = true;
 
     const exchangeToken = async () => {
       try {
