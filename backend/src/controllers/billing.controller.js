@@ -35,22 +35,43 @@ export const createOrder = async (req, res, next) => {
       coins_to_apply
     });
 
-    let orderId = `mock_order_${Date.now()}`;
+    // Coin-only invoices do not need a Razorpay order. Keep an internal ID so
+    // an associated coin reservation can still be tracked safely.
+    let orderId = `coin_order_${Date.now()}`;
     
-    if (razorpay && invoice.total_paise > 0) {
+    if (invoice.total_paise > 0) {
       if (invoice.total_paise < 100) {
         return res.status(400).json({ error: "Minimum payable amount is ₹1 (100 paise)" });
       }
-      const order = await razorpay.orders.create({
-        amount: invoice.total_paise,
-        currency: "INR",
-        receipt: `rcpt_${req.userId.substring(0, 8)}_${Date.now()}`,
-        notes: {
-          user_id: req.userId,
-          plan_key: plan,
-        },
-      });
-      orderId = order.id;
+      if (!razorpay) {
+        return res.status(500).json({
+          error: "Payment gateway is not configured on the server. Please contact support.",
+        });
+      }
+
+      try {
+        const order = await razorpay.orders.create({
+          amount: invoice.total_paise,
+          currency: "INR",
+          receipt: `rcpt_${req.userId.substring(0, 8)}_${Date.now()}`,
+          notes: {
+            user_id: req.userId,
+            plan_key: plan,
+          },
+        });
+        orderId = order.id;
+      } catch (error) {
+        if (error?.statusCode === 401) {
+          return res.status(401).json({
+            error: "Razorpay authentication failed. Verify the server-side API credentials.",
+          });
+        }
+
+        console.error("Razorpay order creation failed:", error?.error?.description || error?.message);
+        return res.status(500).json({
+          error: "Unable to create a payment order. Please try again shortly.",
+        });
+      }
     }
 
     // Reserve coins if applied
@@ -68,6 +89,9 @@ export const createOrder = async (req, res, next) => {
 
     res.json({
       orderId,
+      order_id: orderId,
+      amount: invoice.total_paise,
+      currency: "INR",
       invoice,
       razorpayKey: env.RAZORPAY_KEY_ID,
     });
@@ -93,7 +117,14 @@ export const verifyPayment = async (req, res, next) => {
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 
-    if (expectedSignature !== razorpay_signature) {
+    const signaturesMatch =
+      expectedSignature.length === razorpay_signature.length &&
+      crypto.timingSafeEqual(
+        Buffer.from(expectedSignature, "utf8"),
+        Buffer.from(razorpay_signature, "utf8")
+      );
+
+    if (!signaturesMatch) {
       return res.status(400).json({ error: "Payment verification failed — signature mismatch" });
     }
 
@@ -102,7 +133,11 @@ export const verifyPayment = async (req, res, next) => {
       ? await razorpay.orders.fetch(razorpay_order_id)
       : null;
 
-    if (order && order.notes?.user_id) {
+    if (!order || order.notes?.user_id !== req.userId) {
+      return res.status(400).json({ error: "Payment order does not belong to the current user" });
+    }
+
+    if (order.notes?.user_id) {
       await prisma.subscription.upsert({
         where: { user_id: order.notes.user_id },
         update: {
