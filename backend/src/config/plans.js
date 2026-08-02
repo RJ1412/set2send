@@ -183,7 +183,6 @@ export function sanitizeAddons(addons) {
 }
 
 // S2S Coins Constants
-export const REFERRER_BONUS = 500;
-export const REFEREE_BONUS = 500;
+export const REFERRER_BONUS = 100;
+export const REFEREE_BONUS = 100;
 export const REDEMPTION_MINIMUM = 3000;
-
