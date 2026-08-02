@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useAuthStore } from "../../store/authStore";
@@ -31,6 +31,7 @@ const GoogleIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -44,6 +45,11 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [successOverlay, setSuccessOverlay] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    const referralFromLink = searchParams.get("ref");
+    if (referralFromLink) setReferralCode(referralFromLink);
+  }, [searchParams]);
 
   useEffect(() => {
     const { isAuthenticated, user } = useAuthStore.getState();
@@ -111,7 +117,8 @@ export default function SignUpPage() {
         setErrorMsg("");
         
         const response = await api.post("/auth/google", {
-          token: codeResponse.access_token
+          token: codeResponse.access_token,
+          referral_code: referralCode
         });
         
         const { user, accessToken } = response.data;
@@ -375,3 +382,4 @@ export default function SignUpPage() {
     </div>
   );
 }
+

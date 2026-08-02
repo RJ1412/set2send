@@ -39,6 +39,7 @@ export const getWallet = async (req, res, next) => {
 
     res.json({
       balance,
+      redemptionMinimum: REDEMPTION_MINIMUM,
       ledger,
       referralCode,
       referrals: referrals.map(r => ({
@@ -115,6 +116,35 @@ export const redeemCoins = async (req, res, next) => {
     if (error.message.includes("Minimum balance") || error.message.includes("pending redemption")) {
        return res.status(400).json({ error: error.message });
     }
+    next(error);
+  }
+};
+
+
+
+export const applyReferralCode = async (req, res, next) => {
+  try {
+    const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
+    if (!code) return res.status(400).json({ error: "Referral code is required." });
+
+    const [user, referrer, existingReferral] = await Promise.all([
+      prisma.user.findUnique({ where: { id: req.userId }, select: { id: true, referred_by_code: true } }),
+      prisma.user.findUnique({ where: { referral_code: code }, select: { id: true } }),
+      prisma.referral.findUnique({ where: { referred_user_id: req.userId } }),
+    ]);
+
+    if (!user) return res.status(404).json({ error: "User not found." });
+    if (user.referred_by_code || existingReferral) return res.status(409).json({ error: "A referral code has already been applied to this account." });
+    if (!referrer) return res.status(404).json({ error: "Referral code is invalid." });
+    if (referrer.id === user.id) return res.status(400).json({ error: "You cannot use your own referral code." });
+
+    await prisma.$transaction([
+      prisma.user.update({ where: { id: user.id }, data: { referred_by_code: code } }),
+      prisma.referral.create({ data: { referrer_id: referrer.id, referred_user_id: user.id, status: "pending" } }),
+    ]);
+
+    res.status(201).json({ success: true, message: "Referral code applied. Rewards unlock after the first paid subscription." });
+  } catch (error) {
     next(error);
   }
 };

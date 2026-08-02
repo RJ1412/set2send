@@ -13,8 +13,9 @@ const generateTokens = (userId) => {
 
 export const register = async (req, res, next) => {
   try {
-    const { email, password, name, referral_code } = req.body;
-    if (!email || !password || !name) {
+    const { email, password, name, fullName, referral_code } = req.body;
+    const userName = name || fullName;
+    if (!email || !password || !userName) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -34,19 +35,22 @@ export const register = async (req, res, next) => {
     const user = await prisma.user.create({
       data: {
         email,
-        name,
+        name: userName,
         password_hash: hashedPassword,
         referral_code: generatedReferralCode,
         referred_by_code: referrer ? referral_code : null,
         subscription: {
           create: {
             plan: "free",
-            status: "active",
-            dms_limit: 100, // kept for backward compat with other systems
+            plan_key: "free",
+            status: "active" // kept for backward compat with other systems
           },
         },
         alert_config: {
           create: {}, // Defaults
+        },
+        coin_ledger_entries: {
+          create: { delta: 100, reason: "welcome_bonus", balance_after: 100 },
         },
       },
     });
@@ -168,20 +172,23 @@ export const googleLogin = async (req, res, next) => {
         user = await prisma.user.create({
           data: {
             email,
-            name,
+            name: userName,
             google_id: googleId,
             referral_code: generatedReferralCode,
             referred_by_code: referrer ? referral_code : null,
             subscription: {
               create: {
                 plan: "free",
-                status: "active",
-                dms_limit: 100,
+            plan_key: "free",
+            status: "active"
               },
             },
             alert_config: {
               create: {}, // Defaults
             },
+        coin_ledger_entries: {
+          create: { delta: 100, reason: "welcome_bonus", balance_after: 100 },
+        },
           },
         });
 
@@ -225,3 +232,9 @@ export const me = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
+
+
+

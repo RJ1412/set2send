@@ -32,7 +32,10 @@ export async function getUserEntitlements(userId) {
   });
 
   const isSubscriptionActive = Boolean(subscription) && subscription.status === "active" && (!subscription.current_period_end || new Date(subscription.current_period_end) > new Date());
-  const planKey = isSubscriptionActive && PLAN_FEATURES[subscription.plan_key || subscription.plan] ? (subscription.plan_key || subscription.plan) : "free";
+  const legacyPlan = PLAN_FEATURES[subscription?.plan] ? subscription.plan : "free";
+  const storedPlanKey = PLAN_FEATURES[subscription?.plan_key] ? subscription.plan_key : legacyPlan;
+  const resolvedPlan = storedPlanKey === "free" && PLAN_RANK[legacyPlan] > PLAN_RANK.free ? legacyPlan : storedPlanKey;
+  const planKey = isSubscriptionActive ? resolvedPlan : "free";
   const planConfig = PLAN_FEATURES[planKey] || PLAN_FEATURES["free"];
 
   // Parse purchased add-ons
@@ -147,3 +150,4 @@ export async function checkWaAccountLimit(userId) {
     limit: entitlements.wa_accounts_included,
   };
 }
+

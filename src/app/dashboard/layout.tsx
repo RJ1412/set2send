@@ -30,6 +30,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { user: session, isAuthenticated, clearAuth } = useAuthStore();
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { data: wallet } = useQuery({
+    queryKey: ["walletBalance"],
+    queryFn: () => api.get("/wallet").then((res) => res.data),
+    enabled: Boolean(session),
+    refetchInterval: 10000,
+  });
 
   useEffect(() => {
     if (!isAuthenticated || !session) {
@@ -170,6 +176,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="w-[24px] h-[24px] bg-gradient-to-br from-[#8b5cf6] to-[#6366f1] rounded-[6px] flex items-center justify-center font-bold text-white text-[11px] shrink-0">
               S
             </div>
+            <Link href="/dashboard/wallet" className="inline-flex items-center gap-1 rounded-md border border-[#e8d5a0] bg-[#fdf8ee] px-2 py-1 text-[11px] font-semibold text-[#9a7b3a]">
+              <Coins size={13} /> {wallet?.balance ?? 0}
+            </Link>
           </header>
 
           {/* Dynamic Page Content */}
@@ -180,3 +189,4 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     </div>
   );
 }
+

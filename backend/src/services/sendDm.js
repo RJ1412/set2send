@@ -6,6 +6,7 @@ import axios from "axios";
 import { prisma } from "../utils/db.js";
 import { env } from "../config/env.js";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
+import { getUserEntitlements } from "./entitlement.service.js";
 
 export const sendCampaignDm = async ({ campaignId, commenterIgId, commenterUsername, commentText, commentId }) => {
   console.log(`[DirectDM] Sending DM for campaign ${campaignId} to ${commenterUsername}`);
@@ -25,9 +26,18 @@ export const sendCampaignDm = async ({ campaignId, commenterIgId, commenterUsern
     include: { subscription: true },
   });
 
-  if (!user?.subscription || user.subscription.dms_used_this_month >= user.subscription.dms_limit) {
-    console.log(`[DirectDM] DM limit reached for user ${user?.id}`);
-    return;
+  const entitlements = await getUserEntitlements(campaign.instagram_account.user_id);
+  if (entitlements.dm_limit !== null) {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    const sentThisMonth = await prisma.dmLog.count({
+      where: { campaign: { instagram_account: { user_id: campaign.instagram_account.user_id } }, dm_status: "sent", dm_sent_at: { gte: startOfMonth } },
+    });
+    if (sentThisMonth >= entitlements.dm_limit) {
+      console.log(`[DirectDM] DM limit reached for user ${user?.id}`);
+      return;
+    }
   }
 
   const previousDms = await prisma.dmLog.findMany({
@@ -99,10 +109,7 @@ export const sendCampaignDm = async ({ campaignId, commenterIgId, commenterUsern
       where: { id: campaignId },
       data: { dms_sent: { increment: 1 } },
     });
-    await prisma.subscription.update({
-      where: { id: user.subscription.id },
-      data: { dms_used_this_month: { increment: 1 } },
-    });
     await emitAnalyticsEvent(campaignId, "dm_sent", commenterUsername);
   }
 };
+

@@ -81,8 +81,8 @@ export async function processReferralReward(referredUserId, paymentId) {
   if (!referral) return null; // No referral relationship
   if (referral.status !== "pending") return null; // Already rewarded or flagged — idempotent guard
 
-  const REFERRER_BONUS = parseInt(env.REFERRER_BONUS, 10) || 200;
-  const REFEREE_BONUS = parseInt(env.REFEREE_BONUS, 10) || 100;
+  const REFERRER_BONUS = parseInt(env.REFERRER_BONUS, 10) || 500;
+  const REFEREE_BONUS = parseInt(env.REFEREE_BONUS, 10) || 500;
 
   // Execute in a transaction for atomicity
   const result = await prisma.$transaction(async (tx) => {
@@ -156,3 +156,4 @@ export async function getUserReferrals(userId) {
     orderBy: { created_at: "desc" },
   });
 }
+

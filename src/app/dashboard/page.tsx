@@ -53,6 +53,7 @@ export default function DashboardPage() {
   const { data: walletData, isLoading: walletLoading } = useQuery({
     queryKey: ["walletBalance"],
     queryFn: () => api.get("/wallet").then((res) => res.data),
+    refetchInterval: 10000,
     enabled: !!session,
   });
 
@@ -516,3 +517,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

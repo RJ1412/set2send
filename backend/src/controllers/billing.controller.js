@@ -20,7 +20,9 @@ export const createOrder = async (req, res, next) => {
     const selectedExtraIg = Math.max(0, Math.min(20, Number.parseInt(extra_ig, 10) || 0));
     const selectedExtraWa = Math.max(0, Math.min(20, Number.parseInt(extra_wa, 10) || 0));
     const currentSubscription = await prisma.subscription.findUnique({ where: { user_id: req.userId } });
-    const currentPlanKey = currentSubscription?.status === "active" && isPlanKey(currentSubscription?.plan_key) ? currentSubscription.plan_key : "free";
+    const legacyPlan = isPlanKey(currentSubscription?.plan) ? currentSubscription.plan : "free";
+    const storedPlanKey = isPlanKey(currentSubscription?.plan_key) ? currentSubscription.plan_key : legacyPlan;
+    const currentPlanKey = currentSubscription?.status === "active" ? (storedPlanKey === "free" && PLAN_RANK[legacyPlan] > PLAN_RANK.free ? legacyPlan : storedPlanKey) : "free";
     if (PLAN_RANK[plan] < PLAN_RANK[currentPlanKey]) return res.status(400).json({ error: "Downgrades are not available from checkout. Select a higher plan." });
 
     let coins_to_apply = 0;
@@ -206,22 +208,23 @@ export const webhook = async (req, res) => {
     const userId = entity.notes?.user_id;
 
     if (userId) {
-       // Activate subscription
-       await prisma.subscription.upsert({
-         where: { user_id: userId },
-         update: { 
-            status: "active",
-            plan_key: entity.notes?.plan_key || "creator",
-            first_paid_at: new Date()
-         },
-         create: {
-            user_id: userId,
-            plan: "creator",
-            plan_key: entity.notes?.plan_key || "creator",
-            status: "active",
-            first_paid_at: new Date()
-         }
-       });
+       // Persist exactly the plan and extras attached to the paid Razorpay order.
+       const webhookPlan = isPlanKey(entity.notes?.plan_key) ? entity.notes.plan_key : "creator";
+       let webhookAddons = [];
+       try { webhookAddons = sanitizeAddons(JSON.parse(entity.notes?.addons || "[]")); } catch {}
+       const webhookPeriodEnd = new Date();
+       webhookPeriodEnd.setMonth(webhookPeriodEnd.getMonth() + (entity.notes?.billing === "annual" ? 12 : 1));
+       const webhookSubscription = {
+         plan: webhookPlan, plan_key: webhookPlan, status: "active",
+         purchased_addons: JSON.stringify(webhookAddons),
+         extra_ig_accounts: Math.max(0, Number.parseInt(entity.notes?.extra_ig || "0", 10) || 0),
+         extra_wa_accounts: Math.max(0, Number.parseInt(entity.notes?.extra_wa || "0", 10) || 0),
+         razorpay_order_id: orderId, current_period_end: webhookPeriodEnd, first_paid_at: new Date(),
+       };
+       await prisma.$transaction([
+         prisma.subscription.upsert({ where: { user_id: userId }, update: webhookSubscription, create: { user_id: userId, ...webhookSubscription } }),
+         prisma.user.update({ where: { id: userId }, data: { plan: webhookPlan } }),
+       ]);
 
        // Finalize reserved coins
        const reservation = await prisma.coinReservation.findUnique({ where: { order_id: orderId } });
@@ -337,10 +340,18 @@ export const currentPlan = async (req, res, next) => {
       }
     });
 
+    const subscription = user?.subscription;
+    const isActive = subscription?.status === "active" && (!subscription.current_period_end || new Date(subscription.current_period_end) >= new Date());
+    const legacyPlan = isPlanKey(subscription?.plan) ? subscription.plan : "free";
+    const storedPlanKey = isPlanKey(subscription?.plan_key) ? subscription.plan_key : legacyPlan;
+    const planKey = isActive ? (storedPlanKey === "free" && PLAN_RANK[legacyPlan] > PLAN_RANK.free ? legacyPlan : storedPlanKey) : "free";
     const response = {
-      ...(user?.subscription || { plan: "free" }),
+      ...(subscription || {}),
+      plan: planKey,
+      plan_key: planKey,
+      status: isActive ? "active" : "inactive",
       dms_used_this_month: dmsUsedCount,
-      dms_limit: user?.subscription?.plan_key === "free" || !user?.subscription ? 2000 : "Unlimited"
+      dms_limit: planKey === "free" ? 2000 : "Unlimited"
     };
 
     res.json(response);
@@ -348,3 +359,6 @@ export const currentPlan = async (req, res, next) => {
     next(err);
   }
 };
+
+
+
