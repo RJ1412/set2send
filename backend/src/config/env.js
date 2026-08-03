@@ -29,6 +29,7 @@ const envSchema = z.object({
   SMTP_SECURE: z.string().optional(),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
+  SENDER_EMAIL: z.string().optional(),
 });
 
 const _env = envSchema.safeParse(process.env);

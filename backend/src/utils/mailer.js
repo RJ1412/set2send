@@ -2,19 +2,24 @@ import nodemailer from 'nodemailer';
 import { env } from '../config/env.js';
 
 // Setup transporter with standard env vars or fallback to a test ethereal account
-const transporter = nodemailer.createTransport({
-  host: env.SMTP_HOST || 'smtp.gmail.com',
-  port: env.SMTP_PORT || 587,
-  secure: env.SMTP_SECURE === 'true' ? true : false, 
+const transporterOptions = {
+  host: env.SMTP_HOST,
+  port: env.SMTP_PORT ? Number(env.SMTP_PORT) : 587,
+  secure: env.SMTP_SECURE === 'true',
   auth: {
     user: env.SMTP_USER,
     pass: env.SMTP_PASS,
   },
-});
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
+};
+
+const transporter = nodemailer.createTransport(transporterOptions);
 
 export const sendOtpEmail = async (to, otp) => {
   const mailOptions = {
-    from: `"set2send" <${env.SMTP_USER || 'noreply@set2send.io'}>`,
+    from: `"set2send" <${env.SENDER_EMAIL || env.SMTP_USER || 'noreply@set2send.io'}>`,
     to,
     subject: 'Your Verification Code for set2send',
     html: `
