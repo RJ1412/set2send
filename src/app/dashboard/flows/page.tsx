@@ -13,7 +13,8 @@ export default function FlowsPage() {
 
   const { data: flows, isLoading } = useQuery({
     queryKey: ["flows"],
-    queryFn: () => api.get("/flows").then((res) => res.data),
+    queryFn: () => api.get("/flows").then((res) => res.data).catch(() => []),
+    retry: false,
   });
 
   const toggleStatus = useMutation({

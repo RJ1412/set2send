@@ -54,7 +54,9 @@ const FlowBuilderCanvas = () => {
     if (routeFlowId && routeFlowId !== 'new') {
       api.get(`/flows/${routeFlowId}`).then(res => {
         loadFlow(res.data);
-      }).catch(err => console.error(err));
+      }).catch(err => {
+        if (err.response?.status !== 403 && err.response?.status !== 404) console.error(err);
+      });
     }
   }, [routeFlowId, loadFlow]);
 
