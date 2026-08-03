@@ -15,7 +15,10 @@ import {
   Mail,
   Lock,
   Eye,
-  EyeOff
+  EyeOff,
+  Sparkles,
+  MessageCircle,
+  Globe
 } from "lucide-react";
 
 const GoogleIcon = ({ className = "w-4.5 h-4.5" }: { className?: string }) => (
@@ -172,6 +175,38 @@ export default function SignInPage() {
             <p className="text-[#1A1A1A]/70 text-sm mt-4 leading-relaxed max-w-md font-medium">
               Sign in to continue managing your intelligent chat automations and CRM.
             </p>
+          </div>
+          
+          <div className="flex flex-col gap-5 mt-4">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-[#1A1A1A]/5 flex items-center justify-center shrink-0 mt-0.5 border border-[#1A1A1A]/10">
+                <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[#1A1A1A]">AI-Powered Automation</h4>
+                <p className="text-xs text-[#1A1A1A]/60 mt-1">Intelligent comment-to-DM and auto-replies</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-[#1A1A1A]/5 flex items-center justify-center shrink-0 mt-0.5 border border-[#1A1A1A]/10">
+                <MessageCircle className="w-4 h-4 text-[#D4AF37]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[#1A1A1A]">Omnichannel Presence</h4>
+                <p className="text-xs text-[#1A1A1A]/60 mt-1">Works seamlessly across Instagram, WhatsApp, Messenger & Telegram</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-[#1A1A1A]/5 flex items-center justify-center shrink-0 mt-0.5 border border-[#1A1A1A]/10">
+                <Globe className="w-4 h-4 text-[#D4AF37]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[#1A1A1A]">Built for Growth</h4>
+                <p className="text-xs text-[#1A1A1A]/60 mt-1">Designed specifically for Indian creators & D2C brands</p>
+              </div>
+            </div>
           </div>
         </div>
 
