@@ -185,62 +185,80 @@ function SignUpContent() {
       </AnimatePresence>
 
       {/* LEFT SECTION */}
-      <div className="col-span-12 md:col-span-5 lg:col-span-6 bg-[#FAF9F6] p-8 sm:p-12 flex flex-col justify-between items-start text-left relative overflow-hidden min-h-[30vh] md:min-h-screen z-10 border-r border-[#E8E4D9]">
+      <div className="col-span-12 md:col-span-5 lg:col-span-6 bg-[#0A0E1A] p-8 sm:p-12 md:p-16 flex flex-col justify-between items-start text-left relative overflow-hidden min-h-[45vh] md:min-h-screen z-10">
         
+        {/* Animated Background Gradients */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#D4AF37]/20 blur-[100px] rounded-full mix-blend-screen animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#6E2CF4]/20 blur-[120px] rounded-full mix-blend-screen animate-pulse delay-700" />
+        <div className="absolute top-[40%] left-[20%] w-[40%] h-[40%] bg-[#0B8A5A]/10 blur-[100px] rounded-full mix-blend-screen animate-pulse delay-1000" />
+
         {/* Brand Header */}
         <Link
           href="/"
-          className="flex items-center gap-2 font-sans font-black text-[#1A1A1A] text-2xl tracking-tighter relative z-10 select-none"
+          className="flex items-center gap-2 font-sans font-black text-white text-2xl tracking-tighter relative z-10 select-none"
         >
-          <span className="w-8 h-8 rounded-lg bg-[#1A1A1A] text-[#D4AF37] flex items-center justify-center font-extrabold shadow-md border border-[#D4AF37]/30">S</span>
+          <span className="w-8 h-8 rounded-lg bg-white/10 backdrop-blur-md text-[#D4AF37] flex items-center justify-center font-extrabold shadow-md border border-[#D4AF37]/30">S</span>
           <span>set2send</span>
         </Link>
 
         {/* Central Illustration Area */}
-        <div className="my-auto py-8 relative z-10 w-full flex flex-col items-start gap-8">
-          <div className="max-w-md">
-            <h2 className="text-3xl sm:text-4xl font-serif font-black text-[#1A1A1A] tracking-tight leading-none">
+        <div className="my-auto py-8 relative z-10 w-full flex flex-col gap-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <h2 className="text-4xl sm:text-5xl font-serif font-black text-white tracking-tight leading-tight">
               Automate Conversations Across Every Channel
             </h2>
-            <p className="text-[#1A1A1A]/70 text-xs sm:text-sm mt-4 leading-relaxed font-medium">
+            <p className="text-white/70 text-sm mt-4 leading-relaxed max-w-md font-medium">
               Launch AI-powered messaging workflows across Instagram, WhatsApp, Messenger, Telegram, and more.
             </p>
-          </div>
+          </motion.div>
           
-          <div className="flex flex-col gap-5 mt-2">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-[#1A1A1A]/5 flex items-center justify-center shrink-0 mt-0.5 border border-[#1A1A1A]/10">
-                <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+          <div className="flex flex-col gap-6 mt-2">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center shrink-0 border border-[#D4AF37]/30 shadow-[0_0_15px_rgba(212,175,55,0.15)]">
+                <Sparkles className="w-5 h-5 text-[#D4AF37]" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-[#1A1A1A]">AI-Powered Automation</h4>
-                <p className="text-xs text-[#1A1A1A]/60 mt-1">Intelligent comment-to-DM and auto-replies</p>
+                <h4 className="text-sm font-bold text-white">AI-Powered Automation</h4>
+                <p className="text-xs text-white/60 mt-1 leading-relaxed">Intelligent comment-to-DM and auto-replies across your accounts</p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-[#1A1A1A]/5 flex items-center justify-center shrink-0 mt-0.5 border border-[#1A1A1A]/10">
-                <MessageCircle className="w-4 h-4 text-[#D4AF37]" />
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#6E2CF4]/20 to-[#6E2CF4]/5 flex items-center justify-center shrink-0 border border-[#6E2CF4]/30 shadow-[0_0_15px_rgba(110,44,244,0.15)]">
+                <MessageCircle className="w-5 h-5 text-[#9D6CFF]" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-[#1A1A1A]">Omnichannel Presence</h4>
-                <p className="text-xs text-[#1A1A1A]/60 mt-1">Works seamlessly across Instagram, WhatsApp, Messenger & Telegram</p>
+                <h4 className="text-sm font-bold text-white">Omnichannel Presence</h4>
+                <p className="text-xs text-white/60 mt-1 leading-relaxed">Works seamlessly across Instagram, WhatsApp, Messenger & Telegram</p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-[#1A1A1A]/5 flex items-center justify-center shrink-0 mt-0.5 border border-[#1A1A1A]/10">
-                <Globe className="w-4 h-4 text-[#D4AF37]" />
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}
+              className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#0B8A5A]/20 to-[#0B8A5A]/5 flex items-center justify-center shrink-0 border border-[#0B8A5A]/30 shadow-[0_0_15px_rgba(11,138,90,0.15)]">
+                <Globe className="w-5 h-5 text-[#21D190]" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-[#1A1A1A]">Built for Growth</h4>
-                <p className="text-xs text-[#1A1A1A]/60 mt-1">Designed specifically for Indian creators & D2C brands</p>
+                <h4 className="text-sm font-bold text-white">Built for Growth</h4>
+                <p className="text-xs text-white/60 mt-1 leading-relaxed">Designed specifically for Indian creators & D2C brands</p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 
-        <div className="text-[10px] font-mono text-[#1A1A1A]/50 tracking-wider relative z-10 select-none hidden md:block">
+        <div className="text-[10px] font-mono text-white/40 tracking-wider relative z-10 select-none hidden md:block uppercase font-bold">
           SECURED VIA SSL ENCRYPTION
         </div>
       </div>

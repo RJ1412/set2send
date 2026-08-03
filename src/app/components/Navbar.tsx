@@ -79,6 +79,7 @@ export default function Navbar() {
   const isTikTokPage = pathname === "/product/tiktok";
   const isAiPage = pathname === "/product/set2send-ai";
   const isCreatorsPage = pathname === "/solutions/creators" || pathname === "/solutions/contentcreators";
+  const isDarkNavbarPage = pathname === "/contact" || pathname === "/privacy-policy" || pathname === "/terms-of-service" || pathname === "/security-hub";
   const isLightPage = pathname === "/use-cases/collect-emails" || pathname === "/pricing" || pathname === "/usecase/email" || pathname === "/use-cases/follow-to-dm" || pathname === "/use-cases/request-to-follow" || pathname === "/use-cases/respond-to-comments" || (pathname.startsWith("/solutions/") && !isCreatorsPage);
 
   const navbarBgClass = scrolled
@@ -97,6 +98,8 @@ export default function Navbar() {
       : isSolutionsPage
       ? "bg-[#F7F7F7]/95 backdrop-blur-md border-b border-zinc-200 shadow-md text-zinc-900"
       : "bg-white/95 backdrop-blur-md border-b border-zinc-200/80 shadow-md text-zinc-900"
+    : isDarkNavbarPage
+    ? "bg-[#1A1A1A]/98 backdrop-blur-md border-b border-[#D4AF37]/30 text-white shadow-[0_4px_20px_rgba(212,175,55,0.1)]"
     : isLightPage
     ? "bg-white/40 backdrop-blur-md border-b border-zinc-200/50 text-zinc-900 shadow-sm"
     : isCreatorsPage
@@ -119,6 +122,8 @@ export default function Navbar() {
     ? scrolled
       ? "text-zinc-700 hover:text-zinc-950 font-[family-name:var(--font-inter)] transition-all duration-200 relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-[#C9A84C] after:origin-left after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-200"
       : "text-white/80 hover:text-white font-[family-name:var(--font-inter)] transition-all duration-200 relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-[#C9A84C] after:origin-left after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-200"
+    : isDarkNavbarPage && !scrolled
+    ? "text-white/80 hover:text-[#D4AF37] font-[family-name:var(--font-inter)] transition-all duration-200 relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-[#D4AF37] after:origin-left after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-200"
     : isLightPage && !scrolled
     ? "text-zinc-700 hover:text-zinc-900"
     : isCreatorsPage
@@ -135,6 +140,8 @@ export default function Navbar() {
     ? scrolled
       ? "text-zinc-900"
       : "text-white"
+    : isDarkNavbarPage && !scrolled
+    ? "text-white"
     : isLightPage && !scrolled
     ? "text-zinc-900"
     : isSubPage && !scrolled
@@ -149,6 +156,8 @@ export default function Navbar() {
     ? scrolled
       ? "border border-zinc-300 hover:border-[#E8E4D9] hover:bg-zinc-50 text-zinc-900"
       : "border border-[#C9A84C] bg-[#C9A84C]/10 text-white hover:bg-[#C9A84C] hover:text-[#0A0E1A] transition-all duration-200 ease-in"
+    : isDarkNavbarPage && !scrolled
+    ? "border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#1A1A1A] transition-all duration-200 ease-in"
     : isLightPage && !scrolled
     ? "border-zinc-300 hover:border-[#E8E4D9] hover:bg-zinc-50 text-zinc-900"
     : isSubPage && !scrolled
