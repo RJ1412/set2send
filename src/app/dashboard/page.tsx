@@ -53,8 +53,9 @@ export default function DashboardPage() {
 
   const { data: flows, isLoading: flowsLoading } = useQuery({
     queryKey: ["flows"],
-    queryFn: () => api.get("/flows").then((res) => res.data),
+    queryFn: () => api.get("/flows").then((res) => res.data).catch(() => []),
     enabled: !!session,
+    retry: false,
   });
 
   const { data: walletData, isLoading: walletLoading } = useQuery({

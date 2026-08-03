@@ -1576,7 +1576,7 @@ const HeroSectionRedesigned = ({ store }: { store: any }) => {
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
         disablePictureInPicture
         poster="/hero_poster.png"
         className="absolute inset-0 w-full h-full object-cover z-0 gpu-accelerated"
