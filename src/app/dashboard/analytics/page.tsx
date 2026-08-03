@@ -20,7 +20,8 @@ export default function AnalyticsPage() {
 
   const { data: flows, isLoading: flowsLoading } = useQuery({
     queryKey: ["flows"],
-    queryFn: () => api.get("/flows").then((res) => res.data),
+    queryFn: () => api.get("/flows").then((res) => res.data).catch(() => []),
+    retry: false,
   });
 
   const isLoading = planLoading || campaignsLoading || flowsLoading;
