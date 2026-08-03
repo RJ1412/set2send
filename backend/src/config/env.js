@@ -23,6 +23,12 @@ const envSchema = z.object({
   // S2S Coins referral bonus amounts (in coins, 1 coin = ₹1)
   REFERRER_BONUS: z.string().default("500"),   // coins credited to person who shared code
   REFEREE_BONUS: z.string().default("500"),    // coins credited to new user on first paid charge
+  // Email SMTP
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.string().optional(),
+  SMTP_SECURE: z.string().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
 });
 
 const _env = envSchema.safeParse(process.env);
