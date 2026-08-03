@@ -1576,11 +1576,12 @@ const HeroSectionRedesigned = ({ store }: { store: any }) => {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
+        disablePictureInPicture
         poster="/hero_poster.png"
         className="absolute inset-0 w-full h-full object-cover z-0 gpu-accelerated"
       >
-        <source src="https://res.cloudinary.com/dp2jtar7h/video/upload/v1782687650/merged-video_rllrms.mp4" type="video/mp4" />
+        <source src="https://res.cloudinary.com/dp2jtar7h/video/upload/q_auto,f_auto,w_1920/v1782687650/merged-video_rllrms.mp4" />
       </video>
 
       {/* Overlays Layer 1, 2, 3 */}
