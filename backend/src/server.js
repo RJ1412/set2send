@@ -58,7 +58,7 @@ app.get("/health", async (req, res) => {
   try {
     // Check DB
     await prisma.$queryRaw`SELECT 1`;
-    
+
     // Check Queues
     const dmQueueWaiting = await dmQueue.getWaitingCount();
     const dmQueueActive = await dmQueue.getActiveCount();
