@@ -3,6 +3,7 @@
 import React from "react";
 import { Mail, MessageCircle, HelpCircle, Bug, Handshake } from "lucide-react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const InstagramIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -14,11 +15,11 @@ const InstagramIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
 
 export default function ContactPage() {
   return (
-    <div className="bg-[#FAF9F6] min-h-screen font-sans text-[#1A1A1A]">
+    <div className="bg-[#FAF9F6] min-h-screen font-sans text-[#1A1A1A] flex flex-col">
       <Navbar />
       
-      <main className="pt-32 pb-24 px-6 md:px-12 max-w-5xl mx-auto">
-        <div className="text-center mb-16">
+      <main className="flex-grow pt-32 pb-16 px-6 md:px-12 max-w-5xl mx-auto w-full">
+        <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-serif font-black text-[#1A1A1A] tracking-tight mb-4">
             Get in touch.
           </h1>
@@ -27,7 +28,7 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
           {/* General Support */}
           <div className="bg-white border border-[#E8E4D9] rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
             <div className="w-12 h-12 bg-[#1A1A1A] text-[#D4AF37] rounded-2xl flex items-center justify-center mb-6">
@@ -83,8 +84,8 @@ export default function ContactPage() {
         </div>
 
         {/* FAQ Section */}
-        <div className="mt-20">
-          <h2 className="text-2xl font-serif font-black text-center mb-10">Frequently Asked Questions</h2>
+        <div className="mt-12">
+          <h2 className="text-2xl font-serif font-black text-center mb-8">Frequently Asked Questions</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-[#FAF9F6] border border-[#E8E4D9] rounded-2xl p-6">
               <HelpCircle className="w-6 h-6 text-[#D4AF37] mb-4" />
@@ -115,6 +116,8 @@ export default function ContactPage() {
           </div>
         </div>
       </main>
+      
+      <Footer />
     </div>
   );
 }

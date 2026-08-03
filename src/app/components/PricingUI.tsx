@@ -538,29 +538,29 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
             <tbody>
               {[
                 { group: "Instagram automation", rows: [
-                  { label: "Comment-to-DM replies", free: "2,000/mo", creator: "Unlimited", growth: "Unlimited", biz: "Unlimited" },
-                  { label: "Story reply automation", free: "100/mo", creator: "Unlimited", growth: "Unlimited", biz: "Unlimited" },
-                  { label: "Comment public reply", free: "–", creator: "✓", growth: "✓", biz: "✓" },
-                  { label: "Follow-gate (DM only followers)", free: "–", creator: "✓", growth: "✓", biz: "✓" },
-                  { label: "Custom flow builder", free: "–", creator: "–", growth: "✓", biz: "✓" },
-                  { label: "Instagram accounts included", free: "1", creator: "1", growth: "2", biz: "5" },
+                  { label: "Comment-to-DM replies", desc: "Automatically send a DM when someone comments on your post.", free: "2,000/mo", creator: "Unlimited", growth: "Unlimited", biz: "Unlimited" },
+                  { label: "Story reply automation", desc: "Send automatic replies when people reply to your stories.", free: "100/mo", creator: "Unlimited", growth: "Unlimited", biz: "Unlimited" },
+                  { label: "Comment public reply", desc: "Automatically reply to the public comment itself before sending a DM.", free: "–", creator: "✓", growth: "✓", biz: "✓" },
+                  { label: "Follow-gate (DM only followers)", desc: "Require users to follow your account before they receive the DM.", free: "–", creator: "✓", growth: "✓", biz: "✓" },
+                  { label: "Custom flow builder", desc: "Build advanced conversational workflows and branching logic.", free: "–", creator: "–", growth: "✓", biz: "✓" },
+                  { label: "Instagram accounts included", desc: "Number of Instagram profiles you can connect to your account.", free: "1", creator: "1", growth: "2", biz: "5" },
                 ]},
                 { group: "Contacts & data", rows: [
-                  { label: "Email collection + CSV export", free: "–", creator: "✓", growth: "✓", biz: "✓" },
-                  { label: "CRM & contact tagging", free: "–", creator: "Basic (50 contacts)", growth: "Unlimited", biz: "Unlimited" },
-                  { label: "Analytics dashboard", free: "–", creator: "Top posts only", growth: "Full dashboard", biz: "Full dashboard" },
-                  { label: "AI keyword & timing suggestions", free: "–", creator: "–", growth: "✓", biz: "✓" },
+                  { label: "Email collection + CSV export", desc: "Ask for and capture emails directly in DMs, then download as CSV.", free: "–", creator: "✓", growth: "✓", biz: "✓" },
+                  { label: "CRM & contact tagging", desc: "Manage your audience with tags and see their full chat history.", free: "–", creator: "Basic (50 contacts)", growth: "Unlimited", biz: "Unlimited" },
+                  { label: "Analytics dashboard", desc: "View detailed charts on message volume, top posts, and conversion rates.", free: "–", creator: "Top posts only", growth: "Full dashboard", biz: "Full dashboard" },
+                  { label: "AI keyword & timing suggestions", desc: "Get smart recommendations on the best keywords to use and when to post.", free: "–", creator: "–", growth: "✓", biz: "✓" },
                 ]},
                 { group: "WhatsApp", rows: [
-                  { label: "WhatsApp bulk messaging", free: "–", creator: "Add-on (+₹149/mo)", growth: "✓ Included", biz: "✓ Included, discounted" },
-                  { label: "WhatsApp numbers included", free: "0", creator: "1 (with add-on)", growth: "2", biz: "5" },
-                  { label: "Pay-as-you-go message pricing", free: "–", creator: "✓", growth: "✓", biz: "✓" },
+                  { label: "WhatsApp bulk messaging", desc: "Send mass promotional or utility updates via WhatsApp API.", free: "–", creator: "Add-on (+₹149/mo)", growth: "✓ Included", biz: "✓ Included, discounted" },
+                  { label: "WhatsApp numbers included", desc: "Number of WhatsApp phone numbers you can connect.", free: "0", creator: "1 (with add-on)", growth: "2", biz: "5" },
+                  { label: "Pay-as-you-go message pricing", desc: "Pay only for the exact number of messages you successfully send.", free: "–", creator: "✓", growth: "✓", biz: "✓" },
                 ]},
                 { group: "Support & extras", rows: [
-                  { label: "Extra Instagram account", free: "–", creator: "₹99/mo each", growth: "₹99/mo each", biz: "₹99/mo each" },
-                  { label: "Extra WhatsApp number", free: "–", creator: "₹49/mo each", growth: "₹49/mo each", biz: "₹49/mo each" },
-                  { label: "Support", free: "Community", creator: "Email", growth: "Priority email", biz: "Priority + white-glove" },
-                  { label: "White-label branding", free: "–", creator: "–", growth: "–", biz: "Coming soon" },
+                  { label: "Extra Instagram account", desc: "Add more Instagram profiles beyond your plan's limit.", free: "–", creator: "₹99/mo each", growth: "₹99/mo each", biz: "₹99/mo each" },
+                  { label: "Extra WhatsApp number", desc: "Add more WhatsApp numbers beyond your plan's limit.", free: "–", creator: "₹49/mo each", growth: "₹49/mo each", biz: "₹49/mo each" },
+                  { label: "Support", desc: "How quickly and through which channel you receive customer service.", free: "Community", creator: "Email", growth: "Priority email", biz: "Priority + white-glove" },
+                  { label: "White-label branding", desc: "Remove our branding and use your own logo for your clients.", free: "–", creator: "–", growth: "–", biz: "Coming soon" },
                 ]},
               ].map(section => (
                 <React.Fragment key={section.group}>
@@ -569,7 +569,16 @@ export default function PricingUI({ onCheckout, coinBalance = 0, currentPlanKey,
                   </tr>
                   {section.rows.map((row, i) => (
                     <tr key={i}>
-                      <td style={{ padding: "11px 14px", textAlign: "left", fontSize: 12.5, borderBottom: "1px solid #EDE9E2", color: "#6B6560", fontWeight: 500 }}>{row.label}</td>
+                      <td style={{ padding: "11px 14px", textAlign: "left", fontSize: 12.5, borderBottom: "1px solid #EDE9E2", color: "#6B6560", fontWeight: 500 }}>
+                        <div className="group flex items-center gap-1.5 cursor-help w-max relative">
+                          {row.label}
+                          <div className="w-3.5 h-3.5 rounded-full border border-[#B0AB9E] text-[#B0AB9E] flex items-center justify-center text-[9px] font-bold">?</div>
+                          <div className="absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 w-48 p-2.5 bg-[#1A1714] text-white text-[11px] rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.15)] opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-normal font-normal leading-relaxed text-left">
+                            {row.desc}
+                            <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#1A1714] rotate-45"></div>
+                          </div>
+                        </div>
+                      </td>
                       {(["free", "creator", "growth", "biz"] as const).map(k => {
                         const val = row[k];
                         const isHi = k === "creator";
