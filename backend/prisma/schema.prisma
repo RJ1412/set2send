@@ -151,6 +151,12 @@ model Campaign {
   limit_count           Int?
   limit_reached_message String?
 
+  // Media & Link Attachments
+  attachment_type       String?     // 'image', 'video', 'link', 'none'
+  attachment_url        String?
+  link_url              String?
+  link_title            String?
+
   instagram_account     InstagramAccount @relation(fields: [instagram_account_id], references: [id], onDelete: Cascade)
   dm_logs               DmLog[]
   collected_emails      CollectedEmail[]
@@ -567,4 +573,14 @@ model WebhookEvent {
   processed_at DateTime @default(now())
 
   @@map("webhook_events")
+}
+
+model OtpVerification {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  otp        String
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  @@map("otp_verifications")
 }

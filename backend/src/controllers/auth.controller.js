@@ -4,6 +4,7 @@ import { OAuth2Client } from "google-auth-library";
 import { prisma } from "../utils/db.js";
 import { env } from "../config/env.js";
 import crypto from "crypto";
+import { sendOtpEmail } from "../utils/mailer.js";
 
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ userId }, env.JWT_SECRET, { expiresIn: "7d" });
@@ -11,11 +12,38 @@ const generateTokens = (userId) => {
   return { accessToken, refreshToken };
 };
 
+export const requestOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    await prisma.otpVerification.upsert({
+      where: { email },
+      update: { otp, expires_at: expiresAt },
+      create: { email, otp, expires_at: expiresAt }
+    });
+
+    await sendOtpEmail(email, otp);
+
+    res.json({ message: "OTP sent successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const register = async (req, res, next) => {
   try {
-    const { email, password, name, fullName, referral_code } = req.body;
+    const { email, password, name, fullName, referral_code, otp } = req.body;
     const userName = name || fullName;
-    if (!email || !password || !userName) {
+    if (!email || !password || !userName || !otp) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -23,6 +51,16 @@ export const register = async (req, res, next) => {
     if (existingUser) {
       return res.status(400).json({ error: "User already exists" });
     }
+
+    const otpRecord = await prisma.otpVerification.findUnique({ where: { email } });
+    if (!otpRecord || otpRecord.otp !== otp) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+    if (new Date() > otpRecord.expires_at) {
+      return res.status(400).json({ error: "OTP expired" });
+    }
+
+    await prisma.otpVerification.delete({ where: { email } });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const generatedReferralCode = crypto.randomBytes(4).toString("hex");

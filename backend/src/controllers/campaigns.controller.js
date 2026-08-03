@@ -26,7 +26,8 @@ export const createCampaign = async (req, res, next) => {
     let { 
       instagram_account_id, trigger_type, ig_media_id, ig_media_url, keyword, fuzzy_match, dm_template,
       require_follow, follow_message, collect_email, email_prompt_message, public_reply_enabled, public_reply_text, follow_up_message, follow_up_time_hours,
-      retrigger_mode, retrigger_days, returning_dm_template
+      retrigger_mode, retrigger_days, returning_dm_template,
+      attachment_type, attachment_url, link_title, link_url
     } = req.body;
 
     const account = await prisma.instagramAccount.findUnique({
@@ -74,7 +75,8 @@ export const createCampaign = async (req, res, next) => {
         fuzzy_match,
         dm_template,
         require_follow, follow_message, collect_email, email_prompt_message, public_reply_enabled, public_reply_text, follow_up_message, follow_up_time_hours,
-        retrigger_mode, retrigger_days, returning_dm_template
+        retrigger_mode, retrigger_days, returning_dm_template,
+        attachment_type, attachment_url, link_title, link_url
       }
     });
 
@@ -108,7 +110,8 @@ export const updateCampaign = async (req, res, next) => {
     const { 
       status, keyword, dm_template,
       require_follow, follow_message, collect_email, email_prompt_message, follow_up_message, follow_up_time_hours,
-      retrigger_mode, retrigger_days, returning_dm_template
+      retrigger_mode, retrigger_days, returning_dm_template,
+      attachment_type, attachment_url, link_title, link_url
     } = req.body;
 
     const campaign = await prisma.campaign.findUnique({
@@ -130,7 +133,8 @@ export const updateCampaign = async (req, res, next) => {
       data: { 
         status, keyword, dm_template,
         require_follow, follow_message, collect_email, email_prompt_message, follow_up_message, follow_up_time_hours,
-        retrigger_mode, retrigger_days, returning_dm_template
+        retrigger_mode, retrigger_days, returning_dm_template,
+        attachment_type, attachment_url, link_title, link_url
       }
     });
 

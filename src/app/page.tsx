@@ -1617,7 +1617,7 @@ const HeroSectionRedesigned = ({ store }: { store: any }) => {
         {/* CTA Button */}
         <motion.div {...scaleIn(1.2)} className="mt-12 flex flex-col sm:flex-row items-center gap-6">
           <RippleButton
-            onClick={() => store.navigate('register')}
+            onClick={() => { if(typeof window !== 'undefined') window.location.href = '/signup'; }}
             className="px-10 py-4.5 bg-black text-white hover:text-black font-extrabold text-sm tracking-widest uppercase rounded-full border border-white/10 hover:border-[#D4AF37] hover:bg-white cta-glow-effect transition-all duration-300 flex items-center gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.12)] cursor-pointer group"
           >
             <span className="relative z-10 flex items-center gap-2">

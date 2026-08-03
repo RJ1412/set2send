@@ -143,6 +143,29 @@ export default function CampaignDetails() {
               <div className="bg-gray-50/50 border border-gray-200 rounded-xl p-4 text-xs text-gray-600 leading-relaxed font-mono whitespace-pre-wrap">
                 {campaign.dm_template}
               </div>
+
+              {(campaign.attachment_type || campaign.link_url) && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Rich Attachments</h4>
+                  {campaign.attachment_type && campaign.attachment_type !== 'none' && (
+                    <div className="mb-3">
+                      <span className="text-xs font-medium text-gray-500 block mb-1">Media ({campaign.attachment_type})</span>
+                      <a href={campaign.attachment_url} target="_blank" rel="noreferrer" className="text-sm text-purple-500 hover:underline break-all">
+                        {campaign.attachment_url}
+                      </a>
+                    </div>
+                  )}
+                  {campaign.link_url && (
+                    <div>
+                      <span className="text-xs font-medium text-gray-500 block mb-1">Call-to-Action Link</span>
+                      <div className="text-sm font-bold text-gray-700">{campaign.link_title || "Link"}</div>
+                      <a href={campaign.link_url} target="_blank" rel="noreferrer" className="text-sm text-purple-500 hover:underline break-all">
+                        {campaign.link_url}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
               
               <div className="mt-6 flex flex-col gap-3 border-t border-gray-200 pt-5">
                 <div className="flex justify-between items-center text-sm">

@@ -17,6 +17,12 @@ export default function CreateCampaign() {
   const [postType, setPostType] = useState("all");
   const [postUrl, setPostUrl] = useState("");
   
+  // Attachments
+  const [attachmentType, setAttachmentType] = useState("none");
+  const [attachmentUrl, setAttachmentUrl] = useState("");
+  const [linkTitle, setLinkTitle] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
+  
   // Advanced Features
   const [requireFollow, setRequireFollow] = useState(false);
   const [followMessage, setFollowMessage] = useState("Hey! Follow me first and I'll send you the link.");
@@ -88,6 +94,10 @@ export default function CreateCampaign() {
         limit_enabled: limitEnabled,
         limit_count: limitEnabled ? limitCount : null,
         limit_reached_message: limitEnabled ? limitReachedMessage : null,
+        attachment_type: attachmentType === "none" ? null : attachmentType,
+        attachment_url: attachmentType === "none" ? null : attachmentUrl,
+        link_title: linkTitle || null,
+        link_url: linkUrl || null,
       });
 
       router.push("/dashboard");
@@ -266,6 +276,39 @@ export default function CreateCampaign() {
                   className="w-full px-[14px] py-[10px] bg-white border border-[#e0ddd6] rounded-[10px] text-[13px] text-[#1a1a18] placeholder-[#aaa] focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] outline-none transition-all resize-none"
                 />
                 <p className="mt-[6px] text-[11px] text-[#888]">This message will be sent to the user's DM. Variables like {'{{link}}'} will be replaced.</p>
+              </div>
+
+              {/* Attachments */}
+              <div className="bg-[#fafaf8] border border-[#e8e5de] p-[16px] rounded-[12px]">
+                <label className="text-[13px] font-semibold text-[#1a1a18] mb-[12px] block">Rich Attachments (Optional)</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                  <div>
+                    <label className="text-[11px] font-semibold text-[#1a1a18] mb-[6px] block">Attachment Type</label>
+                    <select value={attachmentType} onChange={(e) => setAttachmentType(e.target.value)} className="w-full px-[14px] py-[8px] bg-white border border-[#e0ddd6] rounded-[10px] text-[12px] text-[#1a1a18] focus:border-[#8b5cf6] outline-none transition-all">
+                      <option value="none">None</option>
+                      <option value="image">Image</option>
+                      <option value="video">Video</option>
+                    </select>
+                  </div>
+                  {attachmentType !== "none" && (
+                    <div>
+                      <label className="text-[11px] font-semibold text-[#1a1a18] mb-[6px] block">Media URL</label>
+                      <input type="url" value={attachmentUrl} onChange={(e) => setAttachmentUrl(e.target.value)} placeholder={`Enter ${attachmentType} URL`} className="w-full px-[14px] py-[8px] bg-white border border-[#e0ddd6] rounded-[10px] text-[12px] text-[#1a1a18] focus:border-[#8b5cf6] outline-none transition-all" />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mt-[16px] pt-[16px] border-t border-[#e8e5de]">
+                  <label className="text-[11px] font-semibold text-[#1a1a18] mb-[6px] block">Call-to-Action Link</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px]">
+                    <div>
+                      <input type="text" value={linkTitle} onChange={(e) => setLinkTitle(e.target.value)} placeholder="Link Title (e.g. Get Started)" className="w-full px-[14px] py-[8px] bg-white border border-[#e0ddd6] rounded-[10px] text-[12px] text-[#1a1a18] focus:border-[#8b5cf6] outline-none transition-all" />
+                    </div>
+                    <div>
+                      <input type="url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="Target URL (e.g. https://...)" className="w-full px-[14px] py-[8px] bg-white border border-[#e0ddd6] rounded-[10px] text-[12px] text-[#1a1a18] focus:border-[#8b5cf6] outline-none transition-all" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Public Comment Reply */}

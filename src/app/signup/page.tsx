@@ -42,6 +42,8 @@ function SignUpContent() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpStep, setOtpStep] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -61,7 +63,7 @@ function SignUpContent() {
     }
   }, [router]);
 
-  const handleSignUpSubmit = async (e: React.FormEvent) => {
+  const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
 
@@ -87,6 +89,26 @@ function SignUpContent() {
     }
 
     setIsLoading(true);
+    try {
+      await api.post("/auth/request-otp", { email });
+      setOtpStep(true);
+      setErrorMsg("");
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.error || "Failed to send OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignUpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otp) {
+      setErrorMsg("Please enter the OTP.");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg("");
 
     try {
       const response = await api.post("/auth/register", {
@@ -95,6 +117,7 @@ function SignUpContent() {
         email,
         password,
         referral_code: referralCode,
+        otp
       });
 
       const { user, accessToken } = response.data;
@@ -108,7 +131,7 @@ function SignUpContent() {
       }, 1600);
 
     } catch (err: any) {
-      setErrorMsg(err.response?.data?.error || "Failed to create account. Please try again.");
+      setErrorMsg(err.response?.data?.error || "Failed to verify OTP or create account.");
       setIsLoading(false);
     }
   };
@@ -287,110 +310,132 @@ function SignUpContent() {
             </div>
           )}
 
-          <form onSubmit={handleSignUpSubmit} className="flex flex-col gap-4">
+          <form onSubmit={otpStep ? handleSignUpSubmit : handleRequestOtp} className="flex flex-col gap-4">
             
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Full Name</label>
-              <div className="relative flex items-center">
-                <User className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
-                <input
-                  type="text"
-                  required
-                  placeholder="John Doe"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
-                />
-              </div>
-            </div>
+            {!otpStep ? (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Full Name</label>
+                  <div className="relative flex items-center">
+                    <User className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="John Doe"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
+                    />
+                  </div>
+                </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Business Name</label>
-              <div className="relative flex items-center">
-                <Building className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
-                <input
-                  type="text"
-                  required
-                  placeholder="Acme Corp"
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
-                />
-              </div>
-            </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Business Name</label>
+                  <div className="relative flex items-center">
+                    <Building className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Acme Corp"
+                      value={businessName}
+                      onChange={(e) => setBusinessName(e.target.value)}
+                      className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
+                    />
+                  </div>
+                </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Email Address</label>
-              <div className="relative flex items-center">
-                <Mail className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
-                <input
-                  type="email"
-                  required
-                  placeholder="john@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
-                />
-              </div>
-            </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Email Address</label>
+                  <div className="relative flex items-center">
+                    <Mail className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="john@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
+                    />
+                  </div>
+                </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Password</label>
-              <div className="relative flex items-center">
-                <Lock className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="At least 8 characters"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-10 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 p-1 text-[#1A1A1A]/40 hover:text-[#1A1A1A] cursor-pointer outline-none select-none"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Password</label>
+                  <div className="relative flex items-center">
+                    <Lock className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      placeholder="At least 8 characters"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-10 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 p-1 text-[#1A1A1A]/40 hover:text-[#1A1A1A] cursor-pointer outline-none select-none"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Confirm Password</label>
-              <div className="relative flex items-center">
-                <Lock className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  required
-                  placeholder="Re-enter your password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-10 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 p-1 text-[#1A1A1A]/40 hover:text-[#1A1A1A] cursor-pointer outline-none select-none"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Confirm Password</label>
+                  <div className="relative flex items-center">
+                    <Lock className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      required
+                      placeholder="Re-enter your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-10 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 p-1 text-[#1A1A1A]/40 hover:text-[#1A1A1A] cursor-pointer outline-none select-none"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Referral Code (Optional)</label>
-              <div className="relative flex items-center">
-                <ShieldCheck className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
-                <input
-                  type="text"
-                  placeholder="e.g. abcd123"
-                  value={referralCode}
-                  onChange={(e) => setReferralCode(e.target.value)}
-                  className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
-                />
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Referral Code (Optional)</label>
+                  <div className="relative flex items-center">
+                    <ShieldCheck className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
+                    <input
+                      type="text"
+                      placeholder="e.g. abcd123"
+                      value={referralCode}
+                      onChange={(e) => setReferralCode(e.target.value)}
+                      className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium"
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#1A1A1A]/60">Verification Code (OTP)</label>
+                <div className="relative flex items-center">
+                  <Mail className="absolute left-3 w-4 h-4 text-[#1A1A1A]/40" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Enter 6-digit code"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    className="w-full bg-[#FAF9F6] border border-[#E8E4D9] hover:border-[#D4AF37] focus:border-[#D4AF37] rounded-xl py-3 pl-10 pr-4 text-xs text-[#1A1A1A] outline-none transition-all placeholder-[#1A1A1A]/30 font-medium tracking-widest text-center"
+                    maxLength={6}
+                  />
+                </div>
+                <p className="text-[10px] text-gray-400 mt-2 text-center">We've sent a code to {email}</p>
+                <button type="button" onClick={() => setOtpStep(false)} className="text-xs text-[#D4AF37] hover:underline mt-2 text-center">Back</button>
               </div>
-            </div>
+            )}
 
             <button
               type="submit"
@@ -403,7 +448,7 @@ function SignUpContent() {
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <span>Create Account</span>
+                  <span>{otpStep ? 'Verify & Create Account' : 'Continue'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -411,22 +456,26 @@ function SignUpContent() {
 
           </form>
 
-          <div className="my-6 flex items-center gap-3">
-            <div className="flex-grow h-px bg-[#E8E4D9]"></div>
-            <span className="text-[9px] font-mono text-[#1A1A1A]/50 font-bold uppercase tracking-wider">Or</span>
-            <div className="flex-grow h-px bg-[#E8E4D9]"></div>
-          </div>
+          {!otpStep && (
+            <>
+              <div className="my-6 flex items-center gap-3">
+                <div className="flex-grow h-px bg-[#E8E4D9]"></div>
+                <span className="text-[9px] font-mono text-[#1A1A1A]/50 font-bold uppercase tracking-wider">Or</span>
+                <div className="flex-grow h-px bg-[#E8E4D9]"></div>
+              </div>
 
-          <button
-            type="button"
-            onClick={() => loginWithGoogle()}
-            className={`w-full py-3 bg-white border border-[#E8E4D9] hover:bg-[#FAF9F6] text-[#1A1A1A] font-sans font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm flex items-center justify-center gap-3 cursor-pointer ${
-              isLoading ? "opacity-60 cursor-wait" : "hover:scale-[1.01]"
-            }`}
-          >
-            <GoogleIcon className="w-4 h-4" />
-            <span>Continue with Google</span>
-          </button>
+              <button
+                type="button"
+                onClick={() => loginWithGoogle()}
+                className={`w-full py-3 bg-white border border-[#E8E4D9] hover:bg-[#FAF9F6] text-[#1A1A1A] font-sans font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm flex items-center justify-center gap-3 cursor-pointer ${
+                  isLoading ? "opacity-60 cursor-wait" : "hover:scale-[1.01]"
+                }`}
+              >
+                <GoogleIcon className="w-4 h-4" />
+                <span>Continue with Google</span>
+              </button>
+            </>
+          )}
 
         </div>
 

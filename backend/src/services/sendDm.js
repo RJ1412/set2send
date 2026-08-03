@@ -64,6 +64,11 @@ export const sendCampaignDm = async ({ campaignId, commenterIgId, commenterUsern
     }
   }
 
+  if (campaign.link_url) {
+    const titleText = campaign.link_title ? `${campaign.link_title}:\n` : '';
+    messageToSend += `\n\n${titleText}${campaign.link_url}`;
+  }
+
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const apiUrl = env.API_URL || "http://localhost:5000";
   messageToSend = messageToSend.replace(urlRegex, (match) => {
@@ -79,9 +84,20 @@ export const sendCampaignDm = async ({ campaignId, commenterIgId, commenterUsern
       ? { id: commenterIgId }
       : { comment_id: commentId };
 
+    const messagePayload = { text: messageToSend };
+
+    if (campaign.attachment_type && campaign.attachment_type !== 'none' && campaign.attachment_url) {
+      messagePayload.attachment = {
+        type: campaign.attachment_type, // 'image' or 'video'
+        payload: {
+          url: campaign.attachment_url
+        }
+      };
+    }
+
     await axios.post(
       `https://graph.facebook.com/v25.0/me/messages`,
-      { recipient: recipientPayload, message: { text: messageToSend } },
+      { recipient: recipientPayload, message: messagePayload },
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
     console.log(`[DirectDM] DM sent to ${commenterUsername}`);
