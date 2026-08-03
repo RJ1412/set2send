@@ -104,21 +104,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="bg-[#f5f3ef] min-h-screen font-sans text-[#1a1a18] p-0 md:p-4 flex flex-col md:flex-row h-screen">
       
-      {/* MOBILE SIDEBAR OVERLAY */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsSidebarOpen(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
-          />
-        )}
-      </AnimatePresence>
-
       <div className="flex-1 w-full h-full flex flex-col md:flex-row bg-[#f5f3ef] overflow-hidden md:border md:border-[#e0ddd6] md:rounded-[16px] relative z-10">
         
+        {/* MOBILE SIDEBAR OVERLAY */}
+        <AnimatePresence>
+          {isSidebarOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+            />
+          )}
+        </AnimatePresence>
+
         {/* SIDEBAR NAVIGATION */}
         <motion.aside
           className={`fixed md:relative inset-y-0 left-0 w-[210px] bg-[#0f1117] flex flex-col z-50 transition-transform duration-300 md:translate-x-0 ${

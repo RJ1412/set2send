@@ -336,7 +336,7 @@ export default function Navbar() {
               transition={{ duration: 0.25, ease: "easeOut" }}
               onMouseEnter={() => handleMouseEnter("product")}
               onMouseLeave={handleMouseLeave}
-              className={`absolute top-full left-1/2 -translate-x-1/2 w-[90vw] max-w-5xl mt-3 z-50 rounded-[24px] border shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden backdrop-blur-md transition-all duration-300 ${
+              className={`absolute top-full left-1/2 -translate-x-1/2 w-[90vw] max-w-3xl mt-3 z-50 rounded-[24px] border shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden backdrop-blur-md transition-all duration-300 ${
                 isHomePage && !scrolled
                   ? "bg-black/90 border-white/10 text-white"
                   : "bg-[#F5F5F5] border-zinc-200/85 text-zinc-900"
