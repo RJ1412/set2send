@@ -187,20 +187,9 @@ export default function DashboardPage() {
           <button className="flex items-center gap-[6px] px-[12px] py-[7px] rounded-[8px] text-[12px] font-medium cursor-pointer border border-[#d0cdc6] bg-white text-[#444] hover:bg-[#fafafa]">
             <Bell className="w-[14px] h-[14px]" /> Alerts
           </button>
-          {session?.ig_username ? (
-            <div className="flex items-center gap-[6px] px-[13px] py-[7px] rounded-[8px] text-[12px] font-medium border border-[#e0ddd6] bg-white text-[#444]">
-              <span className="w-[8px] h-[8px] rounded-full bg-green-500 mr-1"></span>
-              @{session.ig_username}
-            </div>
-          ) : (
-            <button 
-              onClick={handleConnectInstagram}
-              className="flex items-center gap-[6px] px-[13px] py-[7px] rounded-[8px] text-[12px] font-medium cursor-pointer border-none text-white hover:opacity-90 transition-opacity"
-              style={{ background: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)' }}
-            >
-              <InstagramIcon /> Connect Instagram
-            </button>
-          )}
+          <Link href="/dashboard/accounts" className="flex items-center gap-[6px] px-[13px] py-[7px] rounded-[8px] text-[12px] font-medium cursor-pointer border border-[#e0ddd6] bg-white text-[#444] hover:bg-[#fafafa]">
+            Manage Accounts
+          </Link>
         </div>
       </header>
 
@@ -246,26 +235,20 @@ export default function DashboardPage() {
         {/* PLATFORMS */}
         <motion.div {...stagger} transition={{ ...stagger.transition, delay: 0 }} className="flex gap-[8px] items-center flex-wrap">
           {session?.ig_username ? (
-            <div className="flex items-center gap-[6px] px-[14px] py-[7px] rounded-[20px] text-[12px] font-medium border border-[#fbcfe8] bg-[#fdf2f8] text-[#db2777]">
+            <Link href="/dashboard/accounts" className="flex items-center gap-[6px] px-[14px] py-[7px] rounded-[20px] text-[12px] font-medium border border-[#fbcfe8] bg-[#fdf2f8] text-[#db2777] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all">
               <span className="w-[7px] h-[7px] rounded-full bg-[#db2777]"></span>
               Instagram <span className="text-[11px] text-[#db2777]">· connected as @{session.ig_username}</span>
-            </div>
+            </Link>
           ) : (
-            <div 
-              onClick={handleConnectInstagram}
-              className="flex items-center gap-[6px] px-[14px] py-[7px] rounded-[20px] text-[12px] font-medium cursor-pointer border border-[#e0ddd6] bg-white text-[#555] hover:border-[#bbb] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all"
-            >
+            <Link href="/dashboard/accounts" className="flex items-center gap-[6px] px-[14px] py-[7px] rounded-[20px] text-[12px] font-medium cursor-pointer border border-[#e0ddd6] bg-white text-[#555] hover:border-[#bbb] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all">
               <span className="w-[7px] h-[7px] rounded-full bg-[#e91e8c]"></span>
               Instagram <span className="text-[11px] text-[#aaa]">· tap to connect</span>
-            </div>
+            </Link>
           )}
-          <div className="flex items-center gap-[6px] px-[14px] py-[7px] rounded-[20px] text-[12px] font-medium border border-[#86efac] bg-[#f0fdf4] text-[#16a34a] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all">
+          <Link href="/dashboard/accounts" className="flex items-center gap-[6px] px-[14px] py-[7px] rounded-[20px] text-[12px] font-medium border border-[#86efac] bg-[#f0fdf4] text-[#16a34a] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all">
             <span className="w-[7px] h-[7px] rounded-full bg-[#25d366]"></span>
-            WhatsApp <span className="text-[11px] text-[#16a34a]">· connected</span> 
-            <div className="relative w-[6px] h-[6px] rounded-full bg-[#22c55e] ml-[2px]">
-               <div className="absolute inset-[-3px] rounded-full bg-[#22c55e] animate-ping opacity-75"></div>
-            </div>
-          </div>
+            WhatsApp <span className="text-[11px] text-[#16a34a]">· manage</span> 
+          </Link>
           <div className="text-[11px] text-[#aaa] flex items-center gap-[5px] px-[12px] py-[7px] rounded-[20px] border border-dashed border-[#d8d5cf] bg-[#fafaf8]">
             <Clock className="w-[13px] h-[13px]" /> More platforms coming soon
           </div>

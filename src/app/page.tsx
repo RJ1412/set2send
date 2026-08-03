@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
@@ -1594,14 +1594,6 @@ const HeroSectionRedesigned = ({ store }: { store: any }) => {
 
       {/* Hero Content */}
       <div className="relative z-3 w-full max-w-[850px] px-6 text-center flex flex-col items-center justify-center -mt-12 md:-mt-16">
-        {/* Badge */}
-        <motion.div
-          {...fadeUp(0.5)}
-          className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-[#D4AF37]/30 bg-black/40 backdrop-blur-md mb-8 shadow-[0_4px_20px_rgba(212,175,55,0.05)] cursor-default hover:border-[#D4AF37]/65 transition-all duration-300"
-        >
-          <Star className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" />
-          <span className="text-[11px] font-extrabold tracking-[0.25em] text-[#D4AF37] uppercase">The Elite DM Infrastructure</span>
-        </motion.div>
 
         {/* Headline */}
         <motion.h1

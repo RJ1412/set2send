@@ -12,6 +12,9 @@ import {
   handleWebhook,
   getTemplates,
   deleteCampaign,
+  getAccounts,
+  connect,
+  disconnect,
 } from "../controllers/whatsapp.controller.js";
 
 const router = express.Router();
@@ -23,6 +26,10 @@ router.post("/webhook", handleWebhook);
 // Protected routes
 router.use(requireAuth);
 router.use(requireFeature("wa"));
+
+router.get("/accounts", getAccounts);
+router.post("/connect", connect);
+router.delete("/:accountId/disconnect", disconnect);
 
 router.post("/parse-csv", parseCsv);
 router.post("/campaigns", createCampaign);

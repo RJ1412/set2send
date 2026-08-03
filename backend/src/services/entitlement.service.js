@@ -141,9 +141,9 @@ export async function checkIgAccountLimit(userId) {
  */
 export async function checkWaAccountLimit(userId) {
   const entitlements = await getUserEntitlements(userId);
-  // Count distinct WA numbers from campaigns or alert config
-  // For now, using alert_config as proxy for WA account
-  const current = 0; // TODO: extend when WA account model added
+  const current = await prisma.whatsappAccount.count({
+    where: { user_id: userId, status: "active" },
+  });
   return {
     allowed: entitlements.wa_access && current < entitlements.wa_accounts_included,
     current,

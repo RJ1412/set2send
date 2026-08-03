@@ -3,9 +3,66 @@ import axios from "axios";
 import { parse } from "csv-parse/sync";
 import { prisma } from "../utils/db.js";
 import { addWhatsappBulkJob } from "../queues/whatsappBulkQueue.js";
+import { checkWaAccountLimit } from "../services/entitlement.service.js";
 import { env } from "../config/env.js";
 
 const upload = multer({ storage: multer.memoryStorage() });
+
+export const getAccounts = async (req, res, next) => {
+  try {
+    const accounts = await prisma.whatsappAccount.findMany({
+      where: { user_id: req.userId },
+      select: { id: true, wa_phone_number_id: true, wa_phone_number: true, status: true }
+    });
+    res.json(accounts);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const connect = async (req, res, next) => {
+  try {
+    const { wa_phone_number_id, wa_phone_number } = req.body;
+    if (!wa_phone_number_id || !wa_phone_number) {
+      return res.status(400).json({ error: "Missing WhatsApp credentials" });
+    }
+
+    const capacity = await checkWaAccountLimit(req.userId);
+    if (!capacity.allowed) {
+      return res.status(403).json({ error: "WhatsApp account limit reached (" + capacity.limit + "). Upgrade or add an account add-on." });
+    }
+
+    const account = await prisma.whatsappAccount.upsert({
+      where: { wa_phone_number_id },
+      update: {
+        wa_phone_number,
+        status: "active",
+        user_id: req.userId,
+      },
+      create: {
+        user_id: req.userId,
+        wa_phone_number_id,
+        wa_phone_number,
+      }
+    });
+
+    res.json(account);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const disconnect = async (req, res, next) => {
+  try {
+    const { accountId } = req.params;
+    await prisma.whatsappAccount.delete({
+      where: { id: accountId, user_id: req.userId }
+    });
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const parseCsv = [
   upload.single("file"),
