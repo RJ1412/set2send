@@ -4,6 +4,7 @@ import { dmQueue, addDmJob } from "../queues/dmQueue.js";
 import { prisma } from "../utils/db.js";
 import axios from "axios";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
+import { publishDashboardStatsForCampaign } from "../services/dashboardStats.service.js";
 import { startFlow } from "../services/flowEngine.js";
 import { sendCampaignDm } from "../services/sendDm.js";
 
@@ -331,6 +332,7 @@ export const handleMetaEvent = async (req, res) => {
                            where: { id: job.campaign_id },
                            data: { follow_gate_count: { increment: 1 }, dms_sent: { increment: 1 } }
                          });
+                         await publishDashboardStatsForCampaign(job.campaign_id);
 
                          await emitAnalyticsEvent(job.campaign_id, "done_received_following", username);
                          await emitAnalyticsEvent(job.campaign_id, "link_delivered", username);
@@ -523,3 +525,5 @@ export const handleMetaEvent = async (req, res) => {
     console.error(err);
   }
 };
+
+

@@ -4,6 +4,7 @@ import { prisma } from "../utils/db.js";
 import axios from "axios";
 import { env } from "../config/env.js";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
+import { publishDashboardStatsForCampaign } from "../services/dashboardStats.service.js";
 import { redis } from "../utils/redis.js";
 
 const fallbackCache = new Map();
@@ -127,6 +128,7 @@ export const processDmPolling = async (job) => {
                   where: { id: pJob.campaign_id },
                   data: { follow_gate_count: { increment: 1 }, dms_sent: { increment: 1 } }
                 });
+                         await publishDashboardStatsForCampaign(pJob.campaign_id);
 
                 await emitAnalyticsEvent(pJob.campaign_id, "done_received_following", username);
                 await emitAnalyticsEvent(pJob.campaign_id, "link_delivered", username);
@@ -190,3 +192,5 @@ dmPollerWorker.on("failed", (job, err) => {
 });
 
 dmPollerWorker.on("error", (err) => console.error("[Worker Error]", err.message));
+
+

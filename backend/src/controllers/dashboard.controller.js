@@ -1,20 +1,33 @@
 import { prisma } from "../utils/db.js";
+import { getDashboardStats, subscribeToDashboardStats } from "../services/dashboardStats.service.js";
 
 
 // Campaign counters are authoritative because legacy delivery paths may not create DmLog rows.
 export const getStats = async (req, res, next) => {
   try {
-    const totals = await prisma.campaign.aggregate({
-      where: { instagram_account: { user_id: req.userId } },
-      _sum: { dms_sent: true },
-    });
-
-    res.json({ dms_sent: totals._sum.dms_sent ?? 0 });
+    res.json(await getDashboardStats(req.userId));
   } catch (error) {
     next(error);
   }
 };
 
+export const streamStats = async (req, res, next) => {
+  try {
+    res.status(200).set({
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "Content-Type": "text/event-stream",
+      "X-Accel-Buffering": "no",
+    });
+    res.flushHeaders?.();
+    res.write(`data: ${JSON.stringify(await getDashboardStats(req.userId))}\n\n`);
+    const unsubscribe = subscribeToDashboardStats(req.userId, res);
+    const heartbeat = setInterval(() => res.write(": keepalive\n\n"), 25000);
+    req.on("close", () => { clearInterval(heartbeat); unsubscribe(); });
+  } catch (error) {
+    next(error);
+  }
+};
 export const getPlatforms = async (req, res, next) => {
   try {
     const platforms = await prisma.platformConnection.findMany({
@@ -144,5 +157,6 @@ export const addTestLead = async (req, res, next) => {
     next(error);
   }
 };
+
 
 

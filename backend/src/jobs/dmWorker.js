@@ -6,6 +6,7 @@ import { pollerConnection } from "../queues/commentPollerQueue.js";
 import { env } from "../config/env.js";
 import { addFollowUpJob } from "../queues/followUpQueue.js";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
+import { publishDashboardStatsForCampaign } from "../services/dashboardStats.service.js";
 import { getUserEntitlements } from "../services/entitlement.service.js";
 
 export const processDm = async (job) => {
@@ -221,6 +222,7 @@ export const processDm = async (job) => {
       where: { id: campaignId },
       data: { dms_sent: { increment: 1 } },
     });
+        await publishDashboardStatsForCampaign(campaignId);
 
     if (!isGateMessage) {
       // Trigger Email Collection
@@ -286,3 +288,4 @@ dmWorker.on("failed", (job, err) => {
 });
 
 dmWorker.on("error", (err) => console.error("[Worker Error]", err.message));
+

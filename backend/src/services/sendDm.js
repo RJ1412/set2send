@@ -6,6 +6,7 @@ import axios from "axios";
 import { prisma } from "../utils/db.js";
 import { env } from "../config/env.js";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
+import { publishDashboardStatsForCampaign } from "../services/dashboardStats.service.js";
 import { getUserEntitlements } from "./entitlement.service.js";
 
 export const sendCampaignDm = async ({ campaignId, commenterIgId, commenterUsername, commentText, commentId }) => {
@@ -109,7 +110,9 @@ export const sendCampaignDm = async ({ campaignId, commenterIgId, commenterUsern
       where: { id: campaignId },
       data: { dms_sent: { increment: 1 } },
     });
+        await publishDashboardStatsForCampaign(campaignId);
     await emitAnalyticsEvent(campaignId, "dm_sent", commenterUsername);
   }
 };
+
 

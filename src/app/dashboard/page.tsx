@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../lib/api";
 import { useAuthStore } from "../../store/authStore";
 import { motion } from "framer-motion";
@@ -26,6 +26,7 @@ import {
 
 export default function DashboardPage() {
   const { user: session } = useAuthStore();
+  const queryClient = useQueryClient();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -48,7 +49,6 @@ export default function DashboardPage() {
     queryKey: ["dashboardStats"],
     queryFn: () => api.get("/dashboard/stats").then((res) => res.data),
     enabled: !!session,
-    refetchInterval: 10000,
   });
 
   const { data: flows, isLoading: flowsLoading } = useQuery({
@@ -64,6 +64,41 @@ export default function DashboardPage() {
     enabled: !!session,
   });
 
+  useEffect(() => {
+    if (!session) return;
+
+    const controller = new AbortController();
+    const token = useAuthStore.getState().accessToken;
+    const connect = async () => {
+      try {
+        const response = await fetch(`${api.defaults.baseURL}/dashboard/stats/stream`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          credentials: "include",
+          signal: controller.signal,
+        });
+        if (!response.ok || !response.body) return;
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        while (!controller.signal.aborted) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const events = buffer.split("\n\n");
+          buffer = events.pop() ?? "";
+          for (const event of events) {
+            const data = event.split("\n").find((line) => line.startsWith("data: "));
+            if (data) queryClient.setQueryData(["dashboardStats"], JSON.parse(data.slice(6)));
+          }
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) console.warn("Dashboard stats stream disconnected", error);
+      }
+    };
+    connect();
+    return () => controller.abort();
+  }, [session, queryClient]);
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [referralStatus, setReferralStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -524,5 +559,8 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
+
 
 

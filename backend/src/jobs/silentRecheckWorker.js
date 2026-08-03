@@ -4,6 +4,7 @@ import { prisma } from "../utils/db.js";
 import axios from "axios";
 import { env } from "../config/env.js";
 import { emitAnalyticsEvent } from "../utils/analytics.js";
+import { publishDashboardStatsForCampaign } from "../services/dashboardStats.service.js";
 
 const processSilentRecheck = async (job) => {
   console.log(`\n=============================================`);
@@ -67,6 +68,7 @@ const processSilentRecheck = async (job) => {
           where: { id: campaign.id },
           data: { follow_gate_count: { increment: 1 }, dms_sent: { increment: 1 } }
         });
+                         await publishDashboardStatsForCampaign(campaign.id);
 
         await emitAnalyticsEvent(campaign.id, "silent_recheck_delivered", commenter_username);
       } else {
@@ -93,3 +95,5 @@ silentRecheckWorker.on("failed", (job, err) => {
 });
 
 silentRecheckWorker.on("error", (err) => console.error("[Worker Error]", err.message));
+
+
