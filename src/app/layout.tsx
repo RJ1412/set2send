@@ -7,6 +7,29 @@ import "@xyflow/react/dist/style.css";
 export const metadata: Metadata = {
   title: "Set2Send — Premium Chat Automation Platform",
   description: "Set2Send automates marketing conversations on Instagram, WhatsApp, Messenger, and TikTok to scale audience and grow revenue.",
+  metadataBase: new URL("https://www.set2send.com"),
+  openGraph: {
+    title: "Set2Send — Premium Chat Automation Platform",
+    description: "Set2Send automates marketing conversations on Instagram, WhatsApp, Messenger, and TikTok to scale audience and grow revenue.",
+    url: "https://www.set2send.com",
+    siteName: "Set2Send",
+    images: [
+      {
+        url: "/hero_poster.png",
+        width: 1200,
+        height: 630,
+        alt: "Set2Send - Chat Automation",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Set2Send — Premium Chat Automation Platform",
+    description: "Set2Send automates marketing conversations on Instagram, WhatsApp, Messenger, and TikTok to scale audience and grow revenue.",
+    images: ["/hero_poster.png"],
+  },
 };
 
 export default function RootLayout({
