@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: "Set2Send",
     images: [
       {
-        url: "https://set2send.com/logo_s2s.png",
+        url: "https://set2send.com/logo_s2s_og.png",
         width: 1200,
         height: 630,
         alt: "Set2Send - Chat Automation",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Set2Send — Premium Chat Automation Platform",
     description: "Set2Send automates marketing conversations on Instagram, WhatsApp, Messenger, and TikTok to scale audience and grow revenue.",
-    images: ["https://set2send.com/logo_s2s.png"],
+    images: ["https://set2send.com/logo_s2s_og.png"],
   },
 };
 
