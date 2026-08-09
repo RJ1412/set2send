@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import Providers from "./Providers";
 import "./globals.css";
 import "@xyflow/react/dist/style.css";
@@ -51,6 +52,7 @@ export default function RootLayout({
           <Providers>
             {children}
           </Providers>
+          <Analytics />
           <Script
             src="https://checkout.razorpay.com/v1/checkout.js"
             strategy="afterInteractive"
