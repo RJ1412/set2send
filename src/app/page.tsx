@@ -1593,7 +1593,7 @@ const HeroSectionRedesigned = ({ store }: { store: any }) => {
       {!prefersReducedMotion && <div className="grain-overlay pointer-events-none" />}
 
       {/* Hero Content */}
-      <div className="relative z-3 w-full max-w-[850px] px-6 text-center flex flex-col items-center justify-center -mt-12 md:-mt-16">
+      <div className="relative z-3 w-full max-w-[850px] px-6 text-center flex flex-col items-center justify-center mt-12 md:mt-24">
 
         {/* Headline */}
         <motion.h1
