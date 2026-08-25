@@ -210,7 +210,7 @@ export const googleLogin = async (req, res, next) => {
         user = await prisma.user.create({
           data: {
             email,
-            name: userName,
+            name,
             google_id: googleId,
             referral_code: generatedReferralCode,
             referred_by_code: referrer ? referral_code : null,
