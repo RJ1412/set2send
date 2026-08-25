@@ -326,7 +326,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <Link href="/dashboard/flows/new" className="flex items-center justify-center gap-[6px] px-[18px] py-[9px] rounded-[9px] text-[12.5px] font-semibold bg-[#f59e0b] text-[#1a1a18] hover:bg-[#fbbf24] transition-colors whitespace-nowrap">
+          <Link href="/dashboard/campaigns/new" className="flex items-center justify-center gap-[6px] px-[18px] py-[9px] rounded-[9px] text-[12.5px] font-semibold bg-[#f59e0b] text-[#1a1a18] hover:bg-[#fbbf24] transition-colors whitespace-nowrap">
             Get started <ArrowRight className="w-[14px] h-[14px]" />
           </Link>
         </motion.div>
